@@ -6,6 +6,7 @@ import { supabase, checkSupabaseConfig } from '@/lib/supabase';
 import DashboardLayout from '@/components/DashboardLayout';
 import StatusBadge from '@/components/StatusBadge';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuth } from '@/components/AuthProvider';
 import { Plus, Trash2, FileText, Search, Calendar, ArrowRight, AlertTriangle, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -23,6 +24,7 @@ export default function DashboardPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [deleting, setDeleting] = useState<string | null>(null);
     const [configError, setConfigError] = useState('');
+    const { user } = useAuth();
 
     useEffect(() => {
         const { configured, message } = checkSupabaseConfig();
@@ -31,14 +33,15 @@ export default function DashboardPage() {
             setLoading(false);
             return;
         }
-        fetchProjects();
-    }, []);
+        if (user) fetchProjects();
+    }, [user]);
 
     const fetchProjects = async () => {
         try {
             const { data, error } = await supabase
                 .from('projects')
                 .select('id, client_name, project_type, status, created_at')
+                .eq('user_id', user!.id)
                 .order('created_at', { ascending: false });
 
             if (error) throw error;

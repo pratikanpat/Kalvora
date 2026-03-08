@@ -3,12 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { useAuth } from './AuthProvider';
 import {
     LayoutDashboard,
     FilePlus,
     PanelLeftClose,
     PanelLeft,
     Sparkles,
+    LogOut,
+    User,
 } from 'lucide-react';
 
 const navItems = [
@@ -16,10 +19,18 @@ const navItems = [
     { href: '/create', label: 'New Project', icon: FilePlus },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+    collapsed: boolean;
+    onToggleCollapse: () => void;
+}
+
+export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
     const pathname = usePathname();
-    const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const { user, signOut } = useAuth();
+
+    const userEmail = user?.email || '';
+    const truncatedEmail = userEmail.length > 22 ? userEmail.slice(0, 20) + '…' : userEmail;
 
     return (
         <>
@@ -99,18 +110,49 @@ export default function Sidebar() {
                     })}
                 </nav>
 
-                {/* Collapse toggle */}
-                <div className="p-3 border-t border-[#1a1a2e]/80 hidden lg:block">
+                {/* User info & Logout */}
+                <div className="border-t border-[#1a1a2e]/80 p-3 space-y-1">
+                    {/* User email */}
+                    {user && (
+                        <div className={`flex items-center gap-2.5 px-3 py-2 rounded-xl ${collapsed ? 'justify-center' : ''}`}>
+                            <div className="w-7 h-7 rounded-lg bg-brand-700/20 border border-brand-700/30 flex items-center justify-center flex-shrink-0">
+                                <User size={14} className="text-brand-400" />
+                            </div>
+                            {!collapsed && (
+                                <span className="text-[#8888a0] text-xs font-medium truncate animate-fade-in" title={userEmail}>
+                                    {truncatedEmail}
+                                </span>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Logout */}
                     <button
-                        onClick={() => setCollapsed(!collapsed)}
-                        className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm text-[#5a5a70] hover:text-[#8888a0] hover:bg-[#1a1a2e]/60 transition-all duration-200"
+                        onClick={() => { setMobileOpen(false); signOut(); }}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#5a5a70] hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 group relative ${collapsed ? 'justify-center' : ''}`}
                     >
-                        <PanelLeftClose
-                            size={18}
-                            className={`transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`}
-                        />
-                        {!collapsed && <span>Collapse</span>}
+                        <LogOut size={18} className="flex-shrink-0" />
+                        {!collapsed && <span className="animate-fade-in">Log out</span>}
+                        {collapsed && (
+                            <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#1a1a2e] border border-[#2a2a40] rounded-lg text-xs text-[#f0f0f5] whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-xl shadow-black/30">
+                                Log out
+                            </div>
+                        )}
                     </button>
+
+                    {/* Collapse toggle - desktop only */}
+                    <div className="hidden lg:block">
+                        <button
+                            onClick={onToggleCollapse}
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm text-[#5a5a70] hover:text-[#8888a0] hover:bg-[#1a1a2e]/60 transition-all duration-200"
+                        >
+                            <PanelLeftClose
+                                size={18}
+                                className={`transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`}
+                            />
+                            {!collapsed && <span>Collapse</span>}
+                        </button>
+                    </div>
                 </div>
             </aside>
         </>

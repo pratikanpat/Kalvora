@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import DashboardLayout from '@/components/DashboardLayout';
 import SuccessModal from '@/components/SuccessModal';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuth } from '@/components/AuthProvider';
 import {
     User, Mail, Phone, MapPin, Building, Plus, Trash2,
     Palette, Upload, Save, Sparkles, ChevronDown,
@@ -69,10 +70,12 @@ export default function EditPage() {
     const [generatedFilename, setGeneratedFilename] = useState('');
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    const { user } = useAuth();
+
     useEffect(() => {
-        loadProject();
+        if (user) loadProject();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [projectId]);
+    }, [projectId, user]);
 
     const loadProject = async () => {
         try {
@@ -80,6 +83,7 @@ export default function EditPage() {
                 .from('projects')
                 .select('*')
                 .eq('id', projectId)
+                .eq('user_id', user!.id)
                 .single();
 
             if (error) throw error;

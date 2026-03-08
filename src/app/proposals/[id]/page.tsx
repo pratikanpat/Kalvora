@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import DashboardLayout from '@/components/DashboardLayout';
 import StatusBadge from '@/components/StatusBadge';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuth } from '@/components/AuthProvider';
 import {
     Download, Copy, Check, Edit, MapPin, Phone, Mail,
     Building, Calendar, ArrowLeft, DollarSign, ExternalLink, User, FileText
@@ -43,11 +44,12 @@ export default function ProposalViewPage() {
     const [loading, setLoading] = useState(true);
     const [copied, setCopied] = useState(false);
     const [statusUpdating, setStatusUpdating] = useState(false);
+    const { user } = useAuth();
 
     useEffect(() => {
-        loadProject();
+        if (user) loadProject();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [projectId]);
+    }, [projectId, user]);
 
     const loadProject = async () => {
         try {
@@ -55,6 +57,7 @@ export default function ProposalViewPage() {
                 .from('projects')
                 .select('*')
                 .eq('id', projectId)
+                .eq('user_id', user!.id)
                 .single();
             if (error) throw error;
 

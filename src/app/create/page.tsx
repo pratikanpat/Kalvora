@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase, checkSupabaseConfig } from '@/lib/supabase';
 import DashboardLayout from '@/components/DashboardLayout';
 import SuccessModal from '@/components/SuccessModal';
+import { useAuth } from '@/components/AuthProvider';
 import {
     User, Mail, Phone, MapPin, Building, Plus, Trash2,
     Palette, Upload, FileText, Save, Sparkles, ChevronDown,
@@ -49,6 +50,7 @@ const templateOptions: { key: Template; name: string; desc: string; colors: stri
 
 export default function CreatePage() {
     const router = useRouter();
+    const { user } = useAuth();
     const [saving, setSaving] = useState(false);
     const [generating, setGenerating] = useState(false);
     const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({
@@ -223,6 +225,7 @@ export default function CreatePage() {
                     template,
                     tax_rate: parseFloat(taxRate) || 0,
                     status: andGenerate ? 'Sent' : 'Draft',
+                    user_id: user?.id,
                 })
                 .select()
                 .single();
