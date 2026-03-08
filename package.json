@@ -1,0 +1,32 @@
+{
+    "name": "proposalflow",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@sparticuz/chromium": "^131.0.1",
+        "@supabase/supabase-js": "^2.49.1",
+        "lucide-react": "^0.469.0",
+        "next": "14.2.21",
+        "puppeteer-core": "^24.2.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-hot-toast": "^2.5.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20.17.12",
+        "@types/react": "^18.3.18",
+        "@types/react-dom": "^18.3.5",
+        "autoprefixer": "^10.4.27",
+        "eslint": "^8.57.1",
+        "eslint-config-next": "14.2.21",
+        "postcss": "^8.5.1",
+        "tailwindcss": "^3.4.17",
+        "typescript": "^5.7.3"
+    }
+}
