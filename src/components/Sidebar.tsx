@@ -5,8 +5,11 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useAuth } from './AuthProvider';
 import {
+    Home,
     LayoutDashboard,
     FilePlus,
+    FileText,
+    MessageSquare,
     PanelLeftClose,
     PanelLeft,
     Sparkles,
@@ -15,8 +18,11 @@ import {
 } from 'lucide-react';
 
 const navItems = [
+    { href: '/', label: 'Home', icon: Home },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/create', label: 'New Project', icon: FilePlus },
+    { href: '/create', label: 'Create Proposal', icon: FilePlus },
+    { href: '/dashboard#projects', label: 'Projects', icon: FileText },
+    { href: '/feedback', label: 'Feedback', icon: MessageSquare },
 ];
 
 interface SidebarProps {
@@ -63,7 +69,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         `}
             >
                 {/* Logo */}
-                <div className={`flex items-center h-[72px] px-5 border-b border-[#1a1a2e]/80 ${collapsed ? 'justify-center px-3' : 'gap-3'}`}>
+                <Link href="/" className={`flex items-center h-[72px] px-5 border-b border-[#1a1a2e]/80 hover:bg-[#1a1a2e]/30 transition-colors ${collapsed ? 'justify-center px-3' : 'gap-3'}`}>
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 via-brand-600 to-brand-700 flex items-center justify-center flex-shrink-0 shadow-lg shadow-brand-700/25">
                         <Sparkles size={20} className="text-white" />
                     </div>
@@ -73,7 +79,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                             <p className="text-[10px] text-[#5a5a70] font-medium tracking-[0.15em] uppercase">Design Studio</p>
                         </div>
                     )}
-                </div>
+                </Link>
 
                 {/* Navigation */}
                 <nav className="flex-1 py-5 px-3 space-y-1">

@@ -176,9 +176,6 @@ export default function CreatePage() {
         if (!clientName.trim()) errs.clientName = 'Client name is required';
         if (!projectType) errs.projectType = 'Select a project type';
 
-        const validRooms = rooms.filter((r) => r.name.trim());
-        if (validRooms.length === 0) errs.rooms = 'Add at least one room';
-
         const validItems = lineItems.filter((i) => i.item_name.trim());
         if (validItems.length === 0) errs.lineItems = 'Add at least one line item';
 

@@ -261,3 +261,70 @@ body {
 .table-row-hover:hover {
   background: linear-gradient(90deg, rgba(76, 110, 245, 0.04), transparent);
 }
+
+/* ---- Landing Page Utilities ---- */
+html {
+  scroll-behavior: smooth;
+}
+
+.landing-gradient-text {
+  background: linear-gradient(135deg, #748ffc 0%, #5c7cfa 30%, #4c6ef5 60%, #91a7ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.landing-section {
+  @apply px-4 sm:px-6 lg:px-8 py-20 sm:py-28 max-w-7xl mx-auto;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out forwards;
+}
+
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+
+.stagger-4 {
+  animation-delay: 0.4s;
+}
+
+.stagger-5 {
+  animation-delay: 0.5s;
+}
+
+.stagger-6 {
+  animation-delay: 0.6s;
+}
+
+.landing-card {
+  @apply bg-[#1a1a2e]/70 border border-[#2a2a40] rounded-2xl transition-all duration-300;
+  backdrop-filter: blur(12px);
+}
+
+.landing-card:hover {
+  @apply border-[#3a3a55] shadow-lg;
+  box-shadow: 0 8px 32px rgba(76, 110, 245, 0.1);
+  transform: translateY(-4px);
+}

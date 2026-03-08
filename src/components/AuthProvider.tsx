@@ -23,7 +23,7 @@ export function useAuth() {
     return useContext(AuthContext);
 }
 
-const PUBLIC_ROUTES = ['/login', '/signup', '/view'];
+const PUBLIC_ROUTES = ['/', '/login', '/signup', '/view'];
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
@@ -58,7 +58,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
         const isPublicRoute = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
 
-        if (!session && !isPublicRoute && pathname !== '/') {
+        if (!session && !isPublicRoute) {
             router.replace('/login');
         }
     }, [session, loading, pathname, router]);

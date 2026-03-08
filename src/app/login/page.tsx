@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { Mail, Lock, LogIn, Sparkles, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, LogIn, Sparkles, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -52,6 +52,12 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen bg-[#0a0a0f] page-bg flex items-center justify-center px-4">
             <div className="w-full max-w-md animate-fade-in">
+                {/* Home link */}
+                <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#5a5a70] hover:text-brand-400 transition-colors mb-8">
+                    <ArrowLeft size={16} />
+                    Back to Home
+                </Link>
+
                 {/* Logo */}
                 <div className="text-center mb-10">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 via-brand-600 to-brand-700 shadow-xl shadow-brand-700/30 mb-5">
