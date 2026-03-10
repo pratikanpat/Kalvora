@@ -21,7 +21,6 @@ const navItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/create', label: 'Create Proposal', icon: FilePlus },
-    { href: '/dashboard#projects', label: 'Projects', icon: FileText },
     { href: '/feedback', label: 'Feedback', icon: MessageSquare },
 ];
 
