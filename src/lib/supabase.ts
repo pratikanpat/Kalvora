@@ -31,7 +31,12 @@ export function checkSupabaseConfig(): { configured: boolean; message: string } 
 }
 
 // Server-side client with service role key (for API routes)
+// Cached as singleton to reuse across requests within the same process
+let serverClient: SupabaseClient | null = null;
+
 export function createServerClient() {
+    if (serverClient) return serverClient;
+
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -41,5 +46,6 @@ export function createServerClient() {
         );
     }
 
-    return createClient(url, serviceRoleKey);
+    serverClient = createClient(url, serviceRoleKey);
+    return serverClient;
 }

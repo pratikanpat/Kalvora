@@ -5,6 +5,31 @@ import type { TemplateData } from '@/lib/templates';
 
 export const maxDuration = 60; // Allow up to 60s for PDF generation
 
+// Cache the resolved Chrome executable path across requests
+let cachedChromePath: string | null = null;
+
+async function findChromePath(): Promise<string> {
+    if (cachedChromePath) return cachedChromePath;
+
+    const chromePaths = [
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        '/usr/bin/google-chrome',
+        '/usr/bin/chromium-browser',
+        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    ];
+
+    const fs = await import('fs');
+    for (const p of chromePaths) {
+        if (fs.existsSync(p)) {
+            cachedChromePath = p;
+            return p;
+        }
+    }
+
+    throw new Error('Chrome/Chromium not found. Please install Google Chrome or set up @sparticuz/chromium.');
+}
+
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
@@ -16,29 +41,22 @@ export async function POST(request: NextRequest) {
 
         const supabase = createServerClient();
 
-        // 1. Fetch project data
-        const { data: project, error: projError } = await supabase
-            .from('projects')
-            .select('*')
-            .eq('id', project_id)
-            .single();
+        // 1. Fetch project, rooms, and line items IN PARALLEL
+        const [projectResult, roomsResult, lineItemsResult] = await Promise.all([
+            supabase.from('projects').select('*').eq('id', project_id).single(),
+            supabase.from('rooms').select('name, square_footage').eq('project_id', project_id),
+            supabase.from('line_items').select('item_name, quantity, unit_price').eq('project_id', project_id),
+        ]);
 
-        if (projError || !project) {
+        if (projectResult.error || !projectResult.data) {
             return NextResponse.json({ error: 'Project not found' }, { status: 404 });
         }
 
-        // 2. Fetch rooms and line items
-        const { data: rooms } = await supabase
-            .from('rooms')
-            .select('name, square_footage')
-            .eq('project_id', project_id);
+        const project = projectResult.data;
+        const rooms = roomsResult.data;
+        const lineItems = lineItemsResult.data;
 
-        const { data: lineItems } = await supabase
-            .from('line_items')
-            .select('item_name, quantity, unit_price')
-            .eq('project_id', project_id);
-
-        // 3. Build template data
+        // 2. Build template data
         const templateData: TemplateData = {
             client_name: project.client_name,
             client_email: project.client_email || '',
@@ -58,7 +76,7 @@ export async function POST(request: NextRequest) {
             line_items: lineItems || [],
         };
 
-        // 4. Select template
+        // 3. Select template
         let html: string;
         switch (project.template) {
             case 'luxury':
@@ -71,65 +89,44 @@ export async function POST(request: NextRequest) {
                 html = minimalTemplate(templateData);
         }
 
-        // 5. Generate PDF with Puppeteer
+        // 4. Generate PDF with Puppeteer
         let browser;
         try {
-            // Try to use @sparticuz/chromium for serverless environments
-            let chromium;
             let puppeteer;
 
             try {
-                chromium = (await import('@sparticuz/chromium')).default;
+                // Try serverless chromium first
+                const chromium = (await import('@sparticuz/chromium')).default;
                 puppeteer = (await import('puppeteer-core')).default;
 
                 browser = await puppeteer.launch({
-                    args: chromium.args,
+                    args: [...chromium.args, '--disable-gpu', '--disable-dev-shm-usage'],
                     defaultViewport: chromium.defaultViewport,
                     executablePath: await chromium.executablePath(),
                     headless: true,
                 });
             } catch {
-                // Fallback: try using puppeteer-core with local Chrome
+                // Fallback: use local Chrome with cached path
                 puppeteer = (await import('puppeteer-core')).default;
-
-                // Common Chrome paths
-                const chromePaths = [
-                    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-                    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-                    '/usr/bin/google-chrome',
-                    '/usr/bin/chromium-browser',
-                    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-                ];
-
-                let executablePath = '';
-                for (const p of chromePaths) {
-                    try {
-                        const fs = await import('fs');
-                        if (fs.existsSync(p)) {
-                            executablePath = p;
-                            break;
-                        }
-                    } catch {
-                        continue;
-                    }
-                }
-
-                if (!executablePath) {
-                    return NextResponse.json(
-                        { error: 'Chrome/Chromium not found. Please install Google Chrome or set up @sparticuz/chromium.' },
-                        { status: 500 }
-                    );
-                }
+                const executablePath = await findChromePath();
 
                 browser = await puppeteer.launch({
                     executablePath,
                     headless: true,
-                    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                    args: [
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--disable-gpu',
+                        '--disable-dev-shm-usage',
+                        '--disable-extensions',
+                    ],
                 });
             }
 
             const page = await browser.newPage();
-            await page.setContent(html, { waitUntil: 'networkidle0', timeout: 30000 });
+            // Use 'domcontentloaded' — HTML is fully self-contained (inline CSS, base64 logo)
+            // No need to wait for network idle, saving ~1-3 seconds
+            await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 15000 });
             const pdfBuffer = await page.pdf({
                 format: 'A4',
                 printBackground: true,
@@ -139,14 +136,12 @@ export async function POST(request: NextRequest) {
             await browser.close();
             browser = null;
 
-            // 6. Upload PDF to Supabase Storage
-            // Build client-friendly filename: clientname_proposal_N.pdf
+            // 5. Count proposals + upload PDF in parallel-friendly sequence
             const sanitizedClientName = project.client_name
                 .toLowerCase()
                 .replace(/\s+/g, '_')
                 .replace(/[^a-z0-9_]/g, '');
 
-            // Count existing proposals for this project to determine the number
             const { count: proposalCount } = await supabase
                 .from('proposals')
                 .select('*', { count: 'exact', head: true })
@@ -154,7 +149,6 @@ export async function POST(request: NextRequest) {
 
             const proposalNumber = (proposalCount || 0) + 1;
             const downloadFileName = `${sanitizedClientName}_proposal_${proposalNumber}.pdf`;
-            // Storage key remains unique with timestamp to avoid collisions
             const storageFileName = `${sanitizedClientName}_proposal_${proposalNumber}_${Date.now()}.pdf`;
             const pdfUint8 = new Uint8Array(pdfBuffer);
 
@@ -170,35 +164,40 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({ error: 'Failed to upload PDF' }, { status: 500 });
             }
 
-            // 7. Get public URL
+            // 6. Get public URL
             const { data: urlData } = supabase.storage.from('proposals').getPublicUrl(storageFileName);
             const pdfUrl = urlData.publicUrl;
 
-            // 8. Save proposal record
-            await supabase.from('proposals').insert({
-                project_id,
-                pdf_url: pdfUrl,
-            });
+            // 7. Save proposal record + update project status IN PARALLEL
+            const dbOps = [
+                Promise.resolve(supabase.from('proposals').insert({ project_id, pdf_url: pdfUrl })),
+            ];
 
-            // 9. Update project status if it was draft
             if (project.status === 'Draft') {
-                await supabase
-                    .from('projects')
-                    .update({ status: 'Sent', updated_at: new Date().toISOString() })
-                    .eq('id', project_id);
+                dbOps.push(
+                    Promise.resolve(
+                        supabase
+                            .from('projects')
+                            .update({ status: 'Sent', updated_at: new Date().toISOString() })
+                            .eq('id', project_id)
+                    )
+                );
             }
+
+            await Promise.all(dbOps);
 
             return NextResponse.json({ pdf_url: pdfUrl, download_filename: downloadFileName });
 
         } catch (pdfError) {
             console.error('PDF generation error:', pdfError);
-            if (browser) {
-                try { await browser.close(); } catch { /* ignore */ }
-            }
             return NextResponse.json(
                 { error: `PDF generation failed: ${pdfError instanceof Error ? pdfError.message : 'Unknown error'}` },
                 { status: 500 }
             );
+        } finally {
+            if (browser) {
+                try { await browser.close(); } catch { /* ignore */ }
+            }
         }
 
     } catch (err) {

@@ -155,7 +155,7 @@ export default function EditPage() {
     const validate = () => {
         const errs: Record<string, string> = {};
         if (!clientName.trim()) errs.clientName = 'Client name is required';
-        if (rooms.filter((r) => r.name.trim()).length === 0) errs.rooms = 'Add at least one room';
+
         if (lineItems.filter((i) => i.item_name.trim()).length === 0) errs.lineItems = 'Add at least one line item';
         setErrors(errs);
         return Object.keys(errs).length === 0;
@@ -174,18 +174,30 @@ export default function EditPage() {
             }).eq('id', projectId);
             if (projectError) throw projectError;
 
-            // Replace rooms
-            await supabase.from('rooms').delete().eq('project_id', projectId);
+            // Replace rooms and line items IN PARALLEL
             const validRooms = rooms.filter((r) => r.name.trim());
-            if (validRooms.length > 0) {
-                await supabase.from('rooms').insert(validRooms.map((r) => ({ project_id: projectId, name: r.name.trim(), square_footage: parseFloat(r.square_footage) || 0 })));
-            }
-
-            // Replace line items
-            await supabase.from('line_items').delete().eq('project_id', projectId);
             const validItems = lineItems.filter((i) => i.item_name.trim());
+
+            // Delete old data in parallel
+            await Promise.all([
+                supabase.from('rooms').delete().eq('project_id', projectId),
+                supabase.from('line_items').delete().eq('project_id', projectId),
+            ]);
+
+            // Insert new data in parallel
+            const insertOps = [];
+            if (validRooms.length > 0) {
+                insertOps.push(
+                    supabase.from('rooms').insert(validRooms.map((r) => ({ project_id: projectId, name: r.name.trim(), square_footage: parseFloat(r.square_footage) || 0 })))
+                );
+            }
             if (validItems.length > 0) {
-                await supabase.from('line_items').insert(validItems.map((i) => ({ project_id: projectId, item_name: i.item_name.trim(), quantity: parseFloat(i.quantity) || 1, unit_price: parseFloat(i.unit_price) || 0 })));
+                insertOps.push(
+                    supabase.from('line_items').insert(validItems.map((i) => ({ project_id: projectId, item_name: i.item_name.trim(), quantity: parseFloat(i.quantity) || 1, unit_price: parseFloat(i.unit_price) || 0 })))
+                );
+            }
+            if (insertOps.length > 0) {
+                await Promise.all(insertOps);
             }
 
             if (andGenerate) {
@@ -260,7 +272,7 @@ export default function EditPage() {
                             <div className="pb-6 space-y-4 animate-fade-in">
                                 <div><label className="input-label">Project Type *</label><select value={projectType} onChange={(e) => setProjectType(e.target.value)} className="input-field"><option value="Residential">Residential</option><option value="Commercial">Commercial</option></select></div>
                                 <div>
-                                    <div className="flex items-center justify-between mb-3"><label className="input-label mb-0">Rooms *</label><button onClick={addRoom} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1"><Plus size={14} /> Add Room</button></div>
+                                    <div className="flex items-center justify-between mb-3"><label className="input-label mb-0">Rooms</label><button onClick={addRoom} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1"><Plus size={14} /> Add Room</button></div>
                                     {errors.rooms && <p className="text-red-400 text-xs mb-2">{errors.rooms}</p>}
                                     <div className="space-y-2">
                                         {rooms.map((room, i) => (

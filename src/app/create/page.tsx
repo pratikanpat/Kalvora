@@ -229,31 +229,42 @@ export default function CreatePage() {
 
             if (projectError) throw projectError;
 
-            // 2. Insert rooms
+            // 2. Insert rooms and line items IN PARALLEL
             const validRooms = rooms.filter((r) => r.name.trim());
+            const validItems = lineItems.filter((i) => i.item_name.trim());
+
+            const insertOps = [];
+
             if (validRooms.length > 0) {
-                const { error: roomError } = await supabase.from('rooms').insert(
-                    validRooms.map((r) => ({
-                        project_id: project.id,
-                        name: r.name.trim(),
-                        square_footage: parseFloat(r.square_footage) || 0,
-                    }))
+                insertOps.push(
+                    supabase.from('rooms').insert(
+                        validRooms.map((r) => ({
+                            project_id: project.id,
+                            name: r.name.trim(),
+                            square_footage: parseFloat(r.square_footage) || 0,
+                        }))
+                    )
                 );
-                if (roomError) throw roomError;
             }
 
-            // 3. Insert line items
-            const validItems = lineItems.filter((i) => i.item_name.trim());
             if (validItems.length > 0) {
-                const { error: itemError } = await supabase.from('line_items').insert(
-                    validItems.map((i) => ({
-                        project_id: project.id,
-                        item_name: i.item_name.trim(),
-                        quantity: parseFloat(i.quantity) || 1,
-                        unit_price: parseFloat(i.unit_price) || 0,
-                    }))
+                insertOps.push(
+                    supabase.from('line_items').insert(
+                        validItems.map((i) => ({
+                            project_id: project.id,
+                            item_name: i.item_name.trim(),
+                            quantity: parseFloat(i.quantity) || 1,
+                            unit_price: parseFloat(i.unit_price) || 0,
+                        }))
+                    )
                 );
-                if (itemError) throw itemError;
+            }
+
+            if (insertOps.length > 0) {
+                const results = await Promise.all(insertOps);
+                for (const r of results) {
+                    if (r.error) throw r.error;
+                }
             }
 
             if (andGenerate) {
@@ -412,7 +423,7 @@ export default function CreatePage() {
 
                                 <div>
                                     <div className="flex items-center justify-between mb-3">
-                                        <label className="input-label mb-0">Rooms *</label>
+                                        <label className="input-label mb-0">Rooms</label>
                                         <button onClick={addRoom} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1 transition-colors">
                                             <Plus size={14} /> Add Room
                                         </button>
