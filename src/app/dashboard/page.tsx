@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase, checkSupabaseConfig } from '@/lib/supabase';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -19,12 +20,25 @@ interface Project {
 }
 
 export default function DashboardPage() {
+    const router = useRouter();
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [deleting, setDeleting] = useState<string | null>(null);
     const [configError, setConfigError] = useState('');
     const { user } = useAuth();
+
+    // Prefetch common routes for instant navigation
+    useEffect(() => {
+        router.prefetch('/create');
+    }, [router]);
+
+    // Prefetch proposal pages once projects load
+    useEffect(() => {
+        projects.slice(0, 5).forEach(p => {
+            router.prefetch(`/proposals/${p.id}`);
+        });
+    }, [projects, router]);
 
     useEffect(() => {
         const { configured, message } = checkSupabaseConfig();

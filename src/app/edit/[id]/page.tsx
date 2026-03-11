@@ -11,9 +11,10 @@ import {
     User, Mail, Phone, MapPin, Building, Plus, Trash2,
     Palette, Upload, Save, Sparkles, ChevronDown,
     ChevronUp, DollarSign, Calculator, StickyNote, LayoutTemplate,
-    Loader2, FileText
+    Loader2, FileText, Eye
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import TemplatePreviewModal from '@/components/TemplatePreviewModal';
 
 interface Room {
     id?: string;
@@ -31,12 +32,22 @@ interface LineItem {
 type Template = 'minimal' | 'luxury' | 'modern' | 'blueprint' | 'editorial' | 'highcontrast';
 
 const templateOptions: { key: Template; name: string; desc: string; colors: string[] }[] = [
-    { key: 'minimal', name: 'Minimal', desc: 'Clean white, black typography, thin borders', colors: ['#ffffff', '#1a1a1a', '#e5e5e5'] },
-    { key: 'luxury', name: 'Luxury', desc: 'Dark elegance with gold accents, serif fonts', colors: ['#1a1a2e', '#C9A96E', '#2a2a3e'] },
-    { key: 'modern', name: 'Modern', desc: 'Bold geometric, vibrant section dividers', colors: ['#4c6ef5', '#f8f9fa', '#1a1a2e'] },
+    { key: 'minimal', name: 'Minimal', desc: 'Clean white, Inter font, elegant blue accents', colors: ['#ffffff', '#2563EB', '#f8fafc'] },
+    { key: 'luxury', name: 'Luxury', desc: 'Dark elegance with gold accents, serif fonts', colors: ['#1C1917', '#B8963E', '#FAF8F4'] },
+    { key: 'modern', name: 'Professional', desc: 'Bold geometric, vibrant section dividers', colors: ['#4c6ef5', '#ffffff', '#f9fafb'] },
     { key: 'blueprint', name: 'Blueprint', desc: 'Technical grid, navy palette, engineering feel', colors: ['#1a365d', '#bee3f8', '#f7fafc'] },
     { key: 'editorial', name: 'Editorial', desc: 'Warm serif, magazine-style whitespace', colors: ['#FFFBF5', '#3d2b1f', '#e8dcc8'] },
     { key: 'highcontrast', name: 'High Contrast', desc: 'Bold contrast, indigo accent, SaaS-style', colors: ['#0f172a', '#6366f1', '#ffffff'] },
+];
+
+// Template preview data for the modal
+const templatePreviewData = [
+    { name: 'Minimal', desc: 'Clean whites, Inter font, elegant simplicity.', colors: ['#ffffff', '#2563EB', '#f8fafc'], icon: '✦', badge: '⭐ Most Popular', previewImage: '/templates/minimal.png', stylePoints: ['Inter typography', 'Blue gradient accent', 'Stripe-inspired layout', 'Rounded card elements'] },
+    { name: 'Luxury', desc: 'Gold & dark tones, serif typography, opulent feel.', colors: ['#1C1917', '#B8963E', '#FAF8F4'], icon: '✧', badge: 'Best for Luxury', previewImage: '/templates/luxury.png', stylePoints: ['Playfair Display headings', 'Gold accent on dark', 'Diamond ornament divider', 'Ivory background'] },
+    { name: 'Professional', desc: 'Bold geometry, sharp type, corporate accents.', colors: ['#4c6ef5', '#ffffff', '#f9fafb'], icon: '◆', badge: 'Best for Corporate', previewImage: '/templates/professional.png', stylePoints: ['Full-width header bar', 'Inter bold headings', 'Bordered card sections', 'Corporate confidence'] },
+    { name: 'Blueprint', desc: 'Technical grid, navy palette, engineering precision.', colors: ['#1a365d', '#bee3f8', '#f7fafc'], icon: '⊞', badge: 'Best for Architects', previewImage: '/templates/blueprint.png', stylePoints: ['Space Grotesk headings', 'Grid background', 'Section numbers', 'Engineering totals box'] },
+    { name: 'Editorial', desc: 'Warm serif, magazine-style, generous whitespace.', colors: ['#FFFBF5', '#3d2b1f', '#e8dcc8'], icon: '❧', badge: 'Best for Creatives', previewImage: '/templates/editorial.png', stylePoints: ['Playfair Display headings', 'Warm off-white background', 'Italic title', 'Magazine whitespace'] },
+    { name: 'High Contrast', desc: 'Bold contrast, indigo accent, SaaS-inspired.', colors: ['#0f172a', '#6366f1', '#ffffff'], icon: '▣', badge: 'Best for Modern', previewImage: '/templates/highcontrast.png', stylePoints: ['Dark header bar', 'Indigo highlights', 'Tabular numbers', 'Card-style sections'] },
 ];
 
 export default function EditPage() {
@@ -73,6 +84,10 @@ export default function EditPage() {
     const [generatedFilename, setGeneratedFilename] = useState('');
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    // Template Preview Modal
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewIndex, setPreviewIndex] = useState(0);
+
     const { user } = useAuth();
 
     useEffect(() => {
@@ -82,14 +97,15 @@ export default function EditPage() {
 
     const loadProject = async () => {
         try {
-            const { data: project, error } = await supabase
-                .from('projects')
-                .select('*')
-                .eq('id', projectId)
-                .eq('user_id', user!.id)
-                .single();
+            // Run ALL queries in parallel — they only depend on projectId/user.id
+            const [projectResult, roomsResult, itemsResult] = await Promise.all([
+                supabase.from('projects').select('*').eq('id', projectId).eq('user_id', user!.id).single(),
+                supabase.from('rooms').select('*').eq('project_id', projectId),
+                supabase.from('line_items').select('*').eq('project_id', projectId),
+            ]);
 
-            if (error) throw error;
+            if (projectResult.error) throw projectResult.error;
+            const project = projectResult.data;
             if (!project) throw new Error('Project not found');
 
             setClientName(project.client_name || '');
@@ -107,14 +123,12 @@ export default function EditPage() {
             setTemplate((project.template as Template) || 'minimal');
             setTaxRate(String(project.tax_rate || 0));
 
-            // Load rooms
-            const { data: roomData } = await supabase.from('rooms').select('*').eq('project_id', projectId);
+            const roomData = roomsResult.data;
             if (roomData && roomData.length > 0) {
                 setRooms(roomData.map((r) => ({ id: r.id, name: r.name, square_footage: String(r.square_footage || '') })));
             }
 
-            // Load line items
-            const { data: itemData } = await supabase.from('line_items').select('*').eq('project_id', projectId);
+            const itemData = itemsResult.data;
             if (itemData && itemData.length > 0) {
                 setLineItems(itemData.map((i) => ({ id: i.id, item_name: i.item_name, quantity: String(i.quantity || '1'), unit_price: String(i.unit_price || '') })));
             }
@@ -348,12 +362,24 @@ export default function EditPage() {
                         {expandedSections[6] && (
                             <div className="pb-6 animate-fade-in">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {templateOptions.map((opt) => (
+                                    {templateOptions.map((opt, idx) => (
                                         <button key={opt.key} onClick={() => setTemplate(opt.key)} className={`relative p-4 rounded-xl border-2 text-left transition-all ${template === opt.key ? 'border-brand-500 bg-brand-700/10' : 'border-[#2a2a40] bg-[#12121a] hover:border-[#3a3a55]'}`}>
                                             {template === opt.key && <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center"><Sparkles size={12} className="text-white" /></div>}
                                             <div className="flex gap-1.5 mb-3">{opt.colors.map((c, i) => <div key={i} className="w-6 h-6 rounded-md border border-[#2a2a40]" style={{ backgroundColor: c }} />)}</div>
                                             <h3 className="text-white font-semibold text-sm">{opt.name}</h3>
-                                            <p className="text-[#5a5a70] text-xs mt-1">{opt.desc}</p>
+                                            <p className="text-[#5a5a70] text-xs mt-1 mb-3">{opt.desc}</p>
+                                            <button
+                                                type="button"
+                                                className="template-card-view-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setPreviewIndex(idx);
+                                                    setPreviewOpen(true);
+                                                }}
+                                            >
+                                                <Eye size={14} />
+                                                View Preview
+                                            </button>
                                         </button>
                                     ))}
                                 </div>
@@ -376,6 +402,17 @@ export default function EditPage() {
             </div>
 
             <SuccessModal isOpen={showModal} onClose={() => { setShowModal(false); }} pdfUrl={generatedPdfUrl} projectId={projectId} downloadFilename={generatedFilename} />
+
+            <TemplatePreviewModal
+                isOpen={previewOpen}
+                onClose={() => setPreviewOpen(false)}
+                templates={templatePreviewData}
+                activeIndex={previewIndex}
+                onNavigate={setPreviewIndex}
+                onSelectTemplate={(idx) => {
+                    setTemplate(templateOptions[idx].key);
+                }}
+            />
         </DashboardLayout>
     );
 }

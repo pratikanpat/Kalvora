@@ -22,6 +22,7 @@ interface TemplatePreviewModalProps {
     templates: TemplateInfo[];
     activeIndex: number;
     onNavigate: (index: number) => void;
+    onSelectTemplate?: (index: number) => void;
 }
 
 export default function TemplatePreviewModal({
@@ -30,6 +31,7 @@ export default function TemplatePreviewModal({
     templates,
     activeIndex,
     onNavigate,
+    onSelectTemplate,
 }: TemplatePreviewModalProps) {
     const router = useRouter();
     const { session } = useAuth();
@@ -69,11 +71,16 @@ export default function TemplatePreviewModal({
     const t = templates[activeIndex];
 
     const handleCTA = () => {
-        onClose();
-        if (session) {
-            router.push('/create');
+        if (onSelectTemplate) {
+            onSelectTemplate(activeIndex);
+            onClose();
         } else {
-            router.push('/login');
+            onClose();
+            if (session) {
+                router.push('/create');
+            } else {
+                router.push('/login');
+            }
         }
     };
 
@@ -170,7 +177,7 @@ export default function TemplatePreviewModal({
 
                     {/* CTA */}
                     <button onClick={handleCTA} className="template-modal-cta">
-                        Create Proposal With This Style
+                        {onSelectTemplate ? 'Use This Template' : 'Create Proposal With This Style'}
                         <ArrowRight size={18} />
                     </button>
 

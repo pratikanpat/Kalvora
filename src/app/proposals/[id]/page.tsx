@@ -53,23 +53,21 @@ export default function ProposalViewPage() {
 
     const loadProject = async () => {
         try {
-            const { data: proj, error } = await supabase
-                .from('projects')
-                .select('*')
-                .eq('id', projectId)
-                .eq('user_id', user!.id)
-                .single();
-            if (error) throw error;
+            // Run ALL queries in parallel — they only depend on projectId/user.id
+            const [projectResult, roomsResult, itemsResult, proposalsResult] = await Promise.all([
+                supabase.from('projects').select('*').eq('id', projectId).eq('user_id', user!.id).single(),
+                supabase.from('rooms').select('*').eq('project_id', projectId),
+                supabase.from('line_items').select('*').eq('project_id', projectId),
+                supabase.from('proposals').select('*').eq('project_id', projectId).order('created_at', { ascending: false }),
+            ]);
 
-            const { data: rooms } = await supabase.from('rooms').select('*').eq('project_id', projectId);
-            const { data: items } = await supabase.from('line_items').select('*').eq('project_id', projectId);
-            const { data: proposals } = await supabase.from('proposals').select('*').eq('project_id', projectId).order('created_at', { ascending: false });
+            if (projectResult.error || !projectResult.data) throw projectResult.error || new Error('Not found');
 
             setProject({
-                ...proj,
-                rooms: rooms || [],
-                line_items: items || [],
-                proposals: proposals || [],
+                ...projectResult.data,
+                rooms: roomsResult.data || [],
+                line_items: itemsResult.data || [],
+                proposals: proposalsResult.data || [],
             });
         } catch (err) {
             console.error(err);

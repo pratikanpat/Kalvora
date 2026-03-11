@@ -227,15 +227,15 @@ body {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fadeIn 0.2s ease-out forwards;
 }
 
 .animate-slide-in {
-  animation: slideInRight 0.3s ease-out forwards;
+  animation: slideInRight 0.15s ease-out forwards;
 }
 
 .animate-slide-up {
-  animation: slideUp 0.5s ease-out forwards;
+  animation: slideUp 0.25s ease-out forwards;
 }
 
 .animate-pulse-glow {
@@ -291,31 +291,31 @@ html {
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.5s ease-out forwards;
+  animation: scaleIn 0.25s ease-out forwards;
 }
 
 .stagger-1 {
-  animation-delay: 0.1s;
+  animation-delay: 0.05s;
 }
 
 .stagger-2 {
-  animation-delay: 0.2s;
+  animation-delay: 0.1s;
 }
 
 .stagger-3 {
-  animation-delay: 0.3s;
+  animation-delay: 0.15s;
 }
 
 .stagger-4 {
-  animation-delay: 0.4s;
+  animation-delay: 0.2s;
 }
 
 .stagger-5 {
-  animation-delay: 0.5s;
+  animation-delay: 0.25s;
 }
 
 .stagger-6 {
-  animation-delay: 0.6s;
+  animation-delay: 0.3s;
 }
 
 .landing-card {

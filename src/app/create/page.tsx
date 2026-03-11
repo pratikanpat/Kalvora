@@ -10,9 +10,10 @@ import {
     User, Mail, Phone, MapPin, Building, Plus, Trash2,
     Palette, Upload, FileText, Save, Sparkles, ChevronDown,
     ChevronUp, DollarSign, Calculator, StickyNote, LayoutTemplate,
-    Loader2
+    Loader2, Eye
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import TemplatePreviewModal from '@/components/TemplatePreviewModal';
 
 interface Room {
     name: string;
@@ -32,19 +33,19 @@ const templateOptions: { key: Template; name: string; desc: string; colors: stri
         key: 'minimal',
         name: 'Minimal',
         desc: 'Clean whites, Inter font, elegant simplicity',
-        colors: ['#ffffff', '#1f2937', '#e5e7eb'],
+        colors: ['#ffffff', '#2563EB', '#f8fafc'],
     },
     {
         key: 'luxury',
         name: 'Luxury',
         desc: 'Gold & dark, serif typography, luxurious feel',
-        colors: ['#1B1B1F', '#C5A55A', '#faf8f3'],
+        colors: ['#1C1917', '#B8963E', '#FAF8F4'],
     },
     {
         key: 'modern',
         name: 'Professional',
         desc: 'Bold geometry, sharp type, corporate grade',
-        colors: ['#4c6ef5', '#fafbfd', '#1a1a2e'],
+        colors: ['#4c6ef5', '#ffffff', '#f9fafb'],
     },
     {
         key: 'blueprint',
@@ -63,6 +64,46 @@ const templateOptions: { key: Template; name: string; desc: string; colors: stri
         name: 'High Contrast',
         desc: 'Bold contrast, indigo accent, SaaS-inspired',
         colors: ['#0f172a', '#6366f1', '#ffffff'],
+    },
+];
+
+// Template preview data for the modal
+const templatePreviewData = [
+    {
+        name: 'Minimal', desc: 'Clean whites, Inter font, elegant simplicity. Perfect for modern studios that prefer understated sophistication.',
+        colors: ['#ffffff', '#2563EB', '#f8fafc'], icon: '✦', badge: '⭐ Most Popular',
+        previewImage: '/templates/minimal.png',
+        stylePoints: ['Inter typography throughout', 'Blue gradient accent', 'Stripe-inspired clean layout', 'Rounded card elements'],
+    },
+    {
+        name: 'Luxury', desc: 'Gold & dark tones, serif typography, opulent feel. Ideal for high-end residential and boutique projects.',
+        colors: ['#1C1917', '#B8963E', '#FAF8F4'], icon: '✧', badge: 'Best for Luxury',
+        previewImage: '/templates/luxury.png',
+        stylePoints: ['Playfair Display serif headings', 'Gold accent on dark palette', 'Diamond ornament divider', 'Ivory textured background'],
+    },
+    {
+        name: 'Professional', desc: 'Bold geometry, sharp type, vibrant accents. Great for corporate & commercial interior projects.',
+        colors: ['#4c6ef5', '#ffffff', '#f9fafb'], icon: '◆', badge: 'Best for Corporate',
+        previewImage: '/templates/professional.png',
+        stylePoints: ['Full-width colored header bar', 'Inter bold headings', 'Bordered card sections', 'Corporate confidence'],
+    },
+    {
+        name: 'Blueprint', desc: 'Technical grid background, navy palette, engineering precision. Built for architects and contractors.',
+        colors: ['#1a365d', '#bee3f8', '#f7fafc'], icon: '⊞', badge: 'Best for Architects',
+        previewImage: '/templates/blueprint.png',
+        stylePoints: ['Space Grotesk headings', 'Subtle grid background', 'Section numbers (01, 02, 03)', 'Engineering-spec totals box'],
+    },
+    {
+        name: 'Editorial', desc: 'Warm serif, magazine-style layout with generous whitespace. Perfect for creative design studios.',
+        colors: ['#FFFBF5', '#3d2b1f', '#e8dcc8'], icon: '❧', badge: 'Best for Creatives',
+        previewImage: '/templates/editorial.png',
+        stylePoints: ['Playfair Display headings', 'Warm off-white background', 'Italic document title', 'Magazine-style whitespace'],
+    },
+    {
+        name: 'High Contrast', desc: 'Bold contrast blocks, indigo accent, SaaS-inspired. Ideal for modern design firms.',
+        colors: ['#0f172a', '#6366f1', '#ffffff'], icon: '▣', badge: 'Best for Modern',
+        previewImage: '/templates/highcontrast.png',
+        stylePoints: ['Dark header bar', 'Indigo accent highlights', 'Tabular number styling', 'Card-style sections'],
     },
 ];
 
@@ -114,6 +155,10 @@ export default function CreatePage() {
 
     // Errors
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    // Template Preview Modal
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewIndex, setPreviewIndex] = useState(0);
 
     const toggleSection = (section: number) => {
         setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -706,7 +751,7 @@ export default function CreatePage() {
                         {expandedSections[6] && (
                             <div className="pb-6 animate-fade-in">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {templateOptions.map((opt) => (
+                                    {templateOptions.map((opt, idx) => (
                                         <button
                                             key={opt.key}
                                             onClick={() => setTemplate(opt.key)}
@@ -733,7 +778,19 @@ export default function CreatePage() {
                                                 ))}
                                             </div>
                                             <h3 className="text-white font-semibold text-sm">{opt.name}</h3>
-                                            <p className="text-[#5a5a70] text-xs mt-1">{opt.desc}</p>
+                                            <p className="text-[#5a5a70] text-xs mt-1 mb-3">{opt.desc}</p>
+                                            <button
+                                                type="button"
+                                                className="template-card-view-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setPreviewIndex(idx);
+                                                    setPreviewOpen(true);
+                                                }}
+                                            >
+                                                <Eye size={14} />
+                                                View Preview
+                                            </button>
                                         </button>
                                     ))}
                                 </div>
@@ -779,6 +836,17 @@ export default function CreatePage() {
                 pdfUrl={generatedPdfUrl}
                 projectId={generatedProjectId}
                 downloadFilename={generatedFilename}
+            />
+
+            <TemplatePreviewModal
+                isOpen={previewOpen}
+                onClose={() => setPreviewOpen(false)}
+                templates={templatePreviewData}
+                activeIndex={previewIndex}
+                onNavigate={setPreviewIndex}
+                onSelectTemplate={(idx) => {
+                    setTemplate(templateOptions[idx].key);
+                }}
             />
         </DashboardLayout>
     );

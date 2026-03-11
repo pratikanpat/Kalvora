@@ -302,7 +302,7 @@ const landingTemplates = [
     {
         name: 'Minimal',
         desc: 'Clean whites, Inter font, elegant simplicity. Perfect for modern studios that prefer understated sophistication.',
-        colors: ['#ffffff', '#1f2937', '#e5e7eb'],
+        colors: ['#ffffff', '#2563EB', '#f8fafc'],
         icon: '✦',
         badge: '⭐ Most Popular',
         badgeColor: '',
@@ -312,7 +312,7 @@ const landingTemplates = [
     {
         name: 'Luxury',
         desc: 'Gold & dark tones, serif typography, opulent feel. Ideal for high-end residential and boutique projects.',
-        colors: ['#1B1B1F', '#C5A55A', '#faf8f3'],
+        colors: ['#1C1917', '#B8963E', '#FAF8F4'],
         icon: '✧',
         badge: 'Best for Luxury',
         badgeColor: '',
@@ -322,7 +322,7 @@ const landingTemplates = [
     {
         name: 'Professional',
         desc: 'Bold geometry, sharp type, vibrant accents. Great for corporate & commercial interior projects.',
-        colors: ['#4c6ef5', '#fafbfd', '#1a1a2e'],
+        colors: ['#4c6ef5', '#ffffff', '#f9fafb'],
         icon: '◆',
         badge: 'Best for Corporate',
         badgeColor: '',
