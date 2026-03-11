@@ -28,12 +28,15 @@ interface LineItem {
     unit_price: string;
 }
 
-type Template = 'minimal' | 'luxury' | 'modern';
+type Template = 'minimal' | 'luxury' | 'modern' | 'blueprint' | 'editorial' | 'highcontrast';
 
 const templateOptions: { key: Template; name: string; desc: string; colors: string[] }[] = [
     { key: 'minimal', name: 'Minimal', desc: 'Clean white, black typography, thin borders', colors: ['#ffffff', '#1a1a1a', '#e5e5e5'] },
     { key: 'luxury', name: 'Luxury', desc: 'Dark elegance with gold accents, serif fonts', colors: ['#1a1a2e', '#C9A96E', '#2a2a3e'] },
     { key: 'modern', name: 'Modern', desc: 'Bold geometric, vibrant section dividers', colors: ['#4c6ef5', '#f8f9fa', '#1a1a2e'] },
+    { key: 'blueprint', name: 'Blueprint', desc: 'Technical grid, navy palette, engineering feel', colors: ['#1a365d', '#bee3f8', '#f7fafc'] },
+    { key: 'editorial', name: 'Editorial', desc: 'Warm serif, magazine-style whitespace', colors: ['#FFFBF5', '#3d2b1f', '#e8dcc8'] },
+    { key: 'highcontrast', name: 'High Contrast', desc: 'Bold contrast, indigo accent, SaaS-style', colors: ['#0f172a', '#6366f1', '#ffffff'] },
 ];
 
 export default function EditPage() {
@@ -344,7 +347,7 @@ export default function EditPage() {
                         <SectionHeader number={6} icon={LayoutTemplate} title="Template Style" />
                         {expandedSections[6] && (
                             <div className="pb-6 animate-fade-in">
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {templateOptions.map((opt) => (
                                         <button key={opt.key} onClick={() => setTemplate(opt.key)} className={`relative p-4 rounded-xl border-2 text-left transition-all ${template === opt.key ? 'border-brand-500 bg-brand-700/10' : 'border-[#2a2a40] bg-[#12121a] hover:border-[#3a3a55]'}`}>
                                             {template === opt.key && <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center"><Sparkles size={12} className="text-white" /></div>}

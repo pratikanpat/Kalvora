@@ -8,8 +8,9 @@ import { supabase } from '@/lib/supabase';
 import {
     Sparkles, Zap, FileText, Palette, Share2, Layers, LayoutTemplate,
     ArrowRight, ChevronRight, Plus, ClipboardList, Send,
-    Star, MessageSquare, Loader2, CheckCircle2
+    Star, MessageSquare, Loader2, CheckCircle2, Eye
 } from 'lucide-react';
+import TemplatePreviewModal from '@/components/TemplatePreviewModal';
 import toast from 'react-hot-toast';
 
 export default function LandingPage() {
@@ -51,9 +52,12 @@ export default function LandingPage() {
                     </h1>
 
                     {/* Subtitle */}
-                    <p className="text-[#8888a0] text-lg sm:text-xl max-w-2xl mx-auto mb-10 animate-fade-in leading-relaxed">
+                    <p className="text-[#8888a0] text-lg sm:text-xl max-w-2xl mx-auto mb-4 animate-fade-in leading-relaxed">
                         Kalvora helps interior designers generate beautiful, branded PDF proposals.
                         Enter your project details, pick a template, and share with clients — instantly.
+                    </p>
+                    <p className="text-brand-400 text-base sm:text-lg font-semibold max-w-2xl mx-auto mb-10 animate-fade-in tracking-tight">
+                        The fastest way for interior designers to send beautiful client proposals.
                     </p>
 
                     {/* CTAs */}
@@ -164,67 +168,7 @@ export default function LandingPage() {
             </section>
 
             {/* ===== TEMPLATES PREVIEW ===== */}
-            <section id="templates" className="landing-section">
-                <div className="text-center mb-16">
-                    <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">Templates</p>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Three Premium Styles</h2>
-                    <p className="text-[#8888a0] max-w-xl mx-auto">
-                        Each template is crafted for a different aesthetic. Pick the one that matches your brand.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[
-                        {
-                            name: 'Minimal',
-                            desc: 'Clean whites, Inter font, elegant simplicity. Perfect for modern studios.',
-                            colors: ['#ffffff', '#1a1a1a', '#e5e5e5'],
-                            icon: '✦',
-                        },
-                        {
-                            name: 'Luxury',
-                            desc: 'Gold & dark tones, serif typography, opulent feel. Ideal for high-end projects.',
-                            colors: ['#1B1B1F', '#C5A55A', '#faf8f3'],
-                            icon: '✧',
-                        },
-                        {
-                            name: 'Modern',
-                            desc: 'Bold geometry, sharp type, vibrant accents. Great for corporate interiors.',
-                            colors: ['#4c6ef5', '#fafbfd', '#1a1a2e'],
-                            icon: '◆',
-                        },
-                    ].map((template, i) => (
-                        <div
-                            key={template.name}
-                            className={`landing-card overflow-hidden opacity-0 animate-scale-in stagger-${i + 1}`}
-                        >
-                            {/* Color bar */}
-                            <div className="h-2 flex">
-                                {template.colors.map((c, j) => (
-                                    <div key={j} className="flex-1" style={{ backgroundColor: c }} />
-                                ))}
-                            </div>
-                            <div className="p-7">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <span className="text-2xl">{template.icon}</span>
-                                    <h3 className="text-lg font-semibold text-white">{template.name}</h3>
-                                </div>
-                                <p className="text-[#8888a0] text-sm leading-relaxed mb-5">{template.desc}</p>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#5a5a70] uppercase tracking-wider">Colors:</span>
-                                    {template.colors.map((c, j) => (
-                                        <div
-                                            key={j}
-                                            className="w-6 h-6 rounded-lg border border-[#2a2a40]"
-                                            style={{ backgroundColor: c }}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
+            <TemplatesShowcase />
 
             {/* ===== PRICING (Placeholder) ===== */}
             <section id="pricing" className="landing-section">
@@ -350,6 +294,159 @@ export default function LandingPage() {
                 </div>
             </footer>
         </div>
+    );
+}
+
+/* ===== Templates Showcase Component ===== */
+const landingTemplates = [
+    {
+        name: 'Minimal',
+        desc: 'Clean whites, Inter font, elegant simplicity. Perfect for modern studios that prefer understated sophistication.',
+        colors: ['#ffffff', '#1f2937', '#e5e7eb'],
+        icon: '✦',
+        badge: '⭐ Most Popular',
+        badgeColor: '',
+        previewImage: '/templates/minimal.png',
+        stylePoints: ['Inter typography throughout', 'Blue gradient accent', 'Stripe-inspired clean layout', 'Rounded card elements'],
+    },
+    {
+        name: 'Luxury',
+        desc: 'Gold & dark tones, serif typography, opulent feel. Ideal for high-end residential and boutique projects.',
+        colors: ['#1B1B1F', '#C5A55A', '#faf8f3'],
+        icon: '✧',
+        badge: 'Best for Luxury',
+        badgeColor: '',
+        previewImage: '/templates/luxury.png',
+        stylePoints: ['Playfair Display serif headings', 'Gold accent on dark palette', 'Diamond ornament divider', 'Ivory textured background'],
+    },
+    {
+        name: 'Professional',
+        desc: 'Bold geometry, sharp type, vibrant accents. Great for corporate & commercial interior projects.',
+        colors: ['#4c6ef5', '#fafbfd', '#1a1a2e'],
+        icon: '◆',
+        badge: 'Best for Corporate',
+        badgeColor: '',
+        previewImage: '/templates/professional.png',
+        stylePoints: ['Full-width colored header bar', 'Inter bold headings', 'Bordered card sections', 'Corporate confidence'],
+    },
+    {
+        name: 'Blueprint',
+        desc: 'Technical grid background, navy palette, engineering precision. Built for architects and contractors.',
+        colors: ['#1a365d', '#bee3f8', '#f7fafc'],
+        icon: '⊞',
+        badge: 'Best for Architects',
+        badgeColor: '',
+        previewImage: '/templates/blueprint.png',
+        stylePoints: ['Space Grotesk headings', 'Subtle grid background', 'Section numbers (01, 02, 03)', 'Engineering-spec totals box'],
+    },
+    {
+        name: 'Editorial',
+        desc: 'Warm serif, magazine-style layout with generous whitespace. Perfect for creative design studios.',
+        colors: ['#FFFBF5', '#3d2b1f', '#e8dcc8'],
+        icon: '❧',
+        badge: 'Best for Creatives',
+        badgeColor: '',
+        previewImage: '/templates/editorial.png',
+        stylePoints: ['Playfair Display headings', 'Warm off-white background', 'Italic document title', 'Magazine-style whitespace'],
+    },
+    {
+        name: 'High Contrast',
+        desc: 'Bold contrast blocks, indigo accent, SaaS-inspired. Ideal for modern design firms.',
+        colors: ['#0f172a', '#6366f1', '#ffffff'],
+        icon: '▣',
+        badge: 'Best for Modern',
+        badgeColor: '',
+        previewImage: '/templates/highcontrast.png',
+        stylePoints: ['Dark header bar', 'Indigo accent highlights', 'Tabular number styling', 'Card-style sections'],
+    },
+];
+
+function TemplatesShowcase() {
+    const [modalOpen, setModalOpen] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    const openPreview = (index: number) => {
+        setActiveIndex(index);
+        setModalOpen(true);
+    };
+
+    return (
+        <>
+            <section id="templates" className="landing-section">
+                <div className="text-center mb-16">
+                    <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">Templates</p>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Six Premium Styles</h2>
+                    <p className="text-[#8888a0] max-w-xl mx-auto">
+                        Each template is crafted for a different aesthetic. Click preview to see the output.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {landingTemplates.map((template, i) => (
+                        <div
+                            key={template.name}
+                            className={`template-card opacity-0 animate-scale-in stagger-${i + 1}`}
+                            onClick={() => openPreview(i)}
+                        >
+                            {/* Badge */}
+                            {template.badge && (
+                                <span
+                                    className="template-card-badge"
+                                    style={{ background: 'rgba(129, 140, 248, 0.12)', color: '#818cf8' }}
+                                >
+                                    {template.badge}
+                                </span>
+                            )}
+
+                            {/* Color bar */}
+                            <div className="h-2 flex">
+                                {template.colors.map((c, j) => (
+                                    <div key={j} className="flex-1" style={{ backgroundColor: c }} />
+                                ))}
+                            </div>
+
+                            <div className="p-7">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-2xl">{template.icon}</span>
+                                    <h3 className="text-lg font-semibold text-white">{template.name}</h3>
+                                </div>
+                                <p className="text-[#8888a0] text-sm leading-relaxed mb-5">{template.desc}</p>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs text-[#5a5a70] uppercase tracking-wider">Colors:</span>
+                                        {template.colors.map((c, j) => (
+                                            <div
+                                                key={j}
+                                                className="w-5 h-5 rounded-md border border-[#2a2a40]"
+                                                style={{ backgroundColor: c }}
+                                            />
+                                        ))}
+                                    </div>
+                                    <button
+                                        className="template-card-view-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            openPreview(i);
+                                        }}
+                                    >
+                                        <Eye size={14} />
+                                        View Preview
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <TemplatePreviewModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                templates={landingTemplates}
+                activeIndex={activeIndex}
+                onNavigate={setActiveIndex}
+            />
+        </>
     );
 }
 

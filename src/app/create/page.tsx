@@ -25,7 +25,7 @@ interface LineItem {
     unit_price: string;
 }
 
-type Template = 'minimal' | 'luxury' | 'modern';
+type Template = 'minimal' | 'luxury' | 'modern' | 'blueprint' | 'editorial' | 'highcontrast';
 
 const templateOptions: { key: Template; name: string; desc: string; colors: string[] }[] = [
     {
@@ -45,6 +45,24 @@ const templateOptions: { key: Template; name: string; desc: string; colors: stri
         name: 'Professional',
         desc: 'Bold geometry, sharp type, corporate grade',
         colors: ['#4c6ef5', '#fafbfd', '#1a1a2e'],
+    },
+    {
+        key: 'blueprint',
+        name: 'Blueprint',
+        desc: 'Technical grid, navy palette, engineering precision',
+        colors: ['#1a365d', '#bee3f8', '#f7fafc'],
+    },
+    {
+        key: 'editorial',
+        name: 'Editorial',
+        desc: 'Warm serif, magazine-style, generous whitespace',
+        colors: ['#FFFBF5', '#3d2b1f', '#e8dcc8'],
+    },
+    {
+        key: 'highcontrast',
+        name: 'High Contrast',
+        desc: 'Bold contrast, indigo accent, SaaS-inspired',
+        colors: ['#0f172a', '#6366f1', '#ffffff'],
     },
 ];
 
@@ -687,7 +705,7 @@ export default function CreatePage() {
                         <SectionHeader number={6} icon={LayoutTemplate} title="Template Style" />
                         {expandedSections[6] && (
                             <div className="pb-6 animate-fade-in">
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {templateOptions.map((opt) => (
                                         <button
                                             key={opt.key}

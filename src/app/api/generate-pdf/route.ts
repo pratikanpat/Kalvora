@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
-import { minimalTemplate, luxuryTemplate, modernTemplate } from '@/lib/templates';
+import { minimalTemplate, luxuryTemplate, modernTemplate, blueprintTemplate, editorialTemplate, highContrastTemplate } from '@/lib/templates';
 import type { TemplateData } from '@/lib/templates';
 
 export const maxDuration = 60; // Allow up to 60s for PDF generation
@@ -84,6 +84,15 @@ export async function POST(request: NextRequest) {
                 break;
             case 'modern':
                 html = modernTemplate(templateData);
+                break;
+            case 'blueprint':
+                html = blueprintTemplate(templateData);
+                break;
+            case 'editorial':
+                html = editorialTemplate(templateData);
+                break;
+            case 'highcontrast':
+                html = highContrastTemplate(templateData);
                 break;
             default:
                 html = minimalTemplate(templateData);
