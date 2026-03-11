@@ -15,6 +15,13 @@ export interface TemplateData {
   created_at: string;
   rooms: { name: string; square_footage: number }[];
   line_items: { item_name: string; quantity: number; unit_price: number }[];
+  // New fields
+  studio_name?: string;
+  project_size?: string;
+  services_included?: string[];
+  quotation_validity?: number;
+  estimated_start_date?: string;
+  estimated_timeline?: string;
 }
 
 function formatCurrency(amount: number): string {
@@ -70,6 +77,7 @@ function buildBody(data: TemplateData, cfg: {
   const quotationDetails = [
     `<div class="info-line"><strong>Date:</strong> ${formatDate(data.created_at)}</div>`,
     `<div class="info-line"><strong>Project:</strong> ${data.project_type}</div>`,
+    data.project_size ? `<div class="info-line"><strong>Area:</strong> ${data.project_size} sq.ft</div>` : '',
     data.project_address ? `<div class="info-line"><strong>Location:</strong> ${data.project_address}</div>` : '',
     roomsSummary(data) ? `<div class="info-line"><strong>Rooms:</strong> ${roomsSummary(data)}</div>` : '',
   ].filter(Boolean).join('\n');
@@ -141,17 +149,45 @@ function buildBody(data: TemplateData, cfg: {
     </div>
   </div>
 
+  <!-- Services Included -->
+  ${data.services_included && data.services_included.length > 0 ? `
+  <div class="terms-section">
+    <div class="terms-title">Services Included</div>
+    <div class="terms-text">${data.services_included.map(s => `• ${s}`).join('<br/>')}</div>
+  </div>` : ''}
+
+  <!-- Timeline -->
+  ${data.estimated_start_date || data.estimated_timeline ? `
+  <div class="terms-section">
+    <div class="terms-title">Project Timeline</div>
+    <div class="terms-text">
+      ${data.estimated_start_date ? `<strong>Estimated Start:</strong> ${formatDate(data.estimated_start_date)}<br/>` : ''}
+      ${data.estimated_timeline ? data.estimated_timeline.split('\n').join('<br/>') : ''}
+    </div>
+  </div>` : ''}
+
   <!-- Terms & Notes -->
   ${data.payment_terms ? `
   <div class="terms-section">
     <div class="terms-title">Terms & Conditions</div>
     <div class="terms-text">${data.payment_terms}</div>
   </div>` : ''}
+  ${data.quotation_validity ? `
+  <div class="terms-section">
+    <div class="terms-title">Quotation Validity</div>
+    <div class="terms-text">This quotation is valid for <strong>${data.quotation_validity} days</strong> from the date of issue.</div>
+  </div>` : ''}
   ${data.notes ? `
   <div class="terms-section">
     <div class="terms-title">Notes</div>
     <div class="terms-text">${data.notes}</div>
   </div>` : ''}
+
+  <!-- Client Acceptance -->
+  <div class="terms-section">
+    <div class="terms-title">Client Acceptance</div>
+    <div class="terms-text" style="font-style:italic;opacity:0.8">By signing below, the client acknowledges and agrees to the scope, pricing, and terms outlined in this proposal.</div>
+  </div>
 
   <!-- Signatures -->
   <div class="sig-row">
@@ -205,6 +241,11 @@ export function minimalTemplate(data: TemplateData): string {
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { margin: 20mm 0mm 15mm 0mm; }
+  @page :first { margin-top: 0; }
+  .terms-section, .sig-row, .client-section { page-break-inside: avoid; }
+  thead { display: table-header-group; }
+  tbody tr { page-break-inside: avoid; }
   body {
     font-family: 'Inter', -apple-system, sans-serif;
     color: #1e293b; font-size: 10.5px; line-height: 1.55;
@@ -348,6 +389,11 @@ export function luxuryTemplate(data: TemplateData): string {
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { margin: 20mm 0mm 15mm 0mm; }
+  @page :first { margin-top: 0; }
+  .terms-section, .sig-row, .client-section { page-break-inside: avoid; }
+  thead { display: table-header-group; }
+  tbody tr { page-break-inside: avoid; }
   body {
     font-family: 'Inter', -apple-system, sans-serif;
     color: ${dark}; font-size: 10.5px; line-height: 1.55;
@@ -506,6 +552,11 @@ export function modernTemplate(data: TemplateData): string {
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { margin: 20mm 0mm 15mm 0mm; }
+  @page :first { margin-top: 0; }
+  .terms-section, .sig-row, .client-section { page-break-inside: avoid; }
+  thead { display: table-header-group; }
+  tbody tr { page-break-inside: avoid; }
   body {
     font-family: 'Inter', -apple-system, sans-serif;
     color: #1f2937; font-size: 10.5px; line-height: 1.55;
@@ -682,6 +733,11 @@ export function blueprintTemplate(data: TemplateData): string {
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { margin: 20mm 0mm 15mm 0mm; }
+  @page :first { margin-top: 0; }
+  .terms-section, .sig-row, .client-section { page-break-inside: avoid; }
+  thead { display: table-header-group; }
+  tbody tr { page-break-inside: avoid; }
   body {
     font-family: 'Inter', -apple-system, sans-serif;
     color: #1a202c; font-size: 10.5px; line-height: 1.55;
@@ -937,6 +993,11 @@ export function editorialTemplate(data: TemplateData): string {
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { margin: 20mm 0mm 15mm 0mm; }
+  @page :first { margin-top: 0; }
+  .terms-section, .sig-row, .client-section { page-break-inside: avoid; }
+  thead { display: table-header-group; }
+  tbody tr { page-break-inside: avoid; }
   body {
     font-family: 'Inter', -apple-system, sans-serif;
     color: ${warm}; font-size: 10.5px; line-height: 1.6;
@@ -1090,6 +1151,11 @@ export function highContrastTemplate(data: TemplateData): string {
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { margin: 20mm 0mm 15mm 0mm; }
+  @page :first { margin-top: 0; }
+  .terms-section, .sig-row, .client-section { page-break-inside: avoid; }
+  thead { display: table-header-group; }
+  tbody tr { page-break-inside: avoid; }
   body {
     font-family: 'Inter', -apple-system, sans-serif;
     color: ${dark}; font-size: 10.5px; line-height: 1.55;

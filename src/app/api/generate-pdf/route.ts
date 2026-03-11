@@ -74,6 +74,13 @@ export async function POST(request: NextRequest) {
             created_at: project.created_at,
             rooms: rooms || [],
             line_items: lineItems || [],
+            // New fields
+            studio_name: project.designer_name || '',
+            project_size: project.project_size || '',
+            services_included: project.services_included || [],
+            quotation_validity: project.quotation_validity || 30,
+            estimated_start_date: project.estimated_start_date || '',
+            estimated_timeline: project.estimated_timeline || '',
         };
 
         // 3. Select template

@@ -8,6 +8,7 @@ import DashboardLayout from '@/components/DashboardLayout';
 import StatusBadge from '@/components/StatusBadge';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/AuthProvider';
+import ProfileSetupModal from '@/components/ProfileSetupModal';
 import { Plus, Trash2, FileText, Search, Calendar, ArrowRight, AlertTriangle, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -26,6 +27,7 @@ export default function DashboardPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [deleting, setDeleting] = useState<string | null>(null);
     const [configError, setConfigError] = useState('');
+    const [showProfileSetup, setShowProfileSetup] = useState(false);
     const { user } = useAuth();
 
     // Prefetch common routes for instant navigation
@@ -48,6 +50,24 @@ export default function DashboardPage() {
             return;
         }
         if (user) fetchProjects();
+    }, [user]);
+
+    // Check if profile setup is needed
+    useEffect(() => {
+        if (!user) return;
+        const dismissed = localStorage.getItem('kalvora_profile_dismissed');
+        if (dismissed) return;
+
+        supabase
+            .from('designer_profiles')
+            .select('id')
+            .eq('user_id', user.id)
+            .single()
+            .then(({ data, error }) => {
+                if (error || !data) {
+                    setShowProfileSetup(true);
+                }
+            });
     }, [user]);
 
     const fetchProjects = async () => {
@@ -280,6 +300,11 @@ export default function DashboardPage() {
                     )}
                 </>
             )}
+
+            <ProfileSetupModal
+                isOpen={showProfileSetup}
+                onClose={() => setShowProfileSetup(false)}
+            />
         </DashboardLayout>
     );
 }

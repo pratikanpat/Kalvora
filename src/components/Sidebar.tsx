@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
+import { supabase } from '@/lib/supabase';
 import {
     Home,
     LayoutDashboard,
@@ -15,12 +16,14 @@ import {
     Sparkles,
     LogOut,
     User,
+    Building,
 } from 'lucide-react';
 
 const navItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/create', label: 'Create Proposal', icon: FilePlus },
+    { href: '/profile', label: 'Studio Profile', icon: Building },
     { href: '/feedback', label: 'Feedback', icon: MessageSquare },
 ];
 
@@ -33,9 +36,38 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
     const { user, signOut } = useAuth();
+    const [profileIncomplete, setProfileIncomplete] = useState(false);
 
     const userEmail = user?.email || '';
     const truncatedEmail = userEmail.length > 22 ? userEmail.slice(0, 20) + '…' : userEmail;
+
+    // Check profile completeness
+    useEffect(() => {
+        if (!user) return;
+
+        const checkProfile = () => {
+            supabase
+                .from('designer_profiles')
+                .select('studio_name, designer_name, email')
+                .eq('user_id', user.id)
+                .single()
+                .then(({ data, error }) => {
+                    if (error || !data) {
+                        setProfileIncomplete(true);
+                    } else {
+                        const hasName = !!(data.studio_name || data.designer_name);
+                        const hasEmail = !!data.email;
+                        setProfileIncomplete(!hasName || !hasEmail);
+                    }
+                });
+        };
+
+        checkProfile();
+
+        // Listen for profile-updated event (fired from profile page after save)
+        window.addEventListener('profile-updated', checkProfile);
+        return () => window.removeEventListener('profile-updated', checkProfile);
+    }, [user, pathname]);
 
     return (
         <>
@@ -103,11 +135,18 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                                 {isActive && (
                                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-gradient-to-b from-brand-400 to-brand-600 rounded-r-full" />
                                 )}
-                                <Icon size={20} className="flex-shrink-0" />
+                                <Icon size={20} className="flex-shrink-0 relative" />
+                                {/* Red dot for incomplete profile */}
+                                {item.href === '/profile' && profileIncomplete && (
+                                    <div className="absolute top-1.5 left-7 w-2 h-2 rounded-full bg-red-500 ring-2 ring-[#0d0d16] animate-pulse" />
+                                )}
                                 {!collapsed && <span className="animate-fade-in">{item.label}</span>}
                                 {collapsed && (
                                     <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#1a1a2e] border border-[#2a2a40] rounded-lg text-xs text-[#f0f0f5] whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-xl shadow-black/30">
                                         {item.label}
+                                        {item.href === '/profile' && profileIncomplete && (
+                                            <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-red-500" />
+                                        )}
                                     </div>
                                 )}
                             </Link>

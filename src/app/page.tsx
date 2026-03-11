@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import LandingNavbar from '@/components/LandingNavbar';
 import { supabase } from '@/lib/supabase';
@@ -64,13 +65,13 @@ export default function LandingPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in">
                         {session ? (
                             <>
-                                <button
-                                    onClick={() => router.push('/dashboard')}
+                                <Link
+                                    href="/dashboard"
                                     className="btn-primary text-base px-8 py-3.5 rounded-xl shadow-xl shadow-brand-700/25"
                                 >
                                     Go to Dashboard
                                     <ArrowRight size={20} />
-                                </button>
+                                </Link>
                                 <a
                                     href="#features"
                                     className="btn-secondary text-base px-8 py-3.5 rounded-xl"
@@ -81,13 +82,13 @@ export default function LandingPage() {
                             </>
                         ) : (
                             <>
-                                <button
-                                    onClick={handleGetStarted}
+                                <Link
+                                    href="/login"
                                     className="btn-primary text-base px-8 py-3.5 rounded-xl shadow-xl shadow-brand-700/25"
                                 >
                                     Get Started
                                     <ArrowRight size={20} />
-                                </button>
+                                </Link>
                                 <a
                                     href="#features"
                                     className="btn-secondary text-base px-8 py-3.5 rounded-xl"
@@ -214,13 +215,13 @@ export default function LandingPage() {
                         <p className="text-[#8888a0] max-w-lg mx-auto mb-8">
                             Join designers who save hours every week with Kalvora&apos;s instant proposal generator.
                         </p>
-                        <button
-                            onClick={handleGetStarted}
+                        <Link
+                            href={session ? '/dashboard' : '/login'}
                             className="btn-primary text-base px-8 py-3.5 rounded-xl shadow-xl shadow-brand-700/25"
                         >
                             Create Your First Proposal
                             <ArrowRight size={20} />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </section>

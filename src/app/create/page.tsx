@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase, checkSupabaseConfig } from '@/lib/supabase';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -10,7 +10,7 @@ import {
     User, Mail, Phone, MapPin, Building, Plus, Trash2,
     Palette, Upload, FileText, Save, Sparkles, ChevronDown,
     ChevronUp, DollarSign, Calculator, StickyNote, LayoutTemplate,
-    Loader2, Eye
+    Loader2, Eye, Clock, CheckSquare, Calendar, ShieldCheck
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import TemplatePreviewModal from '@/components/TemplatePreviewModal';
@@ -107,13 +107,23 @@ const templatePreviewData = [
     },
 ];
 
+const DEFAULT_SERVICES = [
+    'Concept design',
+    'Furniture layout',
+    'Lighting plan',
+    'Material selection',
+    '3D visualization',
+    'Site visits',
+    'Vendor coordination',
+];
+
 export default function CreatePage() {
     const router = useRouter();
     const { user } = useAuth();
     const [saving, setSaving] = useState(false);
     const [generating, setGenerating] = useState(false);
     const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({
-        1: true, 2: true, 3: true, 4: true, 5: true, 6: true,
+        1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true,
     });
 
     // Section 1 - Client Info
@@ -124,27 +134,31 @@ export default function CreatePage() {
 
     // Section 2 - Project Details
     const [projectType, setProjectType] = useState('Residential');
+    const [projectSize, setProjectSize] = useState('');
+
+    // Section 3 - Rooms
     const [rooms, setRooms] = useState<Room[]>([{ name: '', square_footage: '' }]);
 
-    // Section 3 - Pricing
+    // Section 4 - Services Included
+    const [servicesIncluded, setServicesIncluded] = useState<string[]>([]);
+    const [customService, setCustomService] = useState('');
+
+    // Section 5 - Pricing
     const [lineItems, setLineItems] = useState<LineItem[]>([
         { item_name: '', quantity: '1', unit_price: '' },
     ]);
     const [taxRate, setTaxRate] = useState('0');
 
-    // Section 4 - Brand Settings
-    const [logoUrl, setLogoUrl] = useState('');
-    const [accentColor, setAccentColor] = useState('#4263eb');
-    const [designerName, setDesignerName] = useState('');
-    const [designerEmail, setDesignerEmail] = useState('');
-    const [designerPhone, setDesignerPhone] = useState('');
-    const [uploading, setUploading] = useState(false);
+    // Section 6 - Timeline
+    const [estimatedStartDate, setEstimatedStartDate] = useState('');
+    const [estimatedTimeline, setEstimatedTimeline] = useState('');
 
-    // Section 5 - Notes
+    // Section 7 - Notes
     const [notes, setNotes] = useState('');
     const [paymentTerms, setPaymentTerms] = useState('');
+    const [quotationValidity, setQuotationValidity] = useState('30');
 
-    // Section 6 - Template
+    // Section 8 - Template
     const [template, setTemplate] = useState<Template>('minimal');
 
     // Modal
@@ -159,6 +173,21 @@ export default function CreatePage() {
     // Template Preview Modal
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewIndex, setPreviewIndex] = useState(0);
+
+    // Load profile defaults on mount
+    useEffect(() => {
+        if (!user) return;
+        supabase
+            .from('designer_profiles')
+            .select('default_payment_terms')
+            .eq('user_id', user.id)
+            .single()
+            .then(({ data }) => {
+                if (data?.default_payment_terms && !paymentTerms) {
+                    setPaymentTerms(data.default_payment_terms);
+                }
+            });
+    }, [user]);
 
     const toggleSection = (section: number) => {
         setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -184,6 +213,20 @@ export default function CreatePage() {
         setLineItems(updated);
     };
 
+    // Services
+    const toggleService = (service: string) => {
+        setServicesIncluded(prev =>
+            prev.includes(service) ? prev.filter(s => s !== service) : [...prev, service]
+        );
+    };
+    const addCustomService = () => {
+        const trimmed = customService.trim();
+        if (trimmed && !servicesIncluded.includes(trimmed)) {
+            setServicesIncluded(prev => [...prev, trimmed]);
+            setCustomService('');
+        }
+    };
+
     // Calculations
     const getSubtotal = (item: LineItem) => {
         const qty = parseFloat(item.quantity) || 0;
@@ -194,44 +237,6 @@ export default function CreatePage() {
     const totalBeforeTax = lineItems.reduce((sum, item) => sum + getSubtotal(item), 0);
     const taxAmount = totalBeforeTax * ((parseFloat(taxRate) || 0) / 100);
     const grandTotal = totalBeforeTax + taxAmount;
-
-    // Logo upload — converts to base64 so it embeds directly in PDF HTML
-    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        // Check file size (max 2MB)
-        if (file.size > 2 * 1024 * 1024) {
-            toast.error('Logo must be under 2MB');
-            return;
-        }
-
-        // Check if file looks like an image (by extension as fallback)
-        const ext = file.name.split('.').pop()?.toLowerCase() || '';
-        const imageExts = ['png', 'jpg', 'jpeg', 'svg', 'webp', 'gif', 'bmp'];
-        const isImage = file.type.startsWith('image/') || imageExts.includes(ext);
-        if (!isImage) {
-            toast.error('Please upload an image file (PNG, JPG, SVG, WebP)');
-            return;
-        }
-
-        setUploading(true);
-        // Convert to base64 data URL — embeds directly in HTML
-        // so it works in PDF generation without needing storage access
-        const reader = new FileReader();
-        reader.onload = () => {
-            const dataUrl = reader.result as string;
-            setLogoUrl(dataUrl);
-            toast.success('Logo uploaded!');
-            setUploading(false);
-        };
-        reader.onerror = (err) => {
-            console.error('FileReader error:', err);
-            toast.error('Failed to read logo file. Try a different image.');
-            setUploading(false);
-        };
-        reader.readAsDataURL(file);
-    };
 
     // Validation
     const validate = () => {
@@ -266,6 +271,13 @@ export default function CreatePage() {
         }
 
         try {
+            // Fetch designer profile for auto-populating proposal fields
+            const { data: profile } = await supabase
+                .from('designer_profiles')
+                .select('*')
+                .eq('user_id', user!.id)
+                .single();
+
             // 1. Create project
             const { data: project, error: projectError } = await supabase
                 .from('projects')
@@ -275,17 +287,23 @@ export default function CreatePage() {
                     client_phone: clientPhone.trim(),
                     project_address: projectAddress.trim(),
                     project_type: projectType,
-                    designer_name: designerName.trim(),
-                    designer_email: designerEmail.trim(),
-                    designer_phone: designerPhone.trim(),
-                    logo_url: logoUrl,
-                    accent_color: accentColor,
+                    project_size: projectSize.trim(),
+                    // Designer info from profile
+                    designer_name: profile?.studio_name || profile?.designer_name || '',
+                    designer_email: profile?.email || '',
+                    designer_phone: profile?.phone || '',
+                    logo_url: profile?.logo_url || '',
+                    accent_color: profile?.default_accent_color || '#4263eb',
                     notes: notes.trim(),
                     payment_terms: paymentTerms.trim(),
                     template,
                     tax_rate: parseFloat(taxRate) || 0,
                     status: andGenerate ? 'Sent' : 'Draft',
                     user_id: user?.id,
+                    quotation_validity: parseInt(quotationValidity) || 30,
+                    estimated_start_date: estimatedStartDate.trim(),
+                    estimated_timeline: estimatedTimeline.trim(),
+                    services_included: servicesIncluded,
                 })
                 .select()
                 .single();
@@ -472,65 +490,164 @@ export default function CreatePage() {
                         <SectionHeader number={2} icon={Building} title="Project Details" />
                         {expandedSections[2] && (
                             <div className="pb-6 space-y-4 animate-fade-in">
-                                <div>
-                                    <label className="input-label">Project Type *</label>
-                                    <select
-                                        value={projectType}
-                                        onChange={(e) => setProjectType(e.target.value)}
-                                        className={`input-field ${errors.projectType ? 'border-red-500' : ''}`}
-                                    >
-                                        <option value="Residential">Residential</option>
-                                        <option value="Commercial">Commercial</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <div className="flex items-center justify-between mb-3">
-                                        <label className="input-label mb-0">Rooms</label>
-                                        <button onClick={addRoom} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1 transition-colors">
-                                            <Plus size={14} /> Add Room
-                                        </button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="input-label">Project Type *</label>
+                                        <select
+                                            value={projectType}
+                                            onChange={(e) => setProjectType(e.target.value)}
+                                            className={`input-field ${errors.projectType ? 'border-red-500' : ''}`}
+                                        >
+                                            <option value="Residential">Residential</option>
+                                            <option value="Commercial">Commercial</option>
+                                            <option value="Office">Office</option>
+                                            <option value="Retail">Retail</option>
+                                        </select>
                                     </div>
-                                    {errors.rooms && (
-                                        <p className="text-red-400 text-xs mb-2">{errors.rooms}</p>
-                                    )}
-                                    <div className="space-y-2">
-                                        {rooms.map((room, i) => (
-                                            <div key={i} className="flex items-center gap-2 animate-fade-in">
-                                                <input
-                                                    type="text"
-                                                    value={room.name}
-                                                    onChange={(e) => updateRoom(i, 'name', e.target.value)}
-                                                    placeholder="Room name (e.g. Living Room)"
-                                                    className="input-field flex-1"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    value={room.square_footage}
-                                                    onChange={(e) => updateRoom(i, 'square_footage', e.target.value)}
-                                                    placeholder="Sq.ft"
-                                                    className="input-field w-28"
-                                                />
-                                                {rooms.length > 1 && (
-                                                    <button
-                                                        onClick={() => removeRoom(i)}
-                                                        className="text-[#5a5a70] hover:text-red-400 p-2 transition-colors"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        ))}
+                                    <div>
+                                        <label className="input-label">Project Size (sq.ft)</label>
+                                        <input
+                                            type="text"
+                                            value={projectSize}
+                                            onChange={(e) => setProjectSize(e.target.value)}
+                                            placeholder="e.g. 1500"
+                                            className="input-field"
+                                        />
                                     </div>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* SECTION 3 — Pricing Table */}
+                    {/* SECTION 3 — Rooms / Areas Covered */}
                     <div className="glass-card px-6">
-                        <SectionHeader number={3} icon={DollarSign} title="Pricing Table" />
+                        <SectionHeader number={3} icon={MapPin} title="Rooms / Areas Covered" />
                         {expandedSections[3] && (
+                            <div className="pb-6 space-y-4 animate-fade-in">
+                                <div className="flex items-center justify-between">
+                                    <label className="input-label mb-0">Rooms</label>
+                                    <button onClick={addRoom} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1 transition-colors">
+                                        <Plus size={14} /> Add Room
+                                    </button>
+                                </div>
+                                <div className="space-y-2">
+                                    {rooms.map((room, i) => (
+                                        <div key={i} className="flex items-center gap-2 animate-fade-in">
+                                            <input
+                                                type="text"
+                                                value={room.name}
+                                                onChange={(e) => updateRoom(i, 'name', e.target.value)}
+                                                placeholder="Room name (e.g. Living Room)"
+                                                className="input-field flex-1"
+                                            />
+                                            <input
+                                                type="number"
+                                                value={room.square_footage}
+                                                onChange={(e) => updateRoom(i, 'square_footage', e.target.value)}
+                                                placeholder="Sq.ft"
+                                                className="input-field w-28"
+                                            />
+                                            {rooms.length > 1 && (
+                                                <button
+                                                    onClick={() => removeRoom(i)}
+                                                    className="text-[#5a5a70] hover:text-red-400 p-2 transition-colors"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                {/* Quick add common rooms */}
+                                <div className="flex flex-wrap gap-2 pt-2">
+                                    {['Living Room', 'Kitchen', 'Master Bedroom', 'Guest Bedroom', 'Bathroom', 'Balcony'].map(roomName => (
+                                        <button
+                                            key={roomName}
+                                            onClick={() => {
+                                                const emptyIdx = rooms.findIndex(r => !r.name.trim());
+                                                if (emptyIdx >= 0) {
+                                                    updateRoom(emptyIdx, 'name', roomName);
+                                                } else {
+                                                    setRooms([...rooms, { name: roomName, square_footage: '' }]);
+                                                }
+                                            }}
+                                            className="text-xs px-2.5 py-1.5 rounded-lg bg-[#12121a] border border-[#2a2a40] text-[#8888a0] hover:text-brand-400 hover:border-brand-700/30 transition-colors"
+                                        >
+                                            + {roomName}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* SECTION 4 — Services Included */}
+                    <div className="glass-card px-6">
+                        <SectionHeader number={4} icon={CheckSquare} title="Services Included" />
+                        {expandedSections[4] && (
+                            <div className="pb-6 space-y-4 animate-fade-in">
+                                <p className="text-[#5a5a70] text-xs">
+                                    Select the services included in this project. This tells the client what they are paying for.
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {DEFAULT_SERVICES.map(service => (
+                                        <button
+                                            key={service}
+                                            onClick={() => toggleService(service)}
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left text-sm transition-all duration-200 ${
+                                                servicesIncluded.includes(service)
+                                                    ? 'border-brand-500/50 bg-brand-700/10 text-brand-300'
+                                                    : 'border-[#2a2a40] bg-[#12121a] text-[#8888a0] hover:border-[#3a3a55] hover:text-white'
+                                            }`}
+                                        >
+                                            <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                                                servicesIncluded.includes(service)
+                                                    ? 'border-brand-500 bg-brand-500'
+                                                    : 'border-[#3a3a55]'
+                                            }`}>
+                                                {servicesIncluded.includes(service) && (
+                                                    <svg viewBox="0 0 12 12" className="w-3 h-3 text-white"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                                )}
+                                            </div>
+                                            {service}
+                                        </button>
+                                    ))}
+                                    {/* Custom services the user added */}
+                                    {servicesIncluded.filter(s => !DEFAULT_SERVICES.includes(s)).map(service => (
+                                        <button
+                                            key={service}
+                                            onClick={() => toggleService(service)}
+                                            className="flex items-center gap-3 px-4 py-3 rounded-xl border border-brand-500/50 bg-brand-700/10 text-brand-300 text-left text-sm transition-all duration-200"
+                                        >
+                                            <div className="w-5 h-5 rounded-md border-2 border-brand-500 bg-brand-500 flex items-center justify-center flex-shrink-0">
+                                                <svg viewBox="0 0 12 12" className="w-3 h-3 text-white"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                            </div>
+                                            {service}
+                                        </button>
+                                    ))}
+                                </div>
+                                {/* Add custom service */}
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={customService}
+                                        onChange={(e) => setCustomService(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && addCustomService()}
+                                        placeholder="Add custom service..."
+                                        className="input-field flex-1"
+                                    />
+                                    <button onClick={addCustomService} className="btn-secondary whitespace-nowrap">
+                                        <Plus size={16} /> Add
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* SECTION 5 — Pricing Table */}
+                    <div className="glass-card px-6">
+                        <SectionHeader number={5} icon={DollarSign} title="Pricing Table" />
+                        {expandedSections[5] && (
                             <div className="pb-6 space-y-4 animate-fade-in">
                                 <div className="flex items-center justify-between">
                                     <label className="input-label mb-0">Line Items *</label>
@@ -627,128 +744,87 @@ export default function CreatePage() {
                         )}
                     </div>
 
-                    {/* SECTION 4 — Brand Settings */}
+                    {/* SECTION 6 — Timeline */}
                     <div className="glass-card px-6">
-                        <SectionHeader number={4} icon={Palette} title="Brand Settings" />
-                        {expandedSections[4] && (
+                        <SectionHeader number={6} icon={Clock} title="Project Timeline" />
+                        {expandedSections[6] && (
                             <div className="pb-6 space-y-4 animate-fade-in">
-                                {/* Logo upload */}
-                                <div>
-                                    <label className="input-label">Logo</label>
-                                    <div className="flex items-center gap-4">
-                                        {logoUrl ? (
-                                            <div className="w-16 h-16 rounded-xl border border-[#2a2a40] overflow-hidden bg-white flex items-center justify-center">
-                                                <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
-                                            </div>
-                                        ) : (
-                                            <div className="w-16 h-16 rounded-xl border border-dashed border-[#2a2a40] flex items-center justify-center bg-[#12121a]">
-                                                <Upload size={20} className="text-[#5a5a70]" />
-                                            </div>
-                                        )}
-                                        <label className="btn-secondary cursor-pointer">
-                                            <Upload size={16} />
-                                            {uploading ? 'Uploading...' : 'Upload Logo'}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="input-label">Estimated Start Date</label>
+                                        <div className="relative">
+                                            <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
                                             <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleLogoUpload}
-                                                className="hidden"
-                                                disabled={uploading}
+                                                type="date"
+                                                value={estimatedStartDate}
+                                                onChange={(e) => setEstimatedStartDate(e.target.value)}
+                                                className="input-field pl-10"
                                             />
-                                        </label>
+                                        </div>
                                     </div>
                                 </div>
-
-                                {/* Accent color */}
                                 <div>
-                                    <label className="input-label">Accent Color</label>
-                                    <div className="flex items-center gap-3">
-                                        <input
-                                            type="color"
-                                            value={accentColor}
-                                            onChange={(e) => setAccentColor(e.target.value)}
-                                            className="w-10 h-10 rounded-lg border border-[#2a2a40] cursor-pointer bg-transparent"
-                                        />
-                                        <input
-                                            type="text"
-                                            value={accentColor}
-                                            onChange={(e) => setAccentColor(e.target.value)}
-                                            placeholder="#4263eb"
-                                            className="input-field w-32"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Designer info */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                                    <div className="md:col-span-2">
-                                        <label className="input-label">Designer Name</label>
-                                        <input
-                                            type="text"
-                                            value={designerName}
-                                            onChange={(e) => setDesignerName(e.target.value)}
-                                            placeholder="Your full name"
-                                            className="input-field"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="input-label">Designer Email</label>
-                                        <input
-                                            type="email"
-                                            value={designerEmail}
-                                            onChange={(e) => setDesignerEmail(e.target.value)}
-                                            placeholder="you@studio.com"
-                                            className="input-field"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="input-label">Designer Phone</label>
-                                        <input
-                                            type="tel"
-                                            value={designerPhone}
-                                            onChange={(e) => setDesignerPhone(e.target.value)}
-                                            placeholder="+91 98765 43210"
-                                            className="input-field"
-                                        />
-                                    </div>
+                                    <label className="input-label">Estimated Timeline</label>
+                                    <textarea
+                                        value={estimatedTimeline}
+                                        onChange={(e) => setEstimatedTimeline(e.target.value)}
+                                        placeholder={"e.g.\nConcept design: 7 days\nFinal layout: 10 days\nExecution: 20 days"}
+                                        rows={4}
+                                        className="input-field"
+                                    />
+                                    <p className="text-[#5a5a70] text-xs mt-1">Break down the project phases and their estimated durations.</p>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* SECTION 5 — Notes & Terms */}
+                    {/* SECTION 7 — Notes & Terms */}
                     <div className="glass-card px-6">
-                        <SectionHeader number={5} icon={StickyNote} title="Notes & Terms" />
-                        {expandedSections[5] && (
+                        <SectionHeader number={7} icon={StickyNote} title="Notes & Terms" />
+                        {expandedSections[7] && (
                             <div className="pb-6 space-y-4 animate-fade-in">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="md:col-span-2">
+                                        <label className="input-label">Payment Terms</label>
+                                        <textarea
+                                            value={paymentTerms}
+                                            onChange={(e) => setPaymentTerms(e.target.value)}
+                                            placeholder="e.g. 40% advance, 40% during handover, 20% after completion"
+                                            rows={3}
+                                            className="input-field"
+                                        />
+                                    </div>
+                                </div>
                                 <div>
-                                    <label className="input-label">Project Notes</label>
+                                    <label className="input-label">Quotation Valid For (days)</label>
+                                    <input
+                                        type="number"
+                                        value={quotationValidity}
+                                        onChange={(e) => setQuotationValidity(e.target.value)}
+                                        placeholder="30"
+                                        min="1"
+                                        className="input-field w-32"
+                                    />
+                                    <p className="text-[#5a5a70] text-xs mt-1">Number of days this quotation remains valid.</p>
+                                </div>
+                                <div>
+                                    <label className="input-label">Additional Notes / Conditions</label>
                                     <textarea
                                         value={notes}
                                         onChange={(e) => setNotes(e.target.value)}
-                                        placeholder="Any special notes for the client about the project scope, timeline, etc."
+                                        placeholder={"e.g.\nFurniture cost not included\nExecution charges separate\nMaterial prices subject to change"}
                                         rows={4}
                                         className="input-field"
                                     />
                                 </div>
-                                <div>
-                                    <label className="input-label">Payment Terms</label>
-                                    <textarea
-                                        value={paymentTerms}
-                                        onChange={(e) => setPaymentTerms(e.target.value)}
-                                        placeholder="e.g. 50% advance, 25% on material delivery, 25% on completion"
-                                        rows={3}
-                                        className="input-field"
-                                    />
-                                </div>
                             </div>
                         )}
                     </div>
 
-                    {/* SECTION 6 — Template Picker */}
+                    {/* SECTION 8 — Template Picker */}
                     <div className="glass-card px-6">
-                        <SectionHeader number={6} icon={LayoutTemplate} title="Template Style" />
-                        {expandedSections[6] && (
+                        <SectionHeader number={8} icon={LayoutTemplate} title="Template Style" />
+                        {expandedSections[8] && (
                             <div className="pb-6 animate-fade-in">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {templateOptions.map((opt, idx) => (
