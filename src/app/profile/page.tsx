@@ -166,11 +166,10 @@ export default function ProfilePage() {
                     {!isNew && (
                         <button
                             onClick={() => setIsEditing(!isEditing)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex-shrink-0 ml-4 ${
-                                isEditing
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex-shrink-0 ml-4 ${isEditing
                                     ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
                                     : 'bg-brand-700/15 text-brand-400 border border-brand-700/25 hover:bg-brand-700/25'
-                            }`}
+                                }`}
                         >
                             {isEditing ? <X size={16} /> : <Pencil size={16} />}
                             {isEditing ? 'Cancel' : 'Edit Profile'}

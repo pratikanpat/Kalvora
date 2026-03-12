@@ -594,17 +594,15 @@ export default function CreatePage() {
                                         <button
                                             key={service}
                                             onClick={() => toggleService(service)}
-                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left text-sm transition-all duration-200 ${
-                                                servicesIncluded.includes(service)
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left text-sm transition-all duration-200 ${servicesIncluded.includes(service)
                                                     ? 'border-brand-500/50 bg-brand-700/10 text-brand-300'
                                                     : 'border-[#2a2a40] bg-[#12121a] text-[#8888a0] hover:border-[#3a3a55] hover:text-white'
-                                            }`}
+                                                }`}
                                         >
-                                            <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                                                servicesIncluded.includes(service)
+                                            <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${servicesIncluded.includes(service)
                                                     ? 'border-brand-500 bg-brand-500'
                                                     : 'border-[#3a3a55]'
-                                            }`}>
+                                                }`}>
                                                 {servicesIncluded.includes(service) && (
                                                     <svg viewBox="0 0 12 12" className="w-3 h-3 text-white"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
                                                 )}
