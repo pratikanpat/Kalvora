@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-18
+> Last updated: 2026-03-18 (v2 — build resilience fixes, Browserless REST API)
 
 ---
 
@@ -37,7 +37,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 | **Frontend** | React 18, TailwindCSS 3 |
 | **Database** | Supabase (PostgreSQL) |
 | **Authentication** | Supabase Auth (email/password + Google OAuth) |
-| **PDF Generation** | Puppeteer Core + Browserless.io (remote browser via WebSocket) |
+| **PDF Generation** | Browserless.io REST API (`/pdf` endpoint — single HTTP POST, no browser handshake) |
 | **Email Notifications** | Resend (transactional emails for approval/feedback) |
 | **Storage** | Supabase Storage (buckets: `logos`, `proposals`) |
 | **Icons** | Lucide React |
@@ -51,6 +51,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 - `SUPABASE_SERVICE_ROLE_KEY` (used server-side to bypass RLS in PDF generation API)
 - `BROWSERLESS_API_TOKEN` (Browserless.io API key for remote browser PDF generation)
 - `RESEND_API_KEY` (Resend API key for transactional email notifications)
+- `NEXT_PUBLIC_APP_URL` (optional — used in email links, defaults to `http://localhost:3000`)
 
 ---
 
@@ -61,7 +62,8 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   /app
     /api
       /generate-pdf      → POST API route: generates PDF using Puppeteer, uploads to Supabase Storage
-      /respond-proposal  → POST API route: handles client actions (view, approve, request_changes), sends emails via Resend
+      /respond-proposal  → POST API route (force-dynamic): handles client actions (view, approve, request_changes), sends emails via Resend
+      /warmup             → Lightweight warm-up endpoint for serverless cold-start reduction
     /completed           → Lists all projects with status 'Completed'
     /create              → Multi-section form to create a new proposal
     /dashboard           → Lists all user projects (with search, status filter, delete)
@@ -85,11 +87,11 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     ProfileSetupModal.tsx     → First-time profile setup modal on dashboard
     ProtectedRoute.tsx        → HOC to redirect unauthenticated users to /login
     Sidebar.tsx               → Left nav sidebar for authenticated views (with red dot for incomplete profile)
-    StatusBadge.tsx           → Badge component (Draft / Sent / Approved)
+    StatusBadge.tsx           → Badge component (Draft / Sent / Approved / Completed)
     SuccessModal.tsx          → Post-generation success modal with PDF download/share links
     TemplatePreviewModal.tsx  → Template preview carousel modal on create page
   /lib
-    supabase.ts    → Supabase browser client + server client (service role) + config checker
+    supabase.ts    → Supabase browser client + build-safe server client (service role, returns placeholder when env vars missing) + config checker
     templates.ts   → All 6 PDF HTML templates (48 KB) — raw HTML/CSS strings rendered by Puppeteer
 
 /supabase
@@ -135,10 +137,10 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 - Profile data fetched on mount to auto-populate payment terms.
 
 ### 4. PDF Generation
-- Triggered via `POST /api/generate-pdf` with `project_id`.
-- Server-side API route uses `createServerClient()` (service role) to fetch all project data (project, rooms, line_items, designer_profiles).
+- Triggered via `POST /api/generate-pdf` with `project_id` (max duration: 30s).
+- Server-side API route uses `createServerClient()` (service role) to fetch all project data (project, rooms, line_items) in parallel.
 - Fills data into an HTML template string from `src/lib/templates.ts`.
-- Renders using Puppeteer Core + `@sparticuz/chromium` (serverless-safe).
+- Generates PDF via **Browserless REST API** (`POST https://chrome.browserless.io/pdf`) — single HTTP POST with HTML + print options, no WebSocket or browser handshake.
 - Generated PDF uploaded to Supabase Storage bucket `proposals`.
 - PDF URL saved to `proposals` table with `project_id` reference.
 - Returns `pdf_url` and `download_filename` to the client.
@@ -305,15 +307,14 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 
 ### PDF Generation Flow (Server-Side API Route)
 1. `POST /api/generate-pdf` receives `project_id`.
-2. Uses `createServerClient()` (service role, bypasses RLS) to fetch project + rooms + line_items + designer profile.
+2. Uses `createServerClient()` (service role, bypasses RLS) to fetch project + rooms + line_items **in parallel**.
 3. Selects the HTML template based on `project.template`.
 4. Fills all data into the template string (string interpolation).
-5. Connects to Browserless.io remote browser via WebSocket (`puppeteer.connect()`).
-6. Renders the HTML, generates A4 PDF buffer.
-7. Disconnects from browser (Browserless manages lifecycle).
-8. Uploads PDF to Supabase Storage bucket `proposals`.
-9. Inserts record into `proposals` table.
-10. Returns `{ pdf_url, download_filename }` to the client.
+5. Sends HTML to **Browserless REST API** (`POST /pdf`) — single HTTP POST, no WebSocket.
+6. Receives A4 PDF buffer in response.
+7. Uploads PDF to Supabase Storage bucket `proposals` (parallel with proposal count query).
+8. Inserts record into `proposals` table (parallel with status update if Draft).
+9. Returns `{ pdf_url, download_filename }` to the client.
 
 ### Profile Auto-Population
 When creating a new proposal, the form fetches `designer_profiles` on mount and pre-fills `payment_terms`. On save, it copies `studio_name`, `designer_name`, `email`, `phone`, `logo_url`, and `accent_color` from the profile snapshot into the `projects` row. This ensures PDFs always show the correct branding even if the profile changes later.

@@ -41,8 +41,13 @@ export function createServerClient() {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!url || !serviceRoleKey) {
-        throw new Error(
-            'Missing Supabase server credentials. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local'
+        console.error(
+            'Missing Supabase server credentials. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.'
+        );
+        // Return a placeholder client during build — actual API calls will fail gracefully at runtime
+        return createClient(
+            url || 'https://placeholder.supabase.co',
+            serviceRoleKey || 'placeholder-key'
         );
     }
 
