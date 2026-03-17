@@ -17,11 +17,13 @@ import {
     LogOut,
     User,
     Building,
+    CheckSquare,
 } from 'lucide-react';
 
 const navItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/completed', label: 'Completed Projects', icon: CheckSquare },
     { href: '/create', label: 'Create Proposal', icon: FilePlus },
     { href: '/profile', label: 'Studio Profile', icon: Building },
     { href: '/feedback', label: 'Feedback', icon: MessageSquare },

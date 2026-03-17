@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase, checkSupabaseConfig } from '@/lib/supabase';
@@ -9,7 +9,7 @@ import StatusBadge from '@/components/StatusBadge';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/AuthProvider';
 import ProfileSetupModal from '@/components/ProfileSetupModal';
-import { Plus, Trash2, FileText, Search, Calendar, ArrowRight, AlertTriangle, Sparkles, Eye } from 'lucide-react';
+import { Trash2, FileText, Search, Calendar, ArrowRight, AlertTriangle, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface Project {
@@ -18,31 +18,17 @@ interface Project {
     project_type: string;
     status: string;
     created_at: string;
-    client_viewed_at: string | null;
 }
 
-export default function DashboardPage() {
+export default function CompletedProjectsPage() {
     const router = useRouter();
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    const [statusFilter, setStatusFilter] = useState('All');
     const [deleting, setDeleting] = useState<string | null>(null);
     const [configError, setConfigError] = useState('');
     const [showProfileSetup, setShowProfileSetup] = useState(false);
     const { user } = useAuth();
-
-    // Prefetch common routes for instant navigation
-    useEffect(() => {
-        router.prefetch('/create');
-    }, [router]);
-
-    // Prefetch proposal pages once projects load
-    useEffect(() => {
-        projects.slice(0, 5).forEach(p => {
-            router.prefetch(`/proposals/${p.id}`);
-        });
-    }, [projects, router]);
 
     useEffect(() => {
         const { configured, message } = checkSupabaseConfig();
@@ -76,15 +62,16 @@ export default function DashboardPage() {
         try {
             const { data, error } = await supabase
                 .from('projects')
-                .select('id, client_name, project_type, status, created_at, client_viewed_at')
+                .select('id, client_name, project_type, status, created_at')
                 .eq('user_id', user!.id)
+                .eq('status', 'Completed')
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
             setProjects(data || []);
         } catch (err) {
             console.error('Error fetching projects:', err);
-            toast.error('Failed to load projects');
+            toast.error('Failed to load completed projects');
         } finally {
             setLoading(false);
         }
@@ -108,12 +95,9 @@ export default function DashboardPage() {
     };
 
     const filteredProjects = projects.filter(
-        (p) => {
-            const matchesSearch = p.client_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                  p.project_type.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesStatus = statusFilter === 'All' || p.status === statusFilter;
-            return matchesSearch && matchesStatus;
-        }
+        (p) =>
+            p.client_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.project_type.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const formatDate = (dateStr: string) => {
@@ -129,15 +113,11 @@ export default function DashboardPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 animate-fade-in">
                 <div>
-                    <h1 className="text-2xl font-bold text-white tracking-tight">Projects</h1>
+                    <h1 className="text-2xl font-bold text-white tracking-tight">Completed Projects</h1>
                     <p className="text-[#5a5a70] text-sm mt-1">
-                        Manage your interior design proposals
+                        View your successfully delivered projects
                     </p>
                 </div>
-                <Link href="/create" className="btn-primary">
-                    <Plus size={18} />
-                    New Project
-                </Link>
             </div>
 
             {configError && (
@@ -155,53 +135,37 @@ export default function DashboardPage() {
             )}
 
             {loading ? (
-                <LoadingSpinner text="Loading your projects..." />
+                <LoadingSpinner text="Loading completed projects..." />
             ) : projects.length === 0 && !configError ? (
                 /* Empty State */
                 <div className="glass-card flex flex-col items-center justify-center py-24 px-8 text-center animate-slide-up">
                     <div className="relative mb-8">
-                        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 border border-brand-700/20 flex items-center justify-center animate-float">
-                            <FileText size={40} className="text-brand-400" />
+                        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#1a1a2e] to-purple-500/10 border border-purple-500/20 flex items-center justify-center animate-float">
+                            <FileText size={40} className="text-purple-400" />
                         </div>
-                        <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-brand-500 flex items-center justify-center animate-pulse-glow">
+                        <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center animate-pulse-glow">
                             <Sparkles size={12} className="text-white" />
                         </div>
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-3">No projects yet</h3>
+                    <h3 className="text-xl font-bold text-white mb-3">No completed projects</h3>
                     <p className="text-[#6a6a80] text-sm mb-8 max-w-md leading-relaxed">
-                        Create your first interior design proposal and impress your clients with beautiful, branded PDFs.
+                        When you mark a project as &quot;Completed&quot;, it will appear here. Keep up the great work!
                     </p>
-                    <Link href="/create" className="btn-primary text-base px-8 py-3">
-                        <Plus size={20} />
-                        Create Your First Proposal
-                    </Link>
                 </div>
             ) : (
                 <>
-                    {/* Search and Filter */}
-                    <div className="flex flex-col sm:flex-row gap-4 mb-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
-                        <div className="relative flex-1 max-w-sm">
+                    {/* Search */}
+                    <div className="mb-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
+                        <div className="relative max-w-sm">
                             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
                             <input
                                 type="text"
-                                placeholder="Search projects..."
+                                placeholder="Search completed projects..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="input-field pl-11"
                             />
                         </div>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="input-field w-full sm:w-48 appearance-none bg-[#0d0d14] border-[#2a2a40] text-sm"
-                            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238888a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center' }}
-                        >
-                            <option value="All">All Statuses</option>
-                            <option value="Draft">Draft</option>
-                            <option value="Sent">Sent</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Completed">Completed</option>
-                        </select>
                     </div>
 
                     {/* Projects Table (desktop) */}
@@ -241,17 +205,10 @@ export default function DashboardPage() {
                                         <td className="px-6 py-4">
                                             <span className="text-[#8888a0] text-sm bg-[#12121a] px-2.5 py-1 rounded-lg">{project.project_type}</span>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex flex-col gap-1">
-                                                <div className="flex items-center gap-1.5 text-[#8888a0] text-sm">
-                                                    <Calendar size={14} className="text-[#5a5a70]" />
-                                                    {formatDate(project.created_at)}
-                                                </div>
-                                                {project.client_viewed_at && (
-                                                    <div className="flex items-center gap-1 text-emerald-400 text-xs font-medium" title={`Viewed on ${formatDate(project.client_viewed_at)}`}>
-                                                        <Eye size={12} /> Viewed
-                                                    </div>
-                                                )}
+                                        <td className="px-6 py-4 text-[#8888a0] text-sm">
+                                            <div className="flex items-center gap-1.5">
+                                                <Calendar size={14} className="text-[#5a5a70]" />
+                                                {formatDate(project.created_at)}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -299,16 +256,9 @@ export default function DashboardPage() {
                                     <StatusBadge status={project.status} />
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-[#5a5a70] text-xs flex items-center gap-1">
-                                            <Calendar size={12} /> {formatDate(project.created_at)}
-                                        </span>
-                                        {project.client_viewed_at && (
-                                            <span className="text-emerald-400 text-xs flex items-center gap-1 font-medium">
-                                                <Eye size={12} /> Viewed
-                                            </span>
-                                        )}
-                                    </div>
+                                    <span className="text-[#5a5a70] text-xs flex items-center gap-1">
+                                        <Calendar size={12} /> {formatDate(project.created_at)}
+                                    </span>
                                     <button
                                         onClick={(e) => {
                                             e.preventDefault();
@@ -323,10 +273,10 @@ export default function DashboardPage() {
                         ))}
                     </div>
 
-                    {filteredProjects.length === 0 && (searchQuery || statusFilter !== 'All') && (
+                    {filteredProjects.length === 0 && searchQuery && (
                         <div className="text-center py-16 text-[#5a5a70]">
                             <Search size={32} className="mx-auto mb-3 opacity-50" />
-                            No projects matching your filters
+                            No projects matching &quot;{searchQuery}&quot;
                         </div>
                     )}
                 </>

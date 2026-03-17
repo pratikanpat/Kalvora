@@ -151,6 +151,7 @@ export default function ProposalViewPage() {
                                 <option value="Draft">Draft</option>
                                 <option value="Sent">Sent</option>
                                 <option value="Approved">Approved</option>
+                                <option value="Completed">Completed</option>
                             </select>
                         </div>
                     </div>

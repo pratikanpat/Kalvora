@@ -148,6 +148,10 @@ body {
   .status-approved {
     @apply status-badge bg-emerald-500/15 text-emerald-400 border border-emerald-500/20;
   }
+
+  .status-completed {
+    @apply status-badge bg-purple-500/15 text-purple-400 border border-purple-500/20;
+  }
 }
 
 /* Toast custom styles */
