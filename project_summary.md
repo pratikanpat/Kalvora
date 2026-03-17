@@ -36,7 +36,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 | **Frontend** | React 18, TailwindCSS 3 |
 | **Database** | Supabase (PostgreSQL) |
 | **Authentication** | Supabase Auth (email/password) |
-| **PDF Generation** | Puppeteer Core + `@sparticuz/chromium` (serverless-compatible) |
+| **PDF Generation** | Puppeteer Core + Browserless.io (remote browser via WebSocket) |
 | **Storage** | Supabase Storage (buckets: `logos`, `proposals`) |
 | **Icons** | Lucide React |
 | **Toasts/Notifications** | react-hot-toast |
@@ -47,6 +47,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY` (used server-side to bypass RLS in PDF generation API)
+- `BROWSERLESS_API_TOKEN` (Browserless.io API key for remote browser PDF generation)
 
 ---
 
@@ -275,11 +276,12 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 2. Uses `createServerClient()` (service role, bypasses RLS) to fetch project + rooms + line_items + designer profile.
 3. Selects the HTML template based on `project.template`.
 4. Fills all data into the template string (string interpolation).
-5. Launches Puppeteer with `@sparticuz/chromium` (supports Vercel serverless).
+5. Connects to Browserless.io remote browser via WebSocket (`puppeteer.connect()`).
 6. Renders the HTML, generates A4 PDF buffer.
-7. Uploads PDF to Supabase Storage bucket `proposals`.
-8. Inserts record into `proposals` table.
-9. Returns `{ pdf_url, download_filename }` to the client.
+7. Disconnects from browser (Browserless manages lifecycle).
+8. Uploads PDF to Supabase Storage bucket `proposals`.
+9. Inserts record into `proposals` table.
+10. Returns `{ pdf_url, download_filename }` to the client.
 
 ### Profile Auto-Population
 When creating a new proposal, the form fetches `designer_profiles` on mount and pre-fills `payment_terms`. On save, it copies `studio_name`, `designer_name`, `email`, `phone`, `logo_url`, and `accent_color` from the profile snapshot into the `projects` row. This ensures PDFs always show the correct branding even if the profile changes later.

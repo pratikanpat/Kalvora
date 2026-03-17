@@ -3,32 +3,9 @@ import { createServerClient } from '@/lib/supabase';
 import { minimalTemplate, luxuryTemplate, modernTemplate, blueprintTemplate, editorialTemplate, highContrastTemplate } from '@/lib/templates';
 import type { TemplateData } from '@/lib/templates';
 
-export const maxDuration = 60; // Allow up to 60s for PDF generation
+export const maxDuration = 30;
 
-// Cache the resolved Chrome executable path across requests
-let cachedChromePath: string | null = null;
-
-async function findChromePath(): Promise<string> {
-    if (cachedChromePath) return cachedChromePath;
-
-    const chromePaths = [
-        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-        '/usr/bin/google-chrome',
-        '/usr/bin/chromium-browser',
-        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    ];
-
-    const fs = await import('fs');
-    for (const p of chromePaths) {
-        if (fs.existsSync(p)) {
-            cachedChromePath = p;
-            return p;
-        }
-    }
-
-    throw new Error('Chrome/Chromium not found. Please install Google Chrome or set up @sparticuz/chromium.');
-}
+const BROWSERLESS_TOKEN = process.env.BROWSERLESS_API_TOKEN;
 
 export async function POST(request: NextRequest) {
     try {
@@ -37,6 +14,11 @@ export async function POST(request: NextRequest) {
 
         if (!project_id) {
             return NextResponse.json({ error: 'project_id is required' }, { status: 400 });
+        }
+
+        if (!BROWSERLESS_TOKEN) {
+            console.error('BROWSERLESS_API_TOKEN is not set');
+            return NextResponse.json({ error: 'PDF service is not configured' }, { status: 500 });
         }
 
         const supabase = createServerClient();
@@ -74,7 +56,6 @@ export async function POST(request: NextRequest) {
             created_at: project.created_at,
             rooms: rooms || [],
             line_items: lineItems || [],
-            // New fields
             studio_name: project.designer_name || '',
             project_size: project.project_size || '',
             services_included: project.services_included || [],
@@ -105,116 +86,84 @@ export async function POST(request: NextRequest) {
                 html = minimalTemplate(templateData);
         }
 
-        // 4. Generate PDF with Puppeteer
-        let browser;
-        try {
-            let puppeteer;
+        // 4. Generate PDF via Browserless REST API + count proposals IN PARALLEL
+        //    REST /pdf is much faster than WebSocket — single HTTP POST, no browser handshake
+        const sanitizedClientName = project.client_name
+            .toLowerCase()
+            .replace(/\s+/g, '_')
+            .replace(/[^a-z0-9_]/g, '');
 
-            try {
-                // Try serverless chromium first
-                const chromium = (await import('@sparticuz/chromium')).default;
-                puppeteer = (await import('puppeteer-core')).default;
-
-                browser = await puppeteer.launch({
-                    args: [...chromium.args, '--disable-gpu', '--disable-dev-shm-usage'],
-                    defaultViewport: chromium.defaultViewport,
-                    executablePath: await chromium.executablePath(),
-                    headless: true,
-                });
-            } catch {
-                // Fallback: use local Chrome with cached path
-                puppeteer = (await import('puppeteer-core')).default;
-                const executablePath = await findChromePath();
-
-                browser = await puppeteer.launch({
-                    executablePath,
-                    headless: true,
-                    args: [
-                        '--no-sandbox',
-                        '--disable-setuid-sandbox',
-                        '--disable-gpu',
-                        '--disable-dev-shm-usage',
-                        '--disable-extensions',
-                    ],
-                });
-            }
-
-            const page = await browser.newPage();
-            // Use 'domcontentloaded' — HTML is fully self-contained (inline CSS, base64 logo)
-            // No need to wait for network idle, saving ~1-3 seconds
-            await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 15000 });
-            const pdfBuffer = await page.pdf({
-                format: 'A4',
-                printBackground: true,
-                margin: { top: '0', right: '0', bottom: '0', left: '0' },
-            });
-
-            await browser.close();
-            browser = null;
-
-            // 5. Count proposals + upload PDF in parallel-friendly sequence
-            const sanitizedClientName = project.client_name
-                .toLowerCase()
-                .replace(/\s+/g, '_')
-                .replace(/[^a-z0-9_]/g, '');
-
-            const { count: proposalCount } = await supabase
+        const [pdfResponse, proposalCountResult] = await Promise.all([
+            fetch(`https://chrome.browserless.io/pdf?token=${BROWSERLESS_TOKEN}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    html,
+                    options: {
+                        format: 'A4',
+                        printBackground: true,
+                        margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' },
+                    },
+                }),
+            }),
+            supabase
                 .from('proposals')
                 .select('*', { count: 'exact', head: true })
-                .eq('project_id', project_id);
+                .eq('project_id', project_id),
+        ]);
 
-            const proposalNumber = (proposalCount || 0) + 1;
-            const downloadFileName = `${sanitizedClientName}_proposal_${proposalNumber}.pdf`;
-            const storageFileName = `${sanitizedClientName}_proposal_${proposalNumber}_${Date.now()}.pdf`;
-            const pdfUint8 = new Uint8Array(pdfBuffer);
-
-            const { error: uploadError } = await supabase.storage
-                .from('proposals')
-                .upload(storageFileName, pdfUint8, {
-                    contentType: 'application/pdf',
-                    upsert: true,
-                });
-
-            if (uploadError) {
-                console.error('Upload error:', uploadError);
-                return NextResponse.json({ error: 'Failed to upload PDF' }, { status: 500 });
-            }
-
-            // 6. Get public URL
-            const { data: urlData } = supabase.storage.from('proposals').getPublicUrl(storageFileName);
-            const pdfUrl = urlData.publicUrl;
-
-            // 7. Save proposal record + update project status IN PARALLEL
-            const dbOps = [
-                Promise.resolve(supabase.from('proposals').insert({ project_id, pdf_url: pdfUrl })),
-            ];
-
-            if (project.status === 'Draft') {
-                dbOps.push(
-                    Promise.resolve(
-                        supabase
-                            .from('projects')
-                            .update({ status: 'Sent', updated_at: new Date().toISOString() })
-                            .eq('id', project_id)
-                    )
-                );
-            }
-
-            await Promise.all(dbOps);
-
-            return NextResponse.json({ pdf_url: pdfUrl, download_filename: downloadFileName });
-
-        } catch (pdfError) {
-            console.error('PDF generation error:', pdfError);
+        if (!pdfResponse.ok) {
+            const errText = await pdfResponse.text();
+            console.error('Browserless PDF error:', pdfResponse.status, errText);
             return NextResponse.json(
-                { error: `PDF generation failed: ${pdfError instanceof Error ? pdfError.message : 'Unknown error'}` },
+                { error: `PDF generation failed (${pdfResponse.status})` },
                 { status: 500 }
             );
-        } finally {
-            if (browser) {
-                try { await browser.close(); } catch { /* ignore */ }
-            }
         }
+
+        const pdfArrayBuffer = await pdfResponse.arrayBuffer();
+        const pdfUint8 = new Uint8Array(pdfArrayBuffer);
+
+        // 5. Upload PDF to Supabase Storage
+        const proposalNumber = (proposalCountResult.count || 0) + 1;
+        const downloadFileName = `${sanitizedClientName}_proposal_${proposalNumber}.pdf`;
+        const storageFileName = `${sanitizedClientName}_proposal_${proposalNumber}_${Date.now()}.pdf`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('proposals')
+            .upload(storageFileName, pdfUint8, {
+                contentType: 'application/pdf',
+                upsert: true,
+            });
+
+        if (uploadError) {
+            console.error('Upload error:', uploadError);
+            return NextResponse.json({ error: 'Failed to upload PDF' }, { status: 500 });
+        }
+
+        // 6. Get public URL
+        const { data: urlData } = supabase.storage.from('proposals').getPublicUrl(storageFileName);
+        const pdfUrl = urlData.publicUrl;
+
+        // 7. Save proposal record + update project status IN PARALLEL
+        const dbOps: Promise<unknown>[] = [
+            Promise.resolve(supabase.from('proposals').insert({ project_id, pdf_url: pdfUrl })),
+        ];
+
+        if (project.status === 'Draft') {
+            dbOps.push(
+                Promise.resolve(
+                    supabase
+                        .from('projects')
+                        .update({ status: 'Sent', updated_at: new Date().toISOString() })
+                        .eq('id', project_id)
+                )
+            );
+        }
+
+        await Promise.all(dbOps);
+
+        return NextResponse.json({ pdf_url: pdfUrl, download_filename: downloadFileName });
 
     } catch (err) {
         console.error('API error:', err);
@@ -224,3 +173,5 @@ export async function POST(request: NextRequest) {
         );
     }
 }
+
+
