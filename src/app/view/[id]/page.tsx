@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Download, MapPin, Phone, Mail, Building, User, Sparkles, CheckCircle2, MessageSquare, Clock, Send, Loader2 } from 'lucide-react';
+import { Download, MapPin, Phone, Mail, Building, User, Sparkles, CheckCircle2, MessageSquare, Clock, Send, Loader2, X, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ProjectData {
@@ -35,6 +35,7 @@ interface Comment {
 
 export default function PublicViewPage() {
     const params = useParams();
+    const router = useRouter();
     const projectId = params.id as string;
     const [project, setProject] = useState<ProjectData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -45,6 +46,7 @@ export default function PublicViewPage() {
     const [sendingComment, setSendingComment] = useState(false);
     const [clientComment, setClientComment] = useState('');
     const [comments, setComments] = useState<Comment[]>([]);
+    const [showApproveModal, setShowApproveModal] = useState(false);
 
     useEffect(() => {
         loadProject();
@@ -111,8 +113,14 @@ export default function PublicViewPage() {
 
             if (!res.ok) throw new Error('Failed to approve');
 
-            toast.success('Proposal approved! The designer has been notified.');
+            toast.success('Proposal approved! Redirecting to your invoice...');
             setProject({ ...project, status: 'Approved' });
+            setShowApproveModal(false);
+
+            // Redirect to invoice page after a brief delay
+            setTimeout(() => {
+                router.push(`/invoice/${projectId}`);
+            }, 1200);
         } catch (error) {
             console.error(error);
             toast.error('Something went wrong. Please try again.');
@@ -405,7 +413,7 @@ export default function PublicViewPage() {
                             <p className="text-[#5a5a70] text-xs">Click to approve this proposal</p>
                         </div>
                         <button
-                            onClick={handleApprove}
+                            onClick={() => setShowApproveModal(true)}
                             disabled={approving}
                             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/20 py-3 px-6 sm:px-8 text-sm sm:text-base transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                         >
@@ -431,6 +439,62 @@ export default function PublicViewPage() {
                     <div className="max-w-3xl mx-auto flex items-center justify-center gap-2 sm:gap-3 text-emerald-400">
                         <CheckCircle2 size={20} />
                         <span className="font-semibold text-sm sm:text-base">This proposal has been approved.</span>
+                    </div>
+                </div>
+            )}
+
+            {/* ═══════════════════════════════════════════════════
+               APPROVAL CONFIRMATION MODAL
+               ═══════════════════════════════════════════════════ */}
+            {showApproveModal && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-[#16161f] border border-[#2a2a40] rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 relative animate-in fade-in zoom-in-95 duration-200">
+                        {/* Close button */}
+                        <button
+                            onClick={() => setShowApproveModal(false)}
+                            className="absolute top-4 right-4 text-[#5a5a70] hover:text-white transition-colors"
+                        >
+                            <X size={20} />
+                        </button>
+
+                        {/* Icon */}
+                        <div className="flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500/15 border border-emerald-500/30 mx-auto mb-5">
+                            <FileText size={24} className="text-emerald-400" />
+                        </div>
+
+                        <h3 className="text-xl font-bold text-white text-center mb-2">
+                            Approve this Proposal?
+                        </h3>
+                        <p className="text-[#8888a0] text-sm text-center leading-relaxed mb-6">
+                            The designer will be notified. You will receive an invoice by email and can view it immediately.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <button
+                                onClick={() => setShowApproveModal(false)}
+                                disabled={approving}
+                                className="flex-1 py-3 px-5 rounded-xl border border-[#2a2a40] text-[#8888a0] hover:text-white hover:border-[#3a3a50] transition-all duration-200 font-medium text-sm disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleApprove}
+                                disabled={approving}
+                                className="flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-200 text-sm disabled:opacity-60"
+                            >
+                                {approving ? (
+                                    <>
+                                        <Loader2 size={16} className="animate-spin" />
+                                        Approving...
+                                    </>
+                                ) : (
+                                    <>
+                                        <CheckCircle2 size={16} />
+                                        Yes, Approve & Get Invoice
+                                    </>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-18 (v2 — build resilience fixes, Browserless REST API)
+> Last updated: 2026-03-18 (v3 — approval confirmation modal, invoice page, email URL fix)
 
 ---
 
@@ -51,7 +51,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 - `SUPABASE_SERVICE_ROLE_KEY` (used server-side to bypass RLS in PDF generation API)
 - `BROWSERLESS_API_TOKEN` (Browserless.io API key for remote browser PDF generation)
 - `RESEND_API_KEY` (Resend API key for transactional email notifications)
-- `NEXT_PUBLIC_APP_URL` (optional — used in email links, defaults to `http://localhost:3000`)
+- `NEXT_PUBLIC_APP_URL` (production URL for email links — defaults to `https://kalvora.kaliprlabs.in`)
 
 ---
 
@@ -62,7 +62,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   /app
     /api
       /generate-pdf      → POST API route: generates PDF using Puppeteer, uploads to Supabase Storage
-      /respond-proposal  → POST API route (force-dynamic): handles client actions (view, approve, request_changes), sends emails via Resend
+      /respond-proposal  → POST API route (force-dynamic): handles client actions (view, approve, request_changes), sends emails via Resend; on approval, also emails client an invoice link
       /warmup             → Lightweight warm-up endpoint for serverless cold-start reduction
     /completed           → Lists all projects with status 'Completed'
     /create              → Multi-section form to create a new proposal
@@ -70,6 +70,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     /edit/[id]           → Edit an existing project
     /feedback            → Public feedback submission form
     /forgot-password     → Password reset request page (sends email via Supabase Auth)
+    /invoice/[id]        → Public invoice page (no auth) — shows itemized invoice from project data, Print/Save as PDF via window.print()
     /login               → Login page (email/password + Google OAuth)
     /signup              → Signup page (email/password + Google OAuth)
     /reset-password      → Set new password page (from email reset link)
@@ -180,13 +181,20 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Shareable link for client to view the proposal.
 - **Client Approval Workflow:**
   - Sticky "Approve Proposal" button at bottom of page.
+  - **Confirmation Modal**: Clicking "Approve Proposal" opens a confirmation popup asking "Approve this Proposal?" with Cancel and "✓ Yes, Approve & Get Invoice" buttons.
+  - On confirm: approves the proposal, notifies the designer via email, sends the client an invoice email, and redirects to `/invoice/[id]`.
   - Inline **Discussion section** with persistent comment history (timestamps + author badges).
   - Clients can send feedback via comments; designer is notified via email (Resend).
-  - Approving sets project status to `Approved` and emails the designer.
   - Comments do NOT change the project status — they are purely for discussion.
 - Tracks `client_viewed_at` timestamp when the link is first opened.
 
-### 9. Feedback Page
+### 9. Invoice Page (`/invoice/[id]`)
+- Public page (no auth required) — accessible after approval or via email link.
+- Displays: Invoice number (auto-generated from date + project ID), From (designer/studio info), Bill To (client info), project details, line items table, subtotal, tax, grand total, and payment terms.
+- "Print / Save as PDF" button (uses `window.print()` with print-optimized CSS).
+- After approval, client receives an email with a link to this page.
+
+### 10. Feedback Page
 - Public form (no auth required) to submit name, email, and message.
 - Stored in `feedback` table.
 
@@ -336,7 +344,6 @@ When creating a new proposal, the form fetches `designer_profiles` on mount and 
 
 ## 7. Current Limitations
 
-- **No invoice generation** — There is no separate invoice flow. The PDF is always a "quotation/proposal."
 - **No payment tracking** — No way to record partial payments or payment milestones.
 - **No project analytics** — No dashboard stats (revenue, projects per month, conversion rate, etc.).
 - **No revision history** — Editing a project replaces data; there is no versioning of proposals.

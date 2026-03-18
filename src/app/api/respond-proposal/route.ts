@@ -4,6 +4,11 @@ import { Resend } from 'resend';
 
 export const dynamic = 'force-dynamic';
 
+/** Production URL — used in all email links. Env var takes priority, else hardcoded prod URL. */
+const APP_URL =
+    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/+$/, '') ||
+    'https://kalvora.kaliprlabs.in';
+
 export async function POST(request: Request) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     try {
@@ -16,10 +21,10 @@ export async function POST(request: Request) {
 
         const supabase = createServerClient();
 
-        // Fetch the project
+        // Fetch the project (include client_email for invoice emails)
         const { data: project, error: projectError } = await supabase
             .from('projects')
-            .select('status, user_id')
+            .select('status, user_id, client_email, client_name')
             .eq('id', projectId)
             .single();
 
@@ -71,7 +76,7 @@ export async function POST(request: Request) {
                                     <strong>${clientName}</strong> approved your proposal for <strong>${projectName}</strong>.
                                 </p>
                                 <div style="text-align:center;">
-                                    <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/proposals/${projectId}" 
+                                    <a href="${APP_URL}/proposals/${projectId}" 
                                        style="display:inline-block;background:#4f46e5;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
                                        View in Dashboard →
                                     </a>
@@ -81,6 +86,43 @@ export async function POST(request: Request) {
                     });
                 } catch (emailError) {
                     console.error('Failed to send approval email:', emailError);
+                }
+            }
+
+            // Email the client an invoice link
+            const clientEmail = project.client_email;
+            if (clientEmail && process.env.RESEND_API_KEY) {
+                try {
+                    await resend.emails.send({
+                        from: 'Kalvora <notifications@resend.dev>',
+                        to: clientEmail,
+                        subject: `📄 Your Invoice for ${projectName}`,
+                        html: `
+                            <div style="font-family:'Segoe UI',sans-serif;max-width:560px;margin:0 auto;padding:32px;background:#fafafa;border-radius:12px;">
+                                <div style="text-align:center;margin-bottom:24px;">
+                                    <span style="font-size:48px;">📄</span>
+                                </div>
+                                <h2 style="color:#111;text-align:center;margin:0 0 8px;">Your Invoice is Ready</h2>
+                                <p style="color:#555;text-align:center;margin:0 0 8px;">
+                                    Hi <strong>${clientName}</strong>, your proposal for <strong>${projectName}</strong> has been approved.
+                                </p>
+                                <p style="color:#555;text-align:center;margin:0 0 24px;">
+                                    You can view and download your invoice below.
+                                </p>
+                                <div style="text-align:center;">
+                                    <a href="${APP_URL}/invoice/${projectId}" 
+                                       style="display:inline-block;background:#059669;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
+                                       View Invoice →
+                                    </a>
+                                </div>
+                                <p style="color:#999;text-align:center;margin:24px 0 0;font-size:12px;">
+                                    Generated with Kalvora • Professional Interior Design Proposals
+                                </p>
+                            </div>
+                        `,
+                    });
+                } catch (emailError) {
+                    console.error('Failed to send invoice email to client:', emailError);
                 }
             }
 
@@ -126,7 +168,7 @@ export async function POST(request: Request) {
                                     <p style="color:#333;font-size:14px;margin:0;white-space:pre-wrap;">${comment}</p>
                                 </div>` : ''}
                                 <div style="text-align:center;">
-                                    <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/proposals/${projectId}" 
+                                    <a href="${APP_URL}/proposals/${projectId}" 
                                        style="display:inline-block;background:#4f46e5;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
                                        View in Dashboard →
                                     </a>
