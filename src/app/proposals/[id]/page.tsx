@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import ProjectPipeline from '@/components/ProjectPipeline';
 
 interface ProjectData {
     id: string;
@@ -151,6 +152,7 @@ export default function ProposalViewPage() {
                                 <option value="Draft">Draft</option>
                                 <option value="Sent">Sent</option>
                                 <option value="Approved">Approved</option>
+                                <option value="Paid">Paid</option>
                                 <option value="Completed">Completed</option>
                             </select>
                         </div>
@@ -170,6 +172,11 @@ export default function ProposalViewPage() {
                         <Link href={`/edit/${projectId}`} className="btn-secondary text-sm py-2">
                             <Edit size={15} /> Edit Project
                         </Link>
+                    </div>
+
+                    {/* Project Pipeline */}
+                    <div className="px-6 pb-6 -mt-1">
+                        <ProjectPipeline status={project.status} />
                     </div>
                 </div>
 

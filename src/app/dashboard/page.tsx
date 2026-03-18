@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase, checkSupabaseConfig } from '@/lib/supabase';
 import DashboardLayout from '@/components/DashboardLayout';
-import StatusBadge from '@/components/StatusBadge';
+import ProjectPipeline from '@/components/ProjectPipeline';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/AuthProvider';
 import ProfileSetupModal from '@/components/ProfileSetupModal';
@@ -200,6 +200,7 @@ export default function DashboardPage() {
                             <option value="Draft">Draft</option>
                             <option value="Sent">Sent</option>
                             <option value="Approved">Approved</option>
+                            <option value="Paid">Paid</option>
                             <option value="Completed">Completed</option>
                         </select>
                     </div>
@@ -255,7 +256,7 @@ export default function DashboardPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <StatusBadge status={project.status} />
+                                            <ProjectPipeline status={project.status} />
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center justify-end gap-1">
@@ -296,7 +297,7 @@ export default function DashboardPage() {
                                         <h3 className="text-white font-semibold">{project.client_name}</h3>
                                         <p className="text-[#5a5a70] text-sm">{project.project_type}</p>
                                     </div>
-                                    <StatusBadge status={project.status} />
+                                    <ProjectPipeline status={project.status} />
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">

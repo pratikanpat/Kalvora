@@ -11,6 +11,7 @@ const APP_URL =
 
 export async function POST(request: Request) {
     const resend = new Resend(process.env.RESEND_API_KEY);
+    const emailDebug: Record<string, unknown> = {};
     try {
         const body = await request.json();
         const { projectId, action, comment, clientName, projectName } = body;
@@ -35,9 +36,35 @@ export async function POST(request: Request) {
         // Get the designer's LOGIN email from Supabase Auth (the email they signed up with)
         let designerEmail: string | null = null;
         if (project.user_id) {
-            const { data: userData } = await supabase.auth.admin.getUserById(project.user_id);
+            const { data: userData, error: userError } = await supabase.auth.admin.getUserById(project.user_id);
             designerEmail = userData?.user?.email || null;
+            emailDebug.user_id = project.user_id;
+            emailDebug.designerEmail = designerEmail;
+            if (userError) {
+                emailDebug.userLookupError = String(userError);
+                console.error('Failed to look up designer user:', userError);
+            }
+        } else {
+            emailDebug.issue = 'project.user_id is null';
         }
+
+        emailDebug.hasResendKey = !!process.env.RESEND_API_KEY;
+
+        // Also try the profile email as a fallback
+        let profileEmail: string | null = null;
+        if (project.user_id) {
+            const { data: profile } = await supabase
+                .from('designer_profiles')
+                .select('email')
+                .eq('user_id', project.user_id)
+                .single();
+            profileEmail = profile?.email || null;
+            emailDebug.profileEmail = profileEmail;
+        }
+
+        // Use designer auth email, fallback to profile email
+        const targetEmail = designerEmail || profileEmail;
+        emailDebug.targetEmail = targetEmail;
 
         // ─── 1. Mark as viewed ───────────────────────────────────────────
         if (action === 'viewed') {
@@ -60,11 +87,11 @@ export async function POST(request: Request) {
                 .eq('id', projectId);
 
             // Email the designer
-            if (designerEmail && process.env.RESEND_API_KEY) {
+            if (targetEmail && process.env.RESEND_API_KEY) {
                 try {
-                    await resend.emails.send({
-                        from: 'Kalvora <notifications@resend.dev>',
-                        to: designerEmail,
+                    const result = await resend.emails.send({
+                        from: 'Kalvora <notifications@kalvora.kaliprlabs.in>',
+                        to: targetEmail,
                         subject: `🎉 Proposal Approved by ${clientName}`,
                         html: `
                             <div style="font-family:'Segoe UI',sans-serif;max-width:560px;margin:0 auto;padding:32px;background:#fafafa;border-radius:12px;">
@@ -84,17 +111,23 @@ export async function POST(request: Request) {
                             </div>
                         `,
                     });
+                    emailDebug.approvalEmailResult = result;
+                    console.log('Approval email sent:', JSON.stringify(result));
                 } catch (emailError) {
+                    emailDebug.approvalEmailError = String(emailError);
                     console.error('Failed to send approval email:', emailError);
                 }
+            } else {
+                emailDebug.approvalSkipped = { hasEmail: !!targetEmail, hasKey: !!process.env.RESEND_API_KEY };
+                console.warn('Approval email skipped:', emailDebug.approvalSkipped);
             }
 
             // Email the client an invoice link
             const clientEmail = project.client_email;
             if (clientEmail && process.env.RESEND_API_KEY) {
                 try {
-                    await resend.emails.send({
-                        from: 'Kalvora <notifications@resend.dev>',
+                    const result = await resend.emails.send({
+                        from: 'Kalvora <notifications@kalvora.kaliprlabs.in>',
                         to: clientEmail,
                         subject: `📄 Your Invoice for ${projectName}`,
                         html: `
@@ -121,12 +154,15 @@ export async function POST(request: Request) {
                             </div>
                         `,
                     });
+                    emailDebug.invoiceEmailResult = result;
+                    console.log('Invoice email sent:', JSON.stringify(result));
                 } catch (emailError) {
+                    emailDebug.invoiceEmailError = String(emailError);
                     console.error('Failed to send invoice email to client:', emailError);
                 }
             }
 
-            return NextResponse.json({ success: true, message: 'Proposal approved' });
+            return NextResponse.json({ success: true, message: 'Proposal approved', _debug: emailDebug });
         }
 
         // ─── 3. Request Changes (comment only — does NOT change status) ─
@@ -148,11 +184,11 @@ export async function POST(request: Request) {
             }
 
             // Email the designer about the feedback
-            if (designerEmail && process.env.RESEND_API_KEY) {
+            if (targetEmail && process.env.RESEND_API_KEY) {
                 try {
-                    await resend.emails.send({
-                        from: 'Kalvora <notifications@resend.dev>',
-                        to: designerEmail,
+                    const result = await resend.emails.send({
+                        from: 'Kalvora <notifications@kalvora.kaliprlabs.in>',
+                        to: targetEmail,
                         subject: `📝 ${clientName} requested changes`,
                         html: `
                             <div style="font-family:'Segoe UI',sans-serif;max-width:560px;margin:0 auto;padding:32px;background:#fafafa;border-radius:12px;">
@@ -176,18 +212,24 @@ export async function POST(request: Request) {
                             </div>
                         `,
                     });
+                    emailDebug.feedbackEmailResult = result;
+                    console.log('Feedback email sent:', JSON.stringify(result));
                 } catch (emailError) {
+                    emailDebug.feedbackEmailError = String(emailError);
                     console.error('Failed to send change request email:', emailError);
                 }
+            } else {
+                emailDebug.feedbackSkipped = { hasEmail: !!targetEmail, hasKey: !!process.env.RESEND_API_KEY };
+                console.warn('Feedback email skipped:', emailDebug.feedbackSkipped);
             }
 
-            return NextResponse.json({ success: true, message: 'Changes requested' });
+            return NextResponse.json({ success: true, message: 'Changes requested', _debug: emailDebug });
         }
 
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
 
     } catch (error) {
         console.error('Error in respond-proposal:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error', _debug: emailDebug }, { status: 500 });
     }
 }
