@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-18 (v4 — GST/business fields in profile, enhanced invoice with CGST/SGST, bank details, edit bug fix)
+> Last updated: 2026-03-19 (v5 — project-type room/line-item presets, email domain fix, invoice redirect loader)
 
 ---
 
@@ -133,9 +133,9 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 |---|---|
 | 1. Client Info | name*, email, phone, address |
 | 2. Project Details | type (Residential/Commercial/Office/Retail)*, size (sq.ft) |
-| 3. Rooms | room name + sq.ft (optional, multiple, quick-add buttons) |
+| 3. Rooms | room name + sq.ft (optional, multiple, **project-type-specific** quick-add buttons) |
 | 4. Services Included | checkboxes (7 defaults + custom), shown in PDF |
-| 5. Pricing Table | line items (name, qty, unit price), subtotal, tax %, grand total live calc |
+| 5. Pricing Table | line items (name, qty, unit price), **project-type-specific** quick-add presets, subtotal, tax %, grand total live calc |
 | 6. Timeline | estimated start date, timeline description |
 | 7. Notes & Terms | payment terms (from profile default), quotation validity days, internal notes |
 | 8. Template | pick one of 6 PDF templates (with preview modal) |
@@ -193,6 +193,7 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
   - Clients can send feedback via comments; designer is notified via email (Resend).
   - Comments do NOT change the project status — they are purely for discussion.
 - Tracks `client_viewed_at` timestamp when the link is first opened.
+- **Redirect loading overlay**: After approval, shows a full-screen spinner with "Preparing Your Invoice" while redirecting to `/invoice/[id]`.
 
 ### 9. Invoice Page (`/invoice/[id]`)
 - Public page (no auth required) — accessible after approval or via email link.

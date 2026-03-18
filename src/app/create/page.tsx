@@ -117,6 +117,20 @@ const DEFAULT_SERVICES = [
     'Vendor coordination',
 ];
 
+const ROOM_PRESETS: Record<string, string[]> = {
+    Residential: ['Living Room', 'Kitchen', 'Master Bedroom', 'Guest Bedroom', 'Bathroom', 'Balcony', 'Dining Room', 'Study'],
+    Commercial: ['Reception', 'Conference Room', 'Cabin', 'Open Workspace', 'Pantry', 'Server Room', 'Lounge'],
+    Office: ['CEO Cabin', 'Manager Cabin', 'Meeting Room', 'Open Desk Area', 'Break Room', 'Reception', 'Server Room'],
+    Retail: ['Sales Floor', 'Display Area', 'Storage Room', 'Trial Room', 'Billing Counter', 'Entrance Lobby'],
+};
+
+const LINE_ITEM_PRESETS: Record<string, string[]> = {
+    Residential: ['Design Consultation', 'Furniture & Fixtures', 'Flooring', 'False Ceiling', 'Painting', 'Electrical Work', 'Kitchen Cabinetry', 'Wardrobe', 'Curtains & Blinds'],
+    Commercial: ['Space Planning', 'Modular Furniture', 'HVAC Ducting', 'Flooring', 'False Ceiling', 'Electrical & Networking', 'Branding / Signage', 'Glass Partition'],
+    Office: ['Workstation Setup', 'Cabin Interiors', 'Conference Room Setup', 'Flooring', 'False Ceiling', 'Electrical & Data Points', 'Pantry Setup', 'Glass Partition'],
+    Retail: ['Display Unit Design', 'Shelving & Racking', 'Flooring', 'Lighting Design', 'Signage & Branding', 'Billing Counter', 'Trial Room Fit-out', 'HVAC'],
+};
+
 export default function CreatePage() {
     const router = useRouter();
     const { user } = useAuth();
@@ -560,7 +574,7 @@ export default function CreatePage() {
                                 </div>
                                 {/* Quick add common rooms */}
                                 <div className="flex flex-wrap gap-2 pt-2">
-                                    {['Living Room', 'Kitchen', 'Master Bedroom', 'Guest Bedroom', 'Bathroom', 'Balcony'].map(roomName => (
+                                    {(ROOM_PRESETS[projectType] || ROOM_PRESETS.Residential).map(roomName => (
                                         <button
                                             key={roomName}
                                             onClick={() => {
@@ -706,6 +720,26 @@ export default function CreatePage() {
                                                 </button>
                                             )}
                                         </div>
+                                    ))}
+                                </div>
+
+                                {/* Quick add common line items */}
+                                <div className="flex flex-wrap gap-2 pt-1">
+                                    {(LINE_ITEM_PRESETS[projectType] || LINE_ITEM_PRESETS.Residential).map(itemName => (
+                                        <button
+                                            key={itemName}
+                                            onClick={() => {
+                                                const emptyIdx = lineItems.findIndex(li => !li.item_name.trim());
+                                                if (emptyIdx >= 0) {
+                                                    updateLineItem(emptyIdx, 'item_name', itemName);
+                                                } else {
+                                                    setLineItems([...lineItems, { item_name: itemName, quantity: '1', unit_price: '' }]);
+                                                }
+                                            }}
+                                            className="text-xs px-2.5 py-1.5 rounded-lg bg-[#12121a] border border-[#2a2a40] text-[#8888a0] hover:text-brand-400 hover:border-brand-700/30 transition-colors"
+                                        >
+                                            + {itemName}
+                                        </button>
                                     ))}
                                 </div>
 

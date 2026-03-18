@@ -47,6 +47,7 @@ export default function PublicViewPage() {
     const [clientComment, setClientComment] = useState('');
     const [comments, setComments] = useState<Comment[]>([]);
     const [showApproveModal, setShowApproveModal] = useState(false);
+    const [redirecting, setRedirecting] = useState(false);
 
     useEffect(() => {
         loadProject();
@@ -116,11 +117,12 @@ export default function PublicViewPage() {
             toast.success('Proposal approved! Redirecting to your invoice...');
             setProject({ ...project, status: 'Approved' });
             setShowApproveModal(false);
+            setRedirecting(true);
 
             // Redirect to invoice page after a brief delay
             setTimeout(() => {
                 router.push(`/invoice/${projectId}`);
-            }, 1200);
+            }, 800);
         } catch (error) {
             console.error(error);
             toast.error('Something went wrong. Please try again.');
@@ -496,6 +498,21 @@ export default function PublicViewPage() {
                             </button>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* ═══════════════════════════════════════════════════
+               REDIRECT LOADING OVERLAY
+               ═══════════════════════════════════════════════════ */}
+            {redirecting && (
+                <div className="fixed inset-0 bg-[#0a0a0f]/95 backdrop-blur-md flex flex-col items-center justify-center z-[60] animate-in fade-in duration-300">
+                    <div className="relative mb-6">
+                        <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                            <Loader2 size={28} className="text-emerald-400 animate-spin" />
+                        </div>
+                    </div>
+                    <h3 className="text-white text-lg font-semibold mb-2">Preparing Your Invoice</h3>
+                    <p className="text-[#8888a0] text-sm">Redirecting you in a moment...</p>
                 </div>
             )}
         </div>
