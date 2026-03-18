@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { FileText, Download, Building, User, Mail, Phone, MapPin, Calendar } from 'lucide-react';
+import { FileText, Download, Building, User, Mail, Phone, MapPin, Calendar, Hash, Landmark, CreditCard, Clock } from 'lucide-react';
 
 interface ProjectData {
     id: string;
@@ -32,6 +32,14 @@ interface DesignerProfile {
     studio_address: string;
     email: string;
     phone: string;
+    gstin: string;
+    pan_number: string;
+    hsn_sac_code: string;
+    invoice_due_days: number;
+    bank_name: string;
+    bank_account_number: string;
+    bank_ifsc: string;
+    upi_id: string;
 }
 
 export default function InvoicePage() {
@@ -61,11 +69,11 @@ export default function InvoicePage() {
                 supabase.from('line_items').select('*').eq('project_id', projectId),
             ]);
 
-            // Try to fetch designer profile for bank/payment details
+            // Fetch designer profile for GST, bank, and other details
             if (proj.user_id) {
                 const { data: profile } = await supabase
                     .from('designer_profiles')
-                    .select('studio_name, studio_address, email, phone')
+                    .select('studio_name, studio_address, email, phone, gstin, pan_number, hsn_sac_code, invoice_due_days, bank_name, bank_account_number, bank_ifsc, upi_id')
                     .eq('user_id', proj.user_id)
                     .single();
                 if (profile) setDesignerProfile(profile);
@@ -87,7 +95,7 @@ export default function InvoicePage() {
         new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(a);
 
     const formatDate = (d: string) =>
-        new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
 
     const handlePrint = () => {
         window.print();
@@ -112,9 +120,27 @@ export default function InvoicePage() {
     const taxAmount = subtotal * (project.tax_rate / 100);
     const grandTotal = subtotal + taxAmount;
 
+    // GST split — assume intra-state (CGST + SGST, 50/50)
+    const halfTax = taxAmount / 2;
+    const halfRate = project.tax_rate / 2;
+
     // Generate invoice number from the creation date + last 4 chars of ID
-    const datePrefix = new Date(project.updated_at || project.created_at).toISOString().slice(0, 10).replace(/-/g, '');
+    const invoiceDate = project.updated_at || project.created_at;
+    const datePrefix = new Date(invoiceDate).toISOString().slice(0, 10).replace(/-/g, '');
     const invoiceNumber = `INV-${datePrefix}-${project.id.slice(-4).toUpperCase()}`;
+
+    // Due date calculation
+    const dueDays = designerProfile?.invoice_due_days ?? 7;
+    const dueDate = new Date(invoiceDate);
+    dueDate.setDate(dueDate.getDate() + dueDays);
+
+    // HSN/SAC code from designer profile
+    const hsnSac = designerProfile?.hsn_sac_code || '';
+
+    // Check if bank details exist
+    const hasBankDetails = designerProfile?.bank_name || designerProfile?.bank_account_number || designerProfile?.bank_ifsc;
+    const hasUpi = designerProfile?.upi_id;
+    const hasPaymentInfo = hasBankDetails || hasUpi;
 
     return (
         <>
@@ -134,6 +160,9 @@ export default function InvoicePage() {
                         box-shadow: none !important;
                         background: white !important;
                     }
+                    .print-dark-text { color: #111 !important; }
+                    .print-gray-text { color: #555 !important; }
+                    .print-border { border-color: #e5e7eb !important; }
                 }
             `}</style>
 
@@ -169,26 +198,31 @@ export default function InvoicePage() {
                                         className="h-12 sm:h-14 object-contain mb-3"
                                     />
                                 )}
-                                <h1 className="text-2xl sm:text-3xl font-bold text-white">INVOICE</h1>
-                                <p className="text-[#5a5a70] text-sm mt-1">{invoiceNumber}</p>
+                                <h1 className="text-2xl sm:text-3xl font-bold text-white print-dark-text">INVOICE</h1>
+                                <p className="text-[#5a5a70] print-gray-text text-sm mt-1">{invoiceNumber}</p>
                             </div>
-                            <div className="text-left sm:text-right space-y-1">
+                            <div className="text-left sm:text-right space-y-1.5">
                                 <div className="flex items-center gap-2 sm:justify-end">
                                     <Calendar size={14} className="text-[#5a5a70]" />
-                                    <span className="text-[#8888a0] text-sm">
-                                        Date: <span className="text-white">{formatDate(project.updated_at || project.created_at)}</span>
+                                    <span className="text-[#8888a0] print-gray-text text-sm">
+                                        Invoice Date: <span className="text-white print-dark-text font-medium">{formatDate(invoiceDate)}</span>
                                     </span>
                                 </div>
-                                {project.status === 'Approved' && (
-                                    <div className="inline-flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold mt-2">
-                                        ✓ Approved
-                                    </div>
-                                )}
+                                <div className="flex items-center gap-2 sm:justify-end">
+                                    <Clock size={14} className="text-[#5a5a70]" />
+                                    <span className="text-[#8888a0] print-gray-text text-sm">
+                                        Due Date: <span className="text-white print-dark-text font-medium">{formatDate(dueDate.toISOString())}</span>
+                                    </span>
+                                </div>
+                                {/* Status */}
+                                <div className="inline-flex items-center gap-1.5 bg-amber-500/15 border border-amber-500/30 text-amber-400 px-3 py-1 rounded-full text-xs font-semibold mt-2">
+                                    ◉ Unpaid
+                                </div>
                             </div>
                         </div>
 
                         {/* From / To */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-b border-[#1a1a2e] py-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-b border-[#1a1a2e] print-border py-6">
                             {/* From */}
                             <div>
                                 <h3 className="text-xs font-semibold text-[#5a5a70] uppercase tracking-wider mb-3">From</h3>
@@ -196,31 +230,43 @@ export default function InvoicePage() {
                                     {project.designer_name && (
                                         <div className="flex items-center gap-2">
                                             <User size={14} className="text-[#5a5a70]" />
-                                            <span className="text-white text-sm font-medium">{project.designer_name}</span>
+                                            <span className="text-white print-dark-text text-sm font-medium">{project.designer_name}</span>
                                         </div>
                                     )}
                                     {(designerProfile?.studio_name) && (
                                         <div className="flex items-center gap-2">
                                             <Building size={14} className="text-[#5a5a70]" />
-                                            <span className="text-[#8888a0] text-sm">{designerProfile.studio_name}</span>
+                                            <span className="text-[#8888a0] print-gray-text text-sm">{designerProfile.studio_name}</span>
                                         </div>
                                     )}
                                     {project.designer_email && (
                                         <div className="flex items-center gap-2">
                                             <Mail size={14} className="text-[#5a5a70]" />
-                                            <span className="text-[#8888a0] text-sm">{project.designer_email}</span>
+                                            <span className="text-[#8888a0] print-gray-text text-sm">{project.designer_email}</span>
                                         </div>
                                     )}
                                     {project.designer_phone && (
                                         <div className="flex items-center gap-2">
                                             <Phone size={14} className="text-[#5a5a70]" />
-                                            <span className="text-[#8888a0] text-sm">{project.designer_phone}</span>
+                                            <span className="text-[#8888a0] print-gray-text text-sm">{project.designer_phone}</span>
                                         </div>
                                     )}
                                     {designerProfile?.studio_address && (
                                         <div className="flex items-start gap-2">
                                             <MapPin size={14} className="text-[#5a5a70] mt-0.5" />
-                                            <span className="text-[#8888a0] text-sm">{designerProfile.studio_address}</span>
+                                            <span className="text-[#8888a0] print-gray-text text-sm">{designerProfile.studio_address}</span>
+                                        </div>
+                                    )}
+                                    {designerProfile?.gstin && (
+                                        <div className="flex items-center gap-2 mt-1 pt-1 border-t border-[#1a1a2e] print-border">
+                                            <Hash size={14} className="text-[#5a5a70]" />
+                                            <span className="text-[#8888a0] print-gray-text text-sm">GSTIN: <span className="text-white print-dark-text font-mono font-medium">{designerProfile.gstin}</span></span>
+                                        </div>
+                                    )}
+                                    {designerProfile?.pan_number && !designerProfile?.gstin && (
+                                        <div className="flex items-center gap-2 mt-1 pt-1 border-t border-[#1a1a2e] print-border">
+                                            <CreditCard size={14} className="text-[#5a5a70]" />
+                                            <span className="text-[#8888a0] print-gray-text text-sm">PAN: <span className="text-white print-dark-text font-mono font-medium">{designerProfile.pan_number}</span></span>
                                         </div>
                                     )}
                                 </div>
@@ -232,24 +278,24 @@ export default function InvoicePage() {
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <User size={14} className="text-[#5a5a70]" />
-                                        <span className="text-white text-sm font-medium">{project.client_name}</span>
+                                        <span className="text-white print-dark-text text-sm font-medium">{project.client_name}</span>
                                     </div>
                                     {project.client_email && (
                                         <div className="flex items-center gap-2">
                                             <Mail size={14} className="text-[#5a5a70]" />
-                                            <span className="text-[#8888a0] text-sm">{project.client_email}</span>
+                                            <span className="text-[#8888a0] print-gray-text text-sm">{project.client_email}</span>
                                         </div>
                                     )}
                                     {project.client_phone && (
                                         <div className="flex items-center gap-2">
                                             <Phone size={14} className="text-[#5a5a70]" />
-                                            <span className="text-[#8888a0] text-sm">{project.client_phone}</span>
+                                            <span className="text-[#8888a0] print-gray-text text-sm">{project.client_phone}</span>
                                         </div>
                                     )}
                                     {project.project_address && (
                                         <div className="flex items-start gap-2">
                                             <MapPin size={14} className="text-[#5a5a70] mt-0.5" />
-                                            <span className="text-[#8888a0] text-sm">{project.project_address}</span>
+                                            <span className="text-[#8888a0] print-gray-text text-sm">{project.project_address}</span>
                                         </div>
                                     )}
                                 </div>
@@ -260,9 +306,9 @@ export default function InvoicePage() {
                         <div>
                             <h3 className="text-xs font-semibold text-[#5a5a70] uppercase tracking-wider mb-3">Project Details</h3>
                             <div className="flex flex-wrap gap-4 text-sm">
-                                <span className="text-[#8888a0]">Type: <span className="text-white">{project.project_type}</span></span>
+                                <span className="text-[#8888a0] print-gray-text">Type: <span className="text-white print-dark-text">{project.project_type}</span></span>
                                 {project.rooms.length > 0 && (
-                                    <span className="text-[#8888a0]">Rooms: <span className="text-white">{project.rooms.map(r => r.name).join(', ')}</span></span>
+                                    <span className="text-[#8888a0] print-gray-text">Rooms: <span className="text-white print-dark-text">{project.rooms.map(r => r.name).join(', ')}</span></span>
                                 )}
                             </div>
                         </div>
@@ -273,9 +319,12 @@ export default function InvoicePage() {
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
-                                        <tr className="border-b border-[#2a2a40]">
+                                        <tr className="border-b border-[#2a2a40] print-border">
                                             <th className="text-left py-3 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">#</th>
                                             <th className="text-left py-3 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Description</th>
+                                            {hsnSac && (
+                                                <th className="text-center py-3 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">HSN/SAC</th>
+                                            )}
                                             <th className="text-center py-3 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Qty</th>
                                             <th className="text-right py-3 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Unit Price</th>
                                             <th className="text-right py-3 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Amount</th>
@@ -283,12 +332,15 @@ export default function InvoicePage() {
                                     </thead>
                                     <tbody>
                                         {project.line_items.map((item, i) => (
-                                            <tr key={i} className="border-b border-[#1a1a2e]">
+                                            <tr key={i} className="border-b border-[#1a1a2e] print-border">
                                                 <td className="py-3 text-[#5a5a70]">{i + 1}</td>
-                                                <td className="py-3 text-white">{item.item_name}</td>
-                                                <td className="py-3 text-center text-[#8888a0]">{item.quantity}</td>
-                                                <td className="py-3 text-right text-[#8888a0]">{formatCurrency(item.unit_price)}</td>
-                                                <td className="py-3 text-right text-white font-medium">{formatCurrency(item.quantity * item.unit_price)}</td>
+                                                <td className="py-3 text-white print-dark-text">{item.item_name}</td>
+                                                {hsnSac && (
+                                                    <td className="py-3 text-center text-[#5a5a70] font-mono text-xs">{hsnSac}</td>
+                                                )}
+                                                <td className="py-3 text-center text-[#8888a0] print-gray-text">{item.quantity}</td>
+                                                <td className="py-3 text-right text-[#8888a0] print-gray-text">{formatCurrency(item.unit_price)}</td>
+                                                <td className="py-3 text-right text-white print-dark-text font-medium">{formatCurrency(item.quantity * item.unit_price)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -296,19 +348,32 @@ export default function InvoicePage() {
                             </div>
                         </div>
 
-                        {/* Totals */}
+                        {/* Totals with GST Breakdown */}
                         <div className="flex justify-end">
-                            <div className="w-full sm:w-72 space-y-2 text-sm">
+                            <div className="w-full sm:w-80 space-y-2 text-sm">
                                 <div className="flex justify-between py-2">
-                                    <span className="text-[#8888a0]">Subtotal</span>
-                                    <span className="text-white">{formatCurrency(subtotal)}</span>
+                                    <span className="text-[#8888a0] print-gray-text">Subtotal</span>
+                                    <span className="text-white print-dark-text">{formatCurrency(subtotal)}</span>
                                 </div>
-                                <div className="flex justify-between py-2">
-                                    <span className="text-[#8888a0]">Tax ({project.tax_rate}%)</span>
-                                    <span className="text-white">{formatCurrency(taxAmount)}</span>
-                                </div>
-                                <div className="flex justify-between py-3 border-t border-[#2a2a40]">
-                                    <span className="text-white font-bold text-base">Grand Total</span>
+                                {designerProfile?.gstin ? (
+                                    <>
+                                        <div className="flex justify-between py-1.5">
+                                            <span className="text-[#8888a0] print-gray-text">CGST ({halfRate}%)</span>
+                                            <span className="text-white print-dark-text">{formatCurrency(halfTax)}</span>
+                                        </div>
+                                        <div className="flex justify-between py-1.5">
+                                            <span className="text-[#8888a0] print-gray-text">SGST ({halfRate}%)</span>
+                                            <span className="text-white print-dark-text">{formatCurrency(halfTax)}</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="flex justify-between py-2">
+                                        <span className="text-[#8888a0] print-gray-text">Tax ({project.tax_rate}%)</span>
+                                        <span className="text-white print-dark-text">{formatCurrency(taxAmount)}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between py-3 border-t border-[#2a2a40] print-border">
+                                    <span className="text-white print-dark-text font-bold text-base">Grand Total</span>
                                     <span className="text-xl font-bold" style={{ color: project.accent_color || '#4f46e5' }}>
                                         {formatCurrency(grandTotal)}
                                     </span>
@@ -316,16 +381,48 @@ export default function InvoicePage() {
                             </div>
                         </div>
 
+                        {/* Payment Details */}
+                        {hasPaymentInfo && (
+                            <div className="border-t border-[#1a1a2e] print-border pt-6">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Landmark size={16} className="text-brand-400" />
+                                    <h3 className="text-xs font-semibold text-[#5a5a70] uppercase tracking-wider">Payment Details</h3>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    {hasBankDetails && (
+                                        <div className="space-y-2">
+                                            <p className="text-[#5a5a70] text-xs font-semibold uppercase tracking-wider">Bank Transfer</p>
+                                            {designerProfile?.bank_name && (
+                                                <p className="text-[#8888a0] print-gray-text text-sm">Bank: <span className="text-white print-dark-text">{designerProfile.bank_name}</span></p>
+                                            )}
+                                            {designerProfile?.bank_account_number && (
+                                                <p className="text-[#8888a0] print-gray-text text-sm">A/C No: <span className="text-white print-dark-text font-mono">{designerProfile.bank_account_number}</span></p>
+                                            )}
+                                            {designerProfile?.bank_ifsc && (
+                                                <p className="text-[#8888a0] print-gray-text text-sm">IFSC: <span className="text-white print-dark-text font-mono">{designerProfile.bank_ifsc}</span></p>
+                                            )}
+                                        </div>
+                                    )}
+                                    {hasUpi && (
+                                        <div className="space-y-2">
+                                            <p className="text-[#5a5a70] text-xs font-semibold uppercase tracking-wider">UPI</p>
+                                            <p className="text-[#8888a0] print-gray-text text-sm">UPI ID: <span className="text-white print-dark-text font-mono">{designerProfile!.upi_id}</span></p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Payment Terms */}
                         {project.payment_terms && (
-                            <div className="border-t border-[#1a1a2e] pt-6">
+                            <div className="border-t border-[#1a1a2e] print-border pt-6">
                                 <h3 className="text-xs font-semibold text-[#5a5a70] uppercase tracking-wider mb-3">Payment Terms</h3>
-                                <p className="text-[#8888a0] text-sm whitespace-pre-wrap leading-relaxed">{project.payment_terms}</p>
+                                <p className="text-[#8888a0] print-gray-text text-sm whitespace-pre-wrap leading-relaxed">{project.payment_terms}</p>
                             </div>
                         )}
 
                         {/* Footer */}
-                        <div className="border-t border-[#1a1a2e] pt-6 text-center">
+                        <div className="border-t border-[#1a1a2e] print-border pt-6 text-center">
                             <p className="text-[#5a5a70] text-xs">
                                 Generated with <span className="text-brand-400">K A L V O R A</span> • Professional Interior Design Proposals
                             </p>

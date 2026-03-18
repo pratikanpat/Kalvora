@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -8,9 +8,31 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/AuthProvider';
 import {
     Building, Upload, Save, Palette, Loader2, User, Mail, Phone,
-    Globe, Instagram, MapPin, FileText, CheckCircle, Pencil, X
+    Globe, Instagram, MapPin, FileText, CheckCircle, Pencil, X,
+    CreditCard, Landmark, Receipt, Hash
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+
+interface ProfileSnapshot {
+    studioName: string;
+    designerName: string;
+    logoUrl: string;
+    email: string;
+    phone: string;
+    website: string;
+    instagram: string;
+    studioAddress: string;
+    defaultAccentColor: string;
+    defaultPaymentTerms: string;
+    gstin: string;
+    panNumber: string;
+    hsnSacCode: string;
+    invoiceDueDays: number;
+    bankName: string;
+    bankAccountNumber: string;
+    bankIfsc: string;
+    upiId: string;
+}
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -21,7 +43,7 @@ export default function ProfilePage() {
     const [isNew, setIsNew] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
 
-    // Profile fields
+    // Profile fields — original
     const [studioName, setStudioName] = useState('');
     const [designerName, setDesignerName] = useState('');
     const [logoUrl, setLogoUrl] = useState('');
@@ -32,6 +54,52 @@ export default function ProfilePage() {
     const [studioAddress, setStudioAddress] = useState('');
     const [defaultAccentColor, setDefaultAccentColor] = useState('#4263eb');
     const [defaultPaymentTerms, setDefaultPaymentTerms] = useState('');
+
+    // Profile fields — new business/tax
+    const [gstin, setGstin] = useState('');
+    const [panNumber, setPanNumber] = useState('');
+    const [hsnSacCode, setHsnSacCode] = useState('9971');
+    const [invoiceDueDays, setInvoiceDueDays] = useState(7);
+
+    // Profile fields — new bank/payment
+    const [bankName, setBankName] = useState('');
+    const [bankAccountNumber, setBankAccountNumber] = useState('');
+    const [bankIfsc, setBankIfsc] = useState('');
+    const [upiId, setUpiId] = useState('');
+
+    // Saved snapshot — used to revert on Cancel
+    const [savedSnapshot, setSavedSnapshot] = useState<ProfileSnapshot | null>(null);
+
+    const takeSnapshot = useCallback((): ProfileSnapshot => ({
+        studioName, designerName, logoUrl, email, phone, website, instagram,
+        studioAddress, defaultAccentColor, defaultPaymentTerms,
+        gstin, panNumber, hsnSacCode, invoiceDueDays,
+        bankName, bankAccountNumber, bankIfsc, upiId,
+    }), [studioName, designerName, logoUrl, email, phone, website, instagram,
+        studioAddress, defaultAccentColor, defaultPaymentTerms,
+        gstin, panNumber, hsnSacCode, invoiceDueDays,
+        bankName, bankAccountNumber, bankIfsc, upiId]);
+
+    const restoreSnapshot = (snap: ProfileSnapshot) => {
+        setStudioName(snap.studioName);
+        setDesignerName(snap.designerName);
+        setLogoUrl(snap.logoUrl);
+        setEmail(snap.email);
+        setPhone(snap.phone);
+        setWebsite(snap.website);
+        setInstagram(snap.instagram);
+        setStudioAddress(snap.studioAddress);
+        setDefaultAccentColor(snap.defaultAccentColor);
+        setDefaultPaymentTerms(snap.defaultPaymentTerms);
+        setGstin(snap.gstin);
+        setPanNumber(snap.panNumber);
+        setHsnSacCode(snap.hsnSacCode);
+        setInvoiceDueDays(snap.invoiceDueDays);
+        setBankName(snap.bankName);
+        setBankAccountNumber(snap.bankAccountNumber);
+        setBankIfsc(snap.bankIfsc);
+        setUpiId(snap.upiId);
+    };
 
     useEffect(() => {
         if (user) loadProfile();
@@ -49,16 +117,28 @@ export default function ProfilePage() {
 
             if (data) {
                 setIsNew(false);
-                setStudioName(data.studio_name || '');
-                setDesignerName(data.designer_name || '');
-                setLogoUrl(data.logo_url || '');
-                setEmail(data.email || '');
-                setPhone(data.phone || '');
-                setWebsite(data.website || '');
-                setInstagram(data.instagram || '');
-                setStudioAddress(data.studio_address || '');
-                setDefaultAccentColor(data.default_accent_color || '#4263eb');
-                setDefaultPaymentTerms(data.default_payment_terms || '');
+                const vals = {
+                    studioName: data.studio_name || '',
+                    designerName: data.designer_name || '',
+                    logoUrl: data.logo_url || '',
+                    email: data.email || '',
+                    phone: data.phone || '',
+                    website: data.website || '',
+                    instagram: data.instagram || '',
+                    studioAddress: data.studio_address || '',
+                    defaultAccentColor: data.default_accent_color || '#4263eb',
+                    defaultPaymentTerms: data.default_payment_terms || '',
+                    gstin: data.gstin || '',
+                    panNumber: data.pan_number || '',
+                    hsnSacCode: data.hsn_sac_code || '9971',
+                    invoiceDueDays: data.invoice_due_days ?? 7,
+                    bankName: data.bank_name || '',
+                    bankAccountNumber: data.bank_account_number || '',
+                    bankIfsc: data.bank_ifsc || '',
+                    upiId: data.upi_id || '',
+                };
+                restoreSnapshot(vals);
+                setSavedSnapshot(vals);
             } else {
                 // Pre-fill email from auth
                 setEmail(user?.email || '');
@@ -71,6 +151,13 @@ export default function ProfilePage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleCancel = () => {
+        if (savedSnapshot) {
+            restoreSnapshot(savedSnapshot);
+        }
+        setIsEditing(false);
     };
 
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,6 +195,14 @@ export default function ProfilePage() {
                 studio_address: studioAddress.trim(),
                 default_accent_color: defaultAccentColor,
                 default_payment_terms: defaultPaymentTerms.trim(),
+                gstin: gstin.trim(),
+                pan_number: panNumber.trim(),
+                hsn_sac_code: hsnSacCode.trim(),
+                invoice_due_days: invoiceDueDays,
+                bank_name: bankName.trim(),
+                bank_account_number: bankAccountNumber.trim(),
+                bank_ifsc: bankIfsc.trim(),
+                upi_id: upiId.trim(),
                 updated_at: new Date().toISOString(),
             };
 
@@ -126,9 +221,12 @@ export default function ProfilePage() {
             }
 
             toast.success('Profile saved successfully!');
-            // Notify sidebar to re-check profile completeness (Issue 2 fix)
+            // Notify sidebar to re-check profile completeness
             window.dispatchEvent(new Event('profile-updated'));
-            // Exit edit mode after successful save (Issue 3)
+            // Update saved snapshot to current values
+            const newSnap = takeSnapshot();
+            setSavedSnapshot(newSnap);
+            // Exit edit mode after successful save
             setIsEditing(false);
         } catch (err) {
             console.error('Error saving profile:', err);
@@ -159,13 +257,13 @@ export default function ProfilePage() {
                     <div>
                         <h1 className="text-2xl font-bold text-white tracking-tight">Studio Profile</h1>
                         <p className="text-[#5a5a70] text-sm mt-1.5">
-                            Set up your studio identity. This information will be used automatically in every proposal you create.
+                            Set up your studio identity. This information will be used automatically in every proposal and invoice you create.
                         </p>
                     </div>
                     {/* Edit / Cancel toggle button */}
                     {!isNew && (
                         <button
-                            onClick={() => setIsEditing(!isEditing)}
+                            onClick={() => isEditing ? handleCancel() : setIsEditing(true)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex-shrink-0 ml-4 ${isEditing
                                     ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
                                     : 'bg-brand-700/15 text-brand-400 border border-brand-700/25 hover:bg-brand-700/25'
@@ -198,14 +296,16 @@ export default function ProfilePage() {
                                 <CheckCircle size={16} className="text-emerald-400" />
                             </div>
                             <p className="text-emerald-300/90 text-sm">
-                                Your profile is set up. This info will be used in all your proposals.
+                                Your profile is set up. This info will be used in all your proposals and invoices.
                             </p>
                         </div>
                     </div>
                 )}
 
                 <div className="space-y-4">
-                    {/* Studio Identity */}
+                    {/* ═══════════════════════════════════════════
+                       STUDIO IDENTITY
+                       ═══════════════════════════════════════════ */}
                     <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">
@@ -279,7 +379,9 @@ export default function ProfilePage() {
                         </div>
                     </div>
 
-                    {/* Online Presence */}
+                    {/* ═══════════════════════════════════════════
+                       ONLINE PRESENCE
+                       ═══════════════════════════════════════════ */}
                     <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">
@@ -314,7 +416,109 @@ export default function ProfilePage() {
                         </div>
                     </div>
 
-                    {/* Defaults */}
+                    {/* ═══════════════════════════════════════════
+                       BUSINESS & TAX DETAILS
+                       ═══════════════════════════════════════════ */}
+                    <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">
+                                <Receipt size={16} className="text-brand-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-base font-bold text-white tracking-tight">Business & Tax Details</h2>
+                                <p className="text-[#5a5a70] text-xs mt-0.5">Shown on invoices. Fill in if your studio is GST registered.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="input-label">GSTIN <span className="text-[#5a5a70] font-normal">(GST Number)</span></label>
+                                <div className="relative">
+                                    <Hash size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <input type="text" value={gstin} onChange={(e) => setGstin(e.target.value.toUpperCase())} placeholder="e.g. 22AAAAA0000A1Z5" maxLength={15} className={`input-field pl-10 uppercase ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="input-label">PAN Number <span className="text-[#5a5a70] font-normal">(Optional)</span></label>
+                                <div className="relative">
+                                    <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <input type="text" value={panNumber} onChange={(e) => setPanNumber(e.target.value.toUpperCase())} placeholder="e.g. ABCDE1234F" maxLength={10} className={`input-field pl-10 uppercase ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="input-label">HSN/SAC Code <span className="text-[#5a5a70] font-normal">(Default)</span></label>
+                                <div className="relative">
+                                    <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <input type="text" value={hsnSacCode} onChange={(e) => setHsnSacCode(e.target.value)} placeholder="9971" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                </div>
+                                <p className="text-[#5a5a70] text-xs mt-1">Interior design services are typically SAC 9971</p>
+                            </div>
+                            <div>
+                                <label className="input-label">Invoice Due Days <span className="text-[#5a5a70] font-normal">(Default)</span></label>
+                                <div className="relative">
+                                    <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <input type="number" value={invoiceDueDays} onChange={(e) => setInvoiceDueDays(parseInt(e.target.value) || 7)} placeholder="7" min={1} max={90} className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                </div>
+                                <p className="text-[#5a5a70] text-xs mt-1">Number of days after invoice creation until payment is due</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ═══════════════════════════════════════════
+                       PAYMENT / BANK DETAILS
+                       ═══════════════════════════════════════════ */}
+                    <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">
+                                <Landmark size={16} className="text-brand-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-base font-bold text-white tracking-tight">Payment / Bank Details</h2>
+                                <p className="text-[#5a5a70] text-xs mt-0.5">Shown on invoices so clients know where to pay.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="input-label">Bank Name</label>
+                                <div className="relative">
+                                    <Landmark size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <input type="text" value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder="e.g. HDFC Bank" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="input-label">Account Number</label>
+                                <div className="relative">
+                                    <Hash size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <input type="text" value={bankAccountNumber} onChange={(e) => setBankAccountNumber(e.target.value)} placeholder="e.g. 1234567890123" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="input-label">IFSC Code</label>
+                                <div className="relative">
+                                    <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <input type="text" value={bankIfsc} onChange={(e) => setBankIfsc(e.target.value.toUpperCase())} placeholder="e.g. HDFC0001234" maxLength={11} className={`input-field pl-10 uppercase ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="input-label">UPI ID</label>
+                                <div className="relative">
+                                    <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="e.g. studio@upi" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ═══════════════════════════════════════════
+                       DEFAULTS
+                       ═══════════════════════════════════════════ */}
                     <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">

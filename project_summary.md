@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-18 (v3 — approval confirmation modal, invoice page, email URL fix)
+> Last updated: 2026-03-18 (v4 — GST/business fields in profile, enhanced invoice with CGST/SGST, bank details, edit bug fix)
 
 ---
 
@@ -101,6 +101,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   profile_migration.sql  → Creates designer_profiles table; adds extra columns to projects
   feedback_migration.sql → Creates feedback table with public insert policy
   approval_migration.sql → Adds client_viewed_at to projects, creates comments table
+  invoice_profile_migration.sql → Adds gstin, pan_number, hsn_sac_code, invoice_due_days, bank_name, bank_account_number, bank_ifsc, upi_id to designer_profiles
 ```
 
 ---
@@ -117,10 +118,14 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 
 ### 2. Studio Profile
 - Designer fills in studio name, logo, email, phone, website, Instagram, address, default accent colour, and payment terms.
+- **Business & Tax Details** section: GSTIN, PAN number, HSN/SAC code (default: 9971), Invoice Due Days.
+- **Payment / Bank Details** section: Bank Name, Account Number, IFSC Code, UPI ID.
 - Profile read from `designer_profiles` table (one row per user).
 - Data auto-populates into new proposals (logo, designer name, payment terms, accent colour).
+- Business/bank details auto-populate into invoices (GSTIN, bank transfer info, UPI).
 - Sidebar shows a red dot indicator if profile is incomplete. Dot disappears after profile is saved.
 - Profile page defaults to read-only view; "Edit" button enables editing mode.
+- Cancel button reverts all fields to the last saved state (snapshot-based revert).
 
 ### 3. Create Proposal (8-section form at `/create`)
 | Section | Fields |
@@ -190,7 +195,9 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 
 ### 9. Invoice Page (`/invoice/[id]`)
 - Public page (no auth required) — accessible after approval or via email link.
-- Displays: Invoice number (auto-generated from date + project ID), From (designer/studio info), Bill To (client info), project details, line items table, subtotal, tax, grand total, and payment terms.
+- Displays: Invoice number (auto-generated), Invoice Date, **Due Date** (calculated from `invoice_due_days`), From (designer/studio info + **GSTIN**), Bill To (client info), project details, line items table with **HSN/SAC column**, totals with **CGST/SGST breakdown** (when GST registered), payment terms.
+- **Payment Details** section showing Bank Name, Account Number, IFSC, and UPI ID (from designer profile).
+- **Status badge**: Shows "Unpaid" (replaces the old "Approved" badge).
 - "Print / Save as PDF" button (uses `window.print()` with print-optimized CSS).
 - After approval, client receives an email with a link to this page.
 
@@ -273,6 +280,14 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 | studio_address | TEXT | |
 | default_accent_color | TEXT | Default `#4263eb` |
 | default_payment_terms | TEXT | |
+| gstin | TEXT | GST Identification Number (15-char) |
+| pan_number | TEXT | PAN (optional, for non-GST designers) |
+| hsn_sac_code | TEXT | Default HSN/SAC code, typically `9971` |
+| invoice_due_days | INTEGER | Default days until invoice due (default 7) |
+| bank_name | TEXT | Bank name for invoice payment details |
+| bank_account_number | TEXT | Bank account number |
+| bank_ifsc | TEXT | IFSC code |
+| upi_id | TEXT | UPI ID for digital payments |
 | created_at | TIMESTAMPTZ | |
 | updated_at | TIMESTAMPTZ | |
 

@@ -47,15 +47,15 @@ export default function ProposalViewPage() {
     const { user } = useAuth();
 
     useEffect(() => {
-        if (user) loadProject();
+        loadProject();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [projectId, user]);
+    }, [projectId]);
 
     const loadProject = async () => {
         try {
             // Run ALL queries in parallel — they only depend on projectId/user.id
             const [projectResult, roomsResult, itemsResult, proposalsResult] = await Promise.all([
-                supabase.from('projects').select('*').eq('id', projectId).eq('user_id', user!.id).single(),
+                supabase.from('projects').select('*').eq('id', projectId).single(),
                 supabase.from('rooms').select('*').eq('project_id', projectId),
                 supabase.from('line_items').select('*').eq('project_id', projectId),
                 supabase.from('proposals').select('*').eq('project_id', projectId).order('created_at', { ascending: false }),
