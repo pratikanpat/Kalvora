@@ -276,7 +276,7 @@ export default function CreatePage() {
                 .from('designer_profiles')
                 .select('*')
                 .eq('user_id', user!.id)
-                .single();
+                .maybeSingle();
 
             // 1. Create project
             const { data: project, error: projectError } = await supabase
@@ -368,9 +368,9 @@ export default function CreatePage() {
                 toast.success('Project saved as draft!');
                 router.push('/dashboard');
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error('Save error:', err);
-            toast.error(err instanceof Error ? err.message : 'Failed to save project');
+            toast.error(err.message || 'Failed to save project: Check console for details');
         } finally {
             setSaving(false);
             setGenerating(false);

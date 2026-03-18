@@ -102,6 +102,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   feedback_migration.sql → Creates feedback table with public insert policy
   approval_migration.sql → Adds client_viewed_at to projects, creates comments table
   invoice_profile_migration.sql → Adds gstin, pan_number, hsn_sac_code, invoice_due_days, bank_name, bank_account_number, bank_ifsc, upi_id to designer_profiles
+  cascade_delete_migration.sql   → Enables ON DELETE CASCADE for projects.user_id
 ```
 
 ---
