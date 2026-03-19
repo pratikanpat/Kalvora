@@ -19,6 +19,7 @@ import {
     Building,
     CheckSquare,
 } from 'lucide-react';
+import LogoutFeedbackModal from './LogoutFeedbackModal';
 
 const navItems = [
     { href: '/', label: 'Home', icon: Home },
@@ -39,6 +40,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const { user, signOut } = useAuth();
     const [profileIncomplete, setProfileIncomplete] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     const userEmail = user?.email || '';
     const truncatedEmail = userEmail.length > 22 ? userEmail.slice(0, 20) + '…' : userEmail;
@@ -174,7 +176,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
 
                     {/* Logout */}
                     <button
-                        onClick={() => { setMobileOpen(false); signOut(); }}
+                        onClick={() => { setMobileOpen(false); setShowLogoutModal(true); }}
                         className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#5a5a70] hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 group relative ${collapsed ? 'justify-center' : ''}`}
                     >
                         <LogOut size={18} className="flex-shrink-0" />
@@ -201,6 +203,16 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                     </div>
                 </div>
             </aside>
+
+            <LogoutFeedbackModal
+                isOpen={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                onConfirmLogout={() => {
+                    setShowLogoutModal(false);
+                    signOut();
+                }}
+                userId={user?.id}
+            />
         </>
     );
 }

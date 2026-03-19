@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-19 (v5 — project-type room/line-item presets, email domain fix, invoice redirect loader)
+> Last updated: 2026-03-19 (v6 — structured feedback system, logout feedback modal)
 
 ---
 
@@ -87,7 +87,8 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     LoadingSpinner.tsx        → Reusable loading UI
     ProfileSetupModal.tsx     → First-time profile setup modal on dashboard
     ProtectedRoute.tsx        → HOC to redirect unauthenticated users to /login
-    Sidebar.tsx               → Left nav sidebar for authenticated views (with red dot for incomplete profile)
+    LogoutFeedbackModal.tsx   → Modal shown on logout to capture friction feedback
+    Sidebar.tsx               → Left nav sidebar for authenticated views (with red dot for incomplete profile, logout → feedback modal)
     StatusBadge.tsx           → Badge component (Draft / Sent / Approved / Completed)
     SuccessModal.tsx          → Post-generation success modal with PDF download/share links
     TemplatePreviewModal.tsx  → Template preview carousel modal on create page
@@ -99,7 +100,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   migration.sql          → Initial DB schema (projects, rooms, line_items, proposals tables)
   auth_migration.sql     → Adds user_id to projects, replaces open RLS with per-user policies
   profile_migration.sql  → Creates designer_profiles table; adds extra columns to projects
-  feedback_migration.sql → Creates feedback table with public insert policy
+  feedback_migration.sql → Creates feedback table with structured columns (v2: prior_tools, ease_rating, best_feature, frustrations, feature_wish, pmf_answer, feedback_type, user_id)
   approval_migration.sql → Adds client_viewed_at to projects, creates comments table
   invoice_profile_migration.sql → Adds gstin, pan_number, hsn_sac_code, invoice_due_days, bank_name, bank_account_number, bank_ifsc, upi_id to designer_profiles
   cascade_delete_migration.sql   → Enables ON DELETE CASCADE for projects.user_id
@@ -203,9 +204,19 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - "Print / Save as PDF" button (uses `window.print()` with print-optimized CSS).
 - After approval, client receives an email with a link to this page.
 
-### 10. Feedback Page
-- Public form (no auth required) to submit name, email, and message.
-- Stored in `feedback` table.
+### 10. Feedback System
+
+**Structured Feedback Page (`/feedback`):**
+- Guided form with PMF-grade questions to capture actionable insights.
+- Fields: Name*, Email, Prior Tools (multi-select), Ease Rating (1–5 scale), Best Feature, Frustrations, Feature Wish, PMF Question ("How disappointed would you be if Kalvora disappeared?")*, Additional Thoughts.
+- Validates required fields (name, ease rating, PMF answer) before submission.
+- Stores structured data in `feedback` table with `feedback_type = 'structured'`.
+
+**Logout Feedback Modal (`LogoutFeedbackModal.tsx`):**
+- Triggered when a user clicks "Log out" in the Sidebar (intercepts logout flow).
+- Asks one friction question: "What almost stopped you from creating a proposal today?"
+- Two actions: "Skip & Log out" (no feedback) or "Submit & Log out" (saves feedback with `feedback_type = 'logout_trigger'`).
+- Feedback silently fails if insert errors — never blocks the logout.
 
 ---
 
@@ -299,7 +310,15 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 | id | UUID | PK |
 | name | TEXT | |
 | email | TEXT | |
-| message | TEXT | |
+| message | TEXT | Nullable (structured feedback may not include it) |
+| prior_tools | TEXT[] | Array of tool names the user used before Kalvora |
+| ease_rating | INTEGER | 1–5 scale |
+| best_feature | TEXT | Free-text favorite feature |
+| frustrations | TEXT | Free-text pain points |
+| feature_wish | TEXT | Free-text dream feature |
+| pmf_answer | TEXT | `very_disappointed` / `somewhat_disappointed` / `not_disappointed` |
+| feedback_type | TEXT | `structured` (form) or `logout_trigger` (modal). Default: `structured` |
+| user_id | UUID | Optional FK to auth.users |
 | created_at | TIMESTAMPTZ | |
 
 ### Table: `comments`
