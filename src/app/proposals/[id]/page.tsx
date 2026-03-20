@@ -9,7 +9,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/AuthProvider';
 import {
     Download, Copy, Check, Edit, MapPin, Phone, Mail,
-    Building, Calendar, ArrowLeft, DollarSign, ExternalLink, User, FileText, Share2, Loader2
+    Building, Calendar, ArrowLeft, IndianRupee, ExternalLink, User, FileText, Share2, Loader2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
@@ -138,13 +138,16 @@ export default function ProposalViewPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ projectId, clientEmail: project.client_email }),
             });
-            if (!res.ok) throw new Error('Failed');
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to send email');
+            
             toast.success(`Proposal emailed to ${project.client_email}`);
             if (project.status === 'Draft') {
                 setProject({ ...project, status: 'Sent' });
             }
-        } catch {
-            toast.error('Failed to send email. Try again.');
+        } catch (err: any) {
+            console.error('Email error:', err);
+            toast.error(err.message || 'Failed to send email. Try again.');
         } finally {
             setSendingEmail(false);
         }
@@ -230,7 +233,8 @@ export default function ProposalViewPage() {
 
                 {/* Header Card */}
                 <div className="glass-card p-6 mb-6 animate-fade-in">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                    {/* Title Row + Status */}
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
                         <div>
                             <h1 className="text-2xl font-bold text-white tracking-tight">{project.client_name}</h1>
                             <p className="text-[#5a5a70] text-sm mt-1">
@@ -238,60 +242,70 @@ export default function ProposalViewPage() {
                             </p>
                             <p className="text-[#3a3a50] text-xs mt-1">Created {formatDate(project.created_at)}</p>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <select
-                                value={project.status}
-                                onChange={(e) => updateStatus(e.target.value)}
-                                disabled={statusUpdating}
-                                className="input-field w-auto text-sm py-2 px-3"
-                            >
-                                <option value="Draft">Draft</option>
-                                <option value="Sent">Sent</option>
-                                <option value="Approved">Approved</option>
-                                <option value="Paid">Paid</option>
-                                <option value="Completed">Completed</option>
-                            </select>
-                        </div>
+                        <select
+                            value={project.status}
+                            onChange={(e) => updateStatus(e.target.value)}
+                            disabled={statusUpdating}
+                            className="input-field w-auto text-sm py-2 px-3 flex-shrink-0"
+                        >
+                            <option value="Draft">Draft</option>
+                            <option value="Sent">Sent</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Completed">Completed</option>
+                        </select>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex flex-wrap gap-2 pt-4 border-t border-[#2a2a40]">
-                        <button onClick={copyShareLink} className="btn-secondary text-sm py-2">
-                            {copied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
-                            {copied ? 'Copied!' : 'Copy Shareable Link'}
-                        </button>
-                        <button onClick={shareOnWhatsApp} className="btn-secondary text-sm py-2 !text-emerald-400 hover:!bg-emerald-500/10">
-                            <Share2 size={15} /> Share on WhatsApp
-                        </button>
-                        {latestPdf && (
-                            <a href={latestPdf.pdf_url} target="_blank" rel="noopener noreferrer" className="btn-primary text-sm py-2">
-                                <Download size={15} /> Download PDF
-                            </a>
-                        )}
-                        <Link href={`/edit/${projectId}`} className="btn-secondary text-sm py-2">
-                            <Edit size={15} /> Edit Project
-                        </Link>
-                        <button
-                            onClick={emailToClient}
-                            disabled={sendingEmail}
-                            className="btn-secondary text-sm py-2 !text-blue-400 hover:!bg-blue-500/10 disabled:opacity-50"
-                        >
-                            {sendingEmail ? <Loader2 size={15} className="animate-spin" /> : <Mail size={15} />}
-                            {sendingEmail ? 'Sending...' : 'Email to Client'}
-                        </button>
-                        <button
-                            onClick={duplicateProject}
-                            disabled={duplicating}
-                            className="btn-secondary text-sm py-2 disabled:opacity-50"
-                        >
-                            {duplicating ? <Loader2 size={15} className="animate-spin" /> : <Copy size={15} />}
-                            {duplicating ? 'Duplicating...' : 'Duplicate'}
-                        </button>
-                    </div>
-
-                    {/* Project Pipeline */}
-                    <div className="px-6 pb-6 -mt-1">
+                    {/* Pipeline Stepper */}
+                    <div className="mb-5">
                         <ProjectPipeline status={project.status} clientViewedAt={project.client_viewed_at} />
+                    </div>
+
+                    {/* Action Buttons - Two groups */}
+                    <div className="flex flex-col gap-3 pt-4 border-t border-[#2a2a40]">
+                        {/* Sharing Actions */}
+                        <div>
+                            <p className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-2">Share</p>
+                            <div className="flex flex-wrap gap-2">
+                                <button onClick={copyShareLink} className="btn-secondary text-sm py-2">
+                                    {copied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
+                                    {copied ? 'Copied!' : 'Copy Shareable Link'}
+                                </button>
+                                <button onClick={shareOnWhatsApp} className="btn-secondary text-sm py-2 !text-emerald-400 hover:!bg-emerald-500/10">
+                                    <Share2 size={15} /> Share on WhatsApp
+                                </button>
+                                <button
+                                    onClick={emailToClient}
+                                    disabled={sendingEmail}
+                                    className="btn-secondary text-sm py-2 !text-blue-400 hover:!bg-blue-500/10 disabled:opacity-50"
+                                >
+                                    {sendingEmail ? <Loader2 size={15} className="animate-spin" /> : <Mail size={15} />}
+                                    {sendingEmail ? 'Sending...' : 'Email to Client'}
+                                </button>
+                            </div>
+                        </div>
+                        {/* Project Actions */}
+                        <div>
+                            <p className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-2">Manage</p>
+                            <div className="flex flex-wrap gap-2">
+                                <Link href={`/edit/${projectId}`} className="btn-secondary text-sm py-2">
+                                    <Edit size={15} /> Edit Project
+                                </Link>
+                                {latestPdf && (
+                                    <a href={latestPdf.pdf_url} target="_blank" rel="noopener noreferrer" className="btn-primary text-sm py-2">
+                                        <Download size={15} /> Download PDF
+                                    </a>
+                                )}
+                                <button
+                                    onClick={duplicateProject}
+                                    disabled={duplicating}
+                                    className="btn-secondary text-sm py-2 disabled:opacity-50"
+                                >
+                                    {duplicating ? <Loader2 size={15} className="animate-spin" /> : <Copy size={15} />}
+                                    {duplicating ? 'Duplicating...' : 'Duplicate'}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -394,7 +408,7 @@ export default function ProposalViewPage() {
                         <div className="flex justify-between items-center pt-3 border-t border-[#2a2a40]">
                             <span className="text-white font-bold flex items-center gap-2">
                                 <div className="w-7 h-7 rounded-lg bg-brand-700/15 flex items-center justify-center">
-                                    <DollarSign size={14} className="text-brand-400" />
+                                    <IndianRupee size={14} className="text-brand-400" />
                                 </div>
                                 Grand Total
                             </span>

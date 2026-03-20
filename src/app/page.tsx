@@ -55,7 +55,7 @@ export default function LandingPage() {
 
                     {/* Subtitle */}
                     <p className="text-[#8888a0] text-lg sm:text-xl max-w-2xl mx-auto mb-4 animate-fade-in leading-relaxed">
-                        Create branded proposals, get client approval, and auto-generate invoices — in one place.
+                        Create branded proposals, get client approval, and auto-generate invoices - in one place.
                         Built for Indian interior designers.
                     </p>
 
@@ -129,7 +129,7 @@ export default function LandingPage() {
                         </div>
                         <ul className="space-y-3 text-sm text-[#8888a0]">
                             <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> Word doc proposal over WhatsApp</li>
-                            <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> &quot;Bhai thoda change karo&quot; — endless back and forth</li>
+                            <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> &quot;Bhai thoda change karo&quot; - endless back and forth</li>
                             <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> Manual Excel invoice after approval</li>
                             <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> Chase payments with 10 follow-up messages</li>
                             <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> No idea if client even opened the doc</li>
@@ -160,7 +160,7 @@ export default function LandingPage() {
                     <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">How It Works</p>
                     <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Four Simple Steps</h2>
                     <p className="text-[#8888a0] max-w-xl mx-auto">
-                        From project details to tracked payment — in under a minute.
+                        From project details to tracked payment - in under a minute.
                     </p>
                 </div>
 
@@ -262,7 +262,7 @@ export default function LandingPage() {
                     </p>
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-700/10 border border-brand-700/20 text-brand-400 text-sm font-medium">
                         <Star size={16} />
-                        Launching Pro at ₹999/mo — Early users lock in 50% off forever
+                        Launching Pro at ₹999/mo - Early users lock in 50% off forever
                     </div>
                 </div>
             </section>
@@ -278,17 +278,29 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* ===== FEEDBACK ===== */}
+            {/* ===== FEEDBACK CTA ===== */}
             <section id="feedback" className="landing-section">
-                <div className="max-w-xl mx-auto">
-                    <div className="text-center mb-10">
-                        <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">Feedback</p>
-                        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">We&apos;d Love to Hear From You</h2>
-                        <p className="text-[#8888a0]">
-                            Share your thoughts, suggestions, or just say hello.
-                        </p>
+                <div className="max-w-3xl mx-auto">
+                    <div className="landing-card p-8 sm:p-12 text-center relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand-700/10 via-transparent to-brand-600/5" />
+                        <div className="relative">
+                            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-700/15 border border-brand-700/25 mb-6">
+                                <MessageSquare size={24} className="text-brand-400" />
+                            </div>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">Help Us Build What You Need</h2>
+                            <p className="text-[#8888a0] max-w-lg mx-auto mb-8 leading-relaxed">
+                                We are building Kalvora with real designers like you. Take 2 minutes to share what is working, what is not, and what features you need most.
+                            </p>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                <Link href="/feedback" className="btn-primary text-sm px-8 py-3 rounded-xl shadow-xl shadow-brand-700/25">
+                                    <MessageSquare size={16} />
+                                    Share Your Feedback
+                                    <ArrowRight size={16} />
+                                </Link>
+                            </div>
+                            <p className="text-[#5a5a70] text-xs mt-5">Your input directly shapes our roadmap</p>
+                        </div>
                     </div>
-                    <FeedbackForm />
                 </div>
             </section>
 
@@ -311,7 +323,7 @@ export default function LandingPage() {
                             href={session ? '/dashboard' : '/login'}
                             className="btn-primary text-base px-8 py-3.5 rounded-xl shadow-xl shadow-brand-700/25"
                         >
-                            Start Creating — It&apos;s Free
+                            Start Creating - It&apos;s Free
                             <ArrowRight size={20} />
                         </Link>
                     </div>
@@ -331,7 +343,7 @@ export default function LandingPage() {
                                 <span className="text-sm font-bold text-white tracking-tight">K A L V O R A</span>
                             </div>
                             <p className="text-[#5a5a70] text-sm leading-relaxed">
-                                Close projects faster — professional proposals, client approval, and GST invoicing for interior designers.
+                                Close projects faster - professional proposals, client approval, and GST invoicing for interior designers.
                             </p>
                         </div>
 
@@ -394,7 +406,7 @@ export default function LandingPage() {
 const faqItems = [
     { q: 'Is Kalvora only for interior designers?', a: 'Kalvora is primarily built for interior designers, but architects, home stagers, and design consultants also use it for client proposals and invoicing.' },
     { q: 'Can I add my studio logo and branding?', a: 'Absolutely! Upload your studio logo, set your brand accent color, and it appears on every proposal and invoice you generate.' },
-    { q: 'Can I share proposals on WhatsApp?', a: 'Yes! One-click WhatsApp sharing with a pre-filled message and your proposal link. Clients view it in their browser — no app needed.' },
+    { q: 'Can I share proposals on WhatsApp?', a: 'Yes! One-click WhatsApp sharing with a pre-filled message and your proposal link. Clients view it in their browser - no app needed.' },
     { q: 'Does it support GST invoices?', a: 'Yes. Add your GSTIN and Kalvora automatically generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI info.' },
     { q: 'Is my data secure?', a: 'Your data is stored securely on Supabase (PostgreSQL) with row-level security. Each designer can only access their own data.' },
 ];

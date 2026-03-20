@@ -412,7 +412,7 @@ export default function InvoicePage() {
                                                     <td className="py-2.5 text-white print-dark-text">{m.label}</td>
                                                     <td className="py-2.5 text-right text-white print-dark-text font-medium">{formatCurrency(Number(m.amount))}</td>
                                                     <td className="py-2.5 text-center text-[#8888a0] print-gray-text">
-                                                        {m.due_date ? new Date(m.due_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                                                        {m.due_date ? new Date(m.due_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                                                     </td>
                                                     <td className="py-2.5 text-center">
                                                         {m.paid_at ? (
@@ -479,7 +479,7 @@ export default function InvoicePage() {
                             >
                                 <span className="text-[#5a5a70] text-xs">This proposal was created with</span>
                                 <span className="text-brand-400 text-xs font-bold tracking-wider">KALVORA</span>
-                                <span className="text-[#5a5a70] text-xs hidden sm:inline">—</span>
+                                <span className="text-[#5a5a70] text-xs hidden sm:inline">-</span>
                                 <span className="text-brand-400 text-xs font-medium hidden sm:inline group-hover:underline">Create yours in 60 seconds →</span>
                             </a>
                             <p className="hidden print:block text-[#5a5a70] text-xs">

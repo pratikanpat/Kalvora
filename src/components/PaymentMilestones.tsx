@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Plus, Check, Trash2, Loader2, IndianRupee } from 'lucide-react';
+import { Plus, Check, Trash2, Loader2, IndianRupee, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface Milestone {
@@ -30,6 +30,8 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
     const [milestones, setMilestones] = useState<Milestone[]>([]);
     const [loading, setLoading] = useState(true);
     const [adding, setAdding] = useState(false);
+    const [recalculating, setRecalculating] = useState(false);
+    const prevGrandTotalRef = useRef<number>(grandTotal);
 
     // New milestone form
     const [newLabel, setNewLabel] = useState('');
@@ -41,6 +43,10 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
         loadMilestones();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [projectId]);
+
+    // Track if grand total changed — show mismatch indicator
+    const milestonesTotal = milestones.reduce((s, m) => s + Number(m.amount), 0);
+    const hasMismatch = milestones.length > 0 && Math.abs(milestonesTotal - grandTotal) > 1;
 
     const loadMilestones = async () => {
         const { data } = await supabase
@@ -67,6 +73,51 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
             await loadMilestones();
         }
         setAdding(false);
+    };
+
+    const recalculateMilestones = async () => {
+        if (milestones.length === 0 || grandTotal <= 0) return;
+        setRecalculating(true);
+        try {
+            // Check if milestones match default preset labels
+            const defaultLabels = DEFAULT_PRESETS.map(p => p.label.toLowerCase());
+            const hasDefaultPresets = milestones.every(m =>
+                defaultLabels.includes(m.label.toLowerCase())
+            );
+
+            const updates = milestones.map(m => {
+                let newAmount = m.amount;
+                if (hasDefaultPresets) {
+                    // Recalculate based on preset percentages
+                    const preset = DEFAULT_PRESETS.find(p => p.label.toLowerCase() === m.label.toLowerCase());
+                    if (preset) {
+                        newAmount = Math.round(grandTotal * (preset.pct / 100));
+                    }
+                } else {
+                    // Proportional recalculation: keep the same ratio
+                    const ratio = milestonesTotal > 0 ? Number(m.amount) / milestonesTotal : 1 / milestones.length;
+                    newAmount = Math.round(grandTotal * ratio);
+                }
+                return { id: m.id, amount: newAmount };
+            });
+
+            // Update all milestones in parallel
+            await Promise.all(
+                updates.map(u =>
+                    supabase.from('payment_milestones').update({ amount: u.amount }).eq('id', u.id)
+                )
+            );
+
+            // Update local state
+            setMilestones(prev => prev.map(m => {
+                const upd = updates.find(u => u.id === m.id);
+                return upd ? { ...m, amount: upd.amount } : m;
+            }));
+            toast.success('Milestones recalculated');
+        } catch {
+            toast.error('Failed to recalculate');
+        }
+        setRecalculating(false);
     };
 
     const addMilestone = async () => {
@@ -135,6 +186,24 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
                 )}
             </div>
 
+            {/* Mismatch warning */}
+            {hasMismatch && (
+                <div className="flex items-center justify-between mb-4 px-4 py-3 rounded-xl bg-amber-500/5 border border-amber-500/20">
+                    <div className="flex items-center gap-2 text-amber-400 text-xs">
+                        <RefreshCw size={14} />
+                        <span>Milestone total ({formatCurrency(milestonesTotal)}) doesn&apos;t match project total ({formatCurrency(grandTotal)})</span>
+                    </div>
+                    <button
+                        onClick={recalculateMilestones}
+                        disabled={recalculating}
+                        className="text-xs font-medium text-amber-300 hover:text-amber-200 transition-colors flex items-center gap-1 flex-shrink-0 ml-3"
+                    >
+                        {recalculating ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+                        Recalculate
+                    </button>
+                </div>
+            )}
+
             {milestones.length === 0 ? (
                 <div className="text-center py-6">
                     <p className="text-[#5a5a70] text-sm mb-4">No payment milestones yet</p>
@@ -200,12 +269,24 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
 
             {/* Add milestone form */}
             {milestones.length > 0 && !showForm && (
-                <button
-                    onClick={() => setShowForm(true)}
-                    className="mt-3 flex items-center gap-1.5 text-xs text-brand-400 hover:text-brand-300 transition-colors"
-                >
-                    <Plus size={14} /> Add Milestone
-                </button>
+                <div className="mt-3 flex items-center gap-3">
+                    <button
+                        onClick={() => setShowForm(true)}
+                        className="flex items-center gap-1.5 text-xs text-brand-400 hover:text-brand-300 transition-colors"
+                    >
+                        <Plus size={14} /> Add Milestone
+                    </button>
+                    {!hasMismatch && (
+                        <button
+                            onClick={recalculateMilestones}
+                            disabled={recalculating}
+                            className="flex items-center gap-1.5 text-xs text-[#5a5a70] hover:text-brand-400 transition-colors"
+                        >
+                            {recalculating ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                            Recalculate from Total
+                        </button>
+                    )}
+                </div>
             )}
 
             {showForm && (
@@ -249,3 +330,4 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
         </div>
     );
 }
+

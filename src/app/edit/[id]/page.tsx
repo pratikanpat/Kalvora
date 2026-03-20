@@ -10,7 +10,7 @@ import { useAuth } from '@/components/AuthProvider';
 import {
     User, Mail, Phone, MapPin, Building, Plus, Trash2,
     Save, Sparkles, ChevronDown,
-    ChevronUp, DollarSign, Calculator, StickyNote, LayoutTemplate,
+    ChevronUp, IndianRupee, Calculator, StickyNote, LayoutTemplate,
     Loader2, FileText, Eye, Clock, CheckSquare, Calendar
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -244,7 +244,7 @@ export default function EditPage() {
                 toast.success('Proposal regenerated!');
             } else {
                 toast.success('Project updated!');
-                router.push('/dashboard');
+                router.push(`/proposals/${projectId}`);
             }
         } catch (err) { console.error(err); toast.error(err instanceof Error ? err.message : 'Save failed'); }
         finally { setSaving(false); setGenerating(false); }
@@ -407,7 +407,7 @@ export default function EditPage() {
 
                     {/* SECTION 5 — Pricing */}
                     <div className="glass-card px-6">
-                        <SectionHeader number={5} icon={DollarSign} title="Pricing Table" />
+                        <SectionHeader number={5} icon={IndianRupee} title="Pricing Table" />
                         {expandedSections[5] && (
                             <div className="pb-6 space-y-4 animate-fade-in">
                                 <div className="flex items-center justify-between"><label className="input-label mb-0">Line Items *</label><button onClick={addLineItem} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1"><Plus size={14} /> Add Item</button></div>

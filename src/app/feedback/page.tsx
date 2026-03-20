@@ -287,7 +287,7 @@ export default function FeedbackPage() {
                                 <textarea
                                     value={featureWish}
                                     onChange={(e) => setFeatureWish(e.target.value)}
-                                    placeholder="Your dream feature — no idea is too big..."
+                                    placeholder="Your dream feature - no idea is too big..."
                                     rows={2}
                                     className="input-field resize-none"
                                 />

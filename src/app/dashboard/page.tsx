@@ -32,9 +32,7 @@ export default function DashboardPage() {
     const [showProfileSetup, setShowProfileSetup] = useState(false);
     const { user } = useAuth();
 
-    // ── Analytics state (Feature 11) ──
-    const [analytics, setAnalytics] = useState<{ totalProposals: number; approvalRate: number; avgDealSize: number; activeProjects: number } | null>(null);
-
+    // Removed Analytics state to simplify dashboard
     // Prefetch common routes for instant navigation
     useEffect(() => {
         router.prefetch('/create');
@@ -56,20 +54,10 @@ export default function DashboardPage() {
         }
         if (user) {
             fetchProjects();
-            fetchAnalytics();
         }
     }, [user]);
 
-    const fetchAnalytics = async () => {
-        try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) return;
-            const res = await fetch('/api/analytics', {
-                headers: { 'Authorization': `Bearer ${session.access_token}` },
-            });
-            if (res.ok) setAnalytics(await res.json());
-        } catch { /* silent */ }
-    };
+
 
     // Check if profile setup is needed
     useEffect(() => {
@@ -180,49 +168,7 @@ export default function DashboardPage() {
                 </Link>
             </div>
 
-            {/* ── Analytics Stats Strip (Feature 11) ── */}
-            {analytics && (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 animate-fade-in" style={{ animationDelay: '50ms' }}>
-                    <div className="glass-card p-4">
-                        <div className="flex items-center gap-2 mb-1">
-                            <div className="w-7 h-7 rounded-lg bg-brand-700/15 flex items-center justify-center">
-                                <FileText size={14} className="text-brand-400" />
-                            </div>
-                            <span className="text-white text-xl font-bold">{analytics.totalProposals}</span>
-                        </div>
-                        <p className="text-[#5a5a70] text-xs">Total Proposals</p>
-                    </div>
-                    <div className="glass-card p-4">
-                        <div className="flex items-center gap-2 mb-1">
-                            <div className="w-7 h-7 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                                <TrendingUp size={14} className="text-emerald-400" />
-                            </div>
-                            <span className="text-white text-xl font-bold">{analytics.approvalRate}%</span>
-                        </div>
-                        <p className="text-[#5a5a70] text-xs">Approval Rate</p>
-                    </div>
-                    <div className="glass-card p-4">
-                        <div className="flex items-center gap-2 mb-1">
-                            <div className="w-7 h-7 rounded-lg bg-amber-500/15 flex items-center justify-center">
-                                <IndianRupee size={14} className="text-amber-400" />
-                            </div>
-                            <span className="text-white text-xl font-bold">
-                                {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(analytics.avgDealSize)}
-                            </span>
-                        </div>
-                        <p className="text-[#5a5a70] text-xs">Avg Deal Size</p>
-                    </div>
-                    <div className="glass-card p-4">
-                        <div className="flex items-center gap-2 mb-1">
-                            <div className="w-7 h-7 rounded-lg bg-blue-500/15 flex items-center justify-center">
-                                <Activity size={14} className="text-blue-400" />
-                            </div>
-                            <span className="text-white text-xl font-bold">{analytics.activeProjects}</span>
-                        </div>
-                        <p className="text-[#5a5a70] text-xs">Active Projects</p>
-                    </div>
-                </div>
-            )}
+
 
             {configError && (
                 <div className="glass-card border-yellow-500/30 p-6 mb-6 animate-fade-in">
@@ -289,67 +235,61 @@ export default function DashboardPage() {
                         </select>
                     </div>
 
-                    {/* ── Action Prompt Cards (Feature 6) ── */}
-                    {(awaitingResponse > 0 || viewedAwaitingApproval > 0 || invoicesPending > 0) && (
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 animate-fade-in">
-                            {awaitingResponse > 0 && (
-                                <button
-                                    onClick={() => setStatusFilter('Sent')}
-                                    className="glass-card p-4 text-left hover:border-amber-500/30 transition-all group"
-                                >
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <Send size={14} className="text-amber-400" />
-                                        <span className="text-amber-400 text-2xl font-bold">{awaitingResponse}</span>
-                                    </div>
-                                    <p className="text-[#8888a0] text-xs">Proposals awaiting response</p>
-                                </button>
-                            )}
-                            {viewedAwaitingApproval > 0 && (
-                                <button
-                                    onClick={() => setStatusFilter('Sent')}
-                                    className="glass-card p-4 text-left hover:border-blue-500/30 transition-all group"
-                                >
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <Eye size={14} className="text-blue-400" />
-                                        <span className="text-blue-400 text-2xl font-bold">{viewedAwaitingApproval}</span>
-                                    </div>
-                                    <p className="text-[#8888a0] text-xs">Viewed — awaiting approval</p>
-                                </button>
-                            )}
-                            {invoicesPending > 0 && (
-                                <button
-                                    onClick={() => setStatusFilter('Approved')}
-                                    className="glass-card p-4 text-left hover:border-emerald-500/30 transition-all group"
-                                >
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <CheckCircle2 size={14} className="text-emerald-400" />
-                                        <span className="text-emerald-400 text-2xl font-bold">{invoicesPending}</span>
-                                    </div>
-                                    <p className="text-[#8888a0] text-xs">Invoices pending payment</p>
-                                </button>
-                            )}
-                        </div>
-                    )}
-
-                    {/* ── Follow-up Reminders (Feature 7) ── */}
-                    {staleProposals.length > 0 && (
-                        <div className="space-y-2 mb-6 animate-fade-in">
-                            {staleProposals.map(p => (
-                                <div key={p.id} className="glass-card p-3 sm:p-4 flex items-center justify-between gap-3 border-amber-500/15">
-                                    <div className="flex items-center gap-2 min-w-0">
-                                        <Clock size={14} className="text-amber-400 flex-shrink-0" />
-                                        <p className="text-[#8888a0] text-xs sm:text-sm truncate">
-                                            No response in <span className="text-amber-400 font-semibold">{getDaysAgo(p.created_at)} days</span> — Remind <span className="text-white font-medium">{p.client_name}</span>?
-                                        </p>
-                                    </div>
-                                    <button
-                                        onClick={() => openWhatsAppReminder(p.client_name, p.id)}
-                                        className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/15 px-3 py-1.5 rounded-lg transition-all flex-shrink-0"
-                                    >
-                                        <Share2 size={12} /> Remind
+                    {/* ── Needs Attention (CRM) ── */}
+                    {(awaitingResponse > 0 || viewedAwaitingApproval > 0 || invoicesPending > 0 || staleProposals.length > 0) && (
+                        <div className="mb-6 animate-fade-in">
+                            <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-3">Needs Attention</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                {awaitingResponse > 0 && (
+                                    <button onClick={() => setStatusFilter('Sent')} className="glass-card p-4 text-left hover:border-[#FF9933]/30 transition-all group border-[#FF9933]/10 bg-gradient-to-br from-[#FF9933]/5 to-transparent">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <div className="w-7 h-7 rounded-lg bg-[#FF9933]/15 flex items-center justify-center">
+                                                <Send size={14} className="text-[#FF9933]" />
+                                            </div>
+                                            <span className="text-[#FF9933] text-2xl font-bold">{awaitingResponse}</span>
+                                        </div>
+                                        <p className="text-[#8888a0] text-xs">Awaiting response</p>
                                     </button>
-                                </div>
-                            ))}
+                                )}
+                                {viewedAwaitingApproval > 0 && (
+                                    <button onClick={() => setStatusFilter('Sent')} className="glass-card p-4 text-left hover:border-brand-500/30 transition-all group border-brand-500/10 bg-gradient-to-br from-brand-500/5 to-transparent">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <div className="w-7 h-7 rounded-lg bg-brand-500/15 flex items-center justify-center">
+                                                <Eye size={14} className="text-brand-400" />
+                                            </div>
+                                            <span className="text-brand-400 text-2xl font-bold">{viewedAwaitingApproval}</span>
+                                        </div>
+                                        <p className="text-[#8888a0] text-xs">Viewed - awaiting approval</p>
+                                    </button>
+                                )}
+                                {invoicesPending > 0 && (
+                                    <button onClick={() => setStatusFilter('Approved')} className="glass-card p-4 text-left hover:border-[#138808]/30 transition-all group border-[#138808]/10 bg-gradient-to-br from-[#138808]/5 to-transparent">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <div className="w-7 h-7 rounded-lg bg-[#138808]/15 flex items-center justify-center">
+                                                <CheckCircle2 size={14} className="text-[#22c55e]" />
+                                            </div>
+                                            <span className="text-[#22c55e] text-2xl font-bold">{invoicesPending}</span>
+                                        </div>
+                                        <p className="text-[#8888a0] text-xs">Invoices pending payment</p>
+                                    </button>
+                                )}
+                                {staleProposals.length > 0 && (
+                                    <div className="glass-card p-4 flex flex-col justify-between border-[#25D366]/20 bg-gradient-to-br from-[#25D366]/5 to-transparent">
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <div className="w-7 h-7 rounded-lg bg-[#25D366]/15 flex items-center justify-center">
+                                                    <Clock size={14} className="text-[#25D366]" />
+                                                </div>
+                                                <span className="text-[#25D366] text-2xl font-bold">{staleProposals.length}</span>
+                                            </div>
+                                            <p className="text-[#8888a0] text-xs mb-3">Needs follow-up</p>
+                                        </div>
+                                        <button onClick={() => openWhatsAppReminder(staleProposals[0].client_name, staleProposals[0].id)} className="flex items-center justify-center gap-1.5 text-xs font-medium text-[#25D366] hover:text-[#2aea7a] bg-[#25D366]/10 hover:bg-[#25D366]/15 py-1.5 rounded-lg transition-all w-full">
+                                            <Share2 size={12} /> Remind {staleProposals[0].client_name.split(' ')[0]}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 

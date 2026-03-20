@@ -75,6 +75,11 @@ export async function POST(request: Request) {
             `,
         });
 
+        if (result.error) {
+            console.error('Resend API Error details:', result.error);
+            return NextResponse.json({ error: result.error.message || 'Failed to send email' }, { status: 500 });
+        }
+
         return NextResponse.json({ success: true, emailResult: result });
     } catch (error) {
         console.error('Error in send-proposal:', error);

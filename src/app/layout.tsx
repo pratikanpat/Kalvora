@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: 'K A L V O R A — Interior Design Proposal Generator',
+    title: 'K A L V O R A - Interior Design Proposal Generator',
     description: 'Create beautiful, branded PDF proposals for your interior design clients. Free, fast, professional.',
 };
 

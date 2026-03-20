@@ -406,7 +406,7 @@ export default function PublicViewPage() {
                     >
                         <span className="text-[#5a5a70] text-xs">This proposal was created with</span>
                         <span className="text-brand-400 text-xs font-bold tracking-wider">KALVORA</span>
-                        <span className="text-[#5a5a70] text-xs hidden sm:inline">—</span>
+                        <span className="text-[#5a5a70] text-xs hidden sm:inline">-</span>
                         <span className="text-brand-400 text-xs font-medium hidden sm:inline group-hover:underline">Create yours in 60 seconds →</span>
                     </a>
                 </div>

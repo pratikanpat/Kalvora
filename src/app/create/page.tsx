@@ -9,7 +9,7 @@ import { useAuth } from '@/components/AuthProvider';
 import {
     User, Mail, Phone, MapPin, Building, Plus, Trash2,
     Palette, Upload, FileText, Save, Sparkles, ChevronDown,
-    ChevronUp, DollarSign, Calculator, StickyNote, LayoutTemplate,
+    ChevronUp, IndianRupee, Calculator, StickyNote, LayoutTemplate,
     Loader2, Eye, Clock, CheckSquare, Calendar, ShieldCheck
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -658,7 +658,7 @@ export default function CreatePage() {
 
                     {/* SECTION 5 — Pricing Table */}
                     <div className="glass-card px-6">
-                        <SectionHeader number={5} icon={DollarSign} title="Pricing Table" />
+                        <SectionHeader number={5} icon={IndianRupee} title="Pricing Table" />
                         {expandedSections[5] && (
                             <div className="pb-6 space-y-4 animate-fade-in">
                                 <div className="flex items-center justify-between">
