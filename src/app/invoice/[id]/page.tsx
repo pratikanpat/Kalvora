@@ -27,6 +27,14 @@ interface ProjectData {
     line_items: { item_name: string; quantity: number; unit_price: number }[];
 }
 
+interface PaymentMilestone {
+    id: string;
+    label: string;
+    amount: number;
+    due_date: string | null;
+    paid_at: string | null;
+}
+
 interface DesignerProfile {
     studio_name: string;
     studio_address: string;
@@ -49,6 +57,7 @@ export default function InvoicePage() {
     const [designerProfile, setDesignerProfile] = useState<DesignerProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
+    const [milestones, setMilestones] = useState<PaymentMilestone[]>([]);
 
     useEffect(() => {
         loadInvoice();
@@ -64,10 +73,12 @@ export default function InvoicePage() {
                 .single();
             if (error || !proj) { setNotFound(true); return; }
 
-            const [roomsRes, itemsRes] = await Promise.all([
+            const [roomsRes, itemsRes, milestonesRes] = await Promise.all([
                 supabase.from('rooms').select('*').eq('project_id', projectId),
                 supabase.from('line_items').select('*').eq('project_id', projectId),
+                supabase.from('payment_milestones').select('*').eq('project_id', projectId).order('created_at', { ascending: true }),
             ]);
+            setMilestones(milestonesRes.data || []);
 
             // Fetch designer profile for GST, bank, and other details
             if (proj.user_id) {
@@ -380,6 +391,43 @@ export default function InvoicePage() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Payment Schedule (Milestones) */}
+                        {milestones.length > 0 && (
+                            <div className="border-t border-[#1a1a2e] print-border pt-6">
+                                <h3 className="text-xs font-semibold text-[#5a5a70] uppercase tracking-wider mb-3">Payment Schedule</h3>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="border-b border-[#2a2a40] print-border">
+                                                <th className="text-left py-2 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Milestone</th>
+                                                <th className="text-right py-2 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Amount</th>
+                                                <th className="text-center py-2 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Due Date</th>
+                                                <th className="text-center py-2 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {milestones.map((m) => (
+                                                <tr key={m.id} className="border-b border-[#1a1a2e] print-border">
+                                                    <td className="py-2.5 text-white print-dark-text">{m.label}</td>
+                                                    <td className="py-2.5 text-right text-white print-dark-text font-medium">{formatCurrency(Number(m.amount))}</td>
+                                                    <td className="py-2.5 text-center text-[#8888a0] print-gray-text">
+                                                        {m.due_date ? new Date(m.due_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                                                    </td>
+                                                    <td className="py-2.5 text-center">
+                                                        {m.paid_at ? (
+                                                            <span className="inline-flex items-center gap-1 text-emerald-400 text-xs font-semibold">✓ Paid</span>
+                                                        ) : (
+                                                            <span className="inline-flex items-center gap-1 text-amber-400 text-xs font-semibold">◉ Unpaid</span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Payment Details */}
                         {hasPaymentInfo && (

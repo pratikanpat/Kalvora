@@ -14,6 +14,7 @@ import {
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import ProjectPipeline from '@/components/ProjectPipeline';
+import PaymentMilestones from '@/components/PaymentMilestones';
 
 interface ProjectData {
     id: string;
@@ -403,6 +404,9 @@ export default function ProposalViewPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Payment Milestones */}
+                <PaymentMilestones projectId={projectId} grandTotal={grandTotal} />
 
                 {/* Notes & Terms */}
                 {(project.notes || project.payment_terms) && (
