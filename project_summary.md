@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-20 (v7 — Phase 1 growth features: WhatsApp share, viral CTA, new landing page, email-to-client)
+> Last updated: 2026-03-20 (v8 — Phase 3 revenue enablers: payment milestones, auto-invoice, analytics strip)
 
 ---
 
@@ -62,8 +62,9 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   /app
     /api
       /generate-pdf      → POST API route: generates PDF using Puppeteer, uploads to Supabase Storage
-      /respond-proposal  → POST API route (force-dynamic): handles client actions (view, approve, request_changes), sends emails via Resend; on approval, also emails client an invoice link
+      /respond-proposal  → POST API route (force-dynamic): handles client actions (view, approve, request_changes), sends emails via Resend; on approval, auto-creates payment milestones and emails client an invoice link
       /send-proposal     → POST API route: emails proposal link to client, updates status Draft→Sent
+      /analytics         → GET API route (force-dynamic): returns 4 dashboard stats (total proposals, approval rate, avg deal size, active projects) for authenticated user
       /warmup             → Lightweight warm-up endpoint for serverless cold-start reduction
     /completed           → Lists all projects with status 'Completed'
     /create              → Multi-section form to create a new proposal
@@ -91,6 +92,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     LogoutFeedbackModal.tsx   → Modal shown on logout to capture friction feedback
     Sidebar.tsx               → Left nav sidebar for authenticated views (with red dot for incomplete profile, logout → feedback modal)
     StatusBadge.tsx           → Badge component (Draft / Sent / Approved / Completed)
+    PaymentMilestones.tsx     → Payment milestone management (add/edit/delete/mark paid) with default presets (30/40/30)
     SuccessModal.tsx          → Post-generation success modal with PDF download/share links
     TemplatePreviewModal.tsx  → Template preview carousel modal on create page
   /lib
@@ -105,6 +107,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   approval_migration.sql → Adds client_viewed_at to projects, creates comments table
   invoice_profile_migration.sql → Adds gstin, pan_number, hsn_sac_code, invoice_due_days, bank_name, bank_account_number, bank_ifsc, upi_id to designer_profiles
   cascade_delete_migration.sql   → Enables ON DELETE CASCADE for projects.user_id
+  payment_milestones_migration.sql → Creates payment_milestones table for tracking advance/mid/final payments
 ```
 
 ---
@@ -266,6 +269,29 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Clones project data, rooms, and line_items with new UUID and "Draft" status.
 - Redirects to edit page for the new copy.
 
+### 13. Revenue Enablers (Growth Features — Phase 3)
+
+**Payment Milestone Tracking (`PaymentMilestones.tsx`):**
+- Dedicated component on proposals detail page (`/proposals/[id]`).
+- Table: Label | Amount | Due Date | Status (Paid/Unpaid).
+- Default presets button: creates Advance (30%), Mid-project (40%), Final (30%) milestones based on grand total.
+- Inline add custom milestone form (label, amount, due date).
+- "Mark as Paid" button per row, delete button.
+- Paid/pending totals shown in header.
+- Read-only "Payment Schedule" table also shown on invoice page (`/invoice/[id]`).
+
+**Auto-Invoice After Approval:**
+- When a client approves a proposal via `/view/[id]`, the `respond-proposal` API route automatically creates default payment milestones (30/40/30 of grand total) if none exist.
+- Fetches line_items + tax_rate to compute exact grand total.
+- Non-blocking: if milestone creation fails, approval still succeeds.
+
+**Simple Analytics Strip (Dashboard):**
+- 4-stat card strip at top of dashboard: Total Proposals, Approval Rate, Avg Deal Size, Active Projects.
+- Data fetched from `GET /api/analytics` (authenticated, server-side).
+- Approval Rate = (Approved + Paid + Completed) / (Sent + Approved + Paid + Completed) × 100.
+- Avg Deal Size = average grand_total (with tax) across approved/paid/completed projects.
+- Active Projects = count of non-Draft, non-Completed projects.
+
 ---
 
 ## 5. Database Schema
@@ -378,6 +404,17 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 | author_type | TEXT | `Client` or `Designer` |
 | created_at | TIMESTAMPTZ | |
 
+### Table: `payment_milestones`
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID | PK |
+| project_id | UUID | FK → projects (cascade delete), NOT NULL |
+| label | TEXT | e.g. 'Advance', 'Mid-project', 'Final' |
+| amount | NUMERIC | Default 0 |
+| due_date | DATE | Optional |
+| paid_at | TIMESTAMPTZ | Set when marked as paid |
+| created_at | TIMESTAMPTZ | |
+
 **Supabase Storage Buckets:**
 - `logos` — public, stores designer studio logos
 - `proposals` — public, stores generated PDF files
@@ -428,8 +465,8 @@ When creating a new proposal, the form fetches `designer_profiles` on mount and 
 
 ## 7. Current Limitations
 
-- **No payment tracking** — No way to record partial payments or payment milestones.
-- **No project analytics** — No dashboard stats (revenue, projects per month, conversion rate, etc.).
+- **No payment tracking** — ~~No way to record partial payments or payment milestones.~~ **RESOLVED in Phase 3** — Payment milestones now track advance/mid/final payments.
+- **No project analytics** — ~~No dashboard stats.~~ **RESOLVED in Phase 3** — Analytics strip shows total proposals, approval rate, avg deal size, active projects.
 - **No revision history** — Editing a project replaces data; there is no versioning of proposals.
 - **No multi-user team access** — Each account is a single designer; no shared studio/team workspace.
 - **PDF is regenerated on demand** — No auto-versioning; re-generating overwrites the previous PDF record in the `proposals` table.
