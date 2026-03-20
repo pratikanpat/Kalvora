@@ -9,7 +9,7 @@ import ProjectPipeline from '@/components/ProjectPipeline';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/AuthProvider';
 import ProfileSetupModal from '@/components/ProfileSetupModal';
-import { Plus, Trash2, FileText, Search, Calendar, ArrowRight, AlertTriangle, Sparkles, Eye, Send, Clock, CheckCircle2, Share2 } from 'lucide-react';
+import { Plus, Trash2, FileText, Search, Calendar, ArrowRight, AlertTriangle, Sparkles, Eye, Send, Clock, CheckCircle2, Share2, BarChart3, TrendingUp, IndianRupee, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface Project {
@@ -32,6 +32,9 @@ export default function DashboardPage() {
     const [showProfileSetup, setShowProfileSetup] = useState(false);
     const { user } = useAuth();
 
+    // ── Analytics state (Feature 11) ──
+    const [analytics, setAnalytics] = useState<{ totalProposals: number; approvalRate: number; avgDealSize: number; activeProjects: number } | null>(null);
+
     // Prefetch common routes for instant navigation
     useEffect(() => {
         router.prefetch('/create');
@@ -51,8 +54,22 @@ export default function DashboardPage() {
             setLoading(false);
             return;
         }
-        if (user) fetchProjects();
+        if (user) {
+            fetchProjects();
+            fetchAnalytics();
+        }
     }, [user]);
+
+    const fetchAnalytics = async () => {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) return;
+            const res = await fetch('/api/analytics', {
+                headers: { 'Authorization': `Bearer ${session.access_token}` },
+            });
+            if (res.ok) setAnalytics(await res.json());
+        } catch { /* silent */ }
+    };
 
     // Check if profile setup is needed
     useEffect(() => {
@@ -162,6 +179,50 @@ export default function DashboardPage() {
                     New Project
                 </Link>
             </div>
+
+            {/* ── Analytics Stats Strip (Feature 11) ── */}
+            {analytics && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 animate-fade-in" style={{ animationDelay: '50ms' }}>
+                    <div className="glass-card p-4">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-7 h-7 rounded-lg bg-brand-700/15 flex items-center justify-center">
+                                <FileText size={14} className="text-brand-400" />
+                            </div>
+                            <span className="text-white text-xl font-bold">{analytics.totalProposals}</span>
+                        </div>
+                        <p className="text-[#5a5a70] text-xs">Total Proposals</p>
+                    </div>
+                    <div className="glass-card p-4">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-7 h-7 rounded-lg bg-emerald-500/15 flex items-center justify-center">
+                                <TrendingUp size={14} className="text-emerald-400" />
+                            </div>
+                            <span className="text-white text-xl font-bold">{analytics.approvalRate}%</span>
+                        </div>
+                        <p className="text-[#5a5a70] text-xs">Approval Rate</p>
+                    </div>
+                    <div className="glass-card p-4">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-7 h-7 rounded-lg bg-amber-500/15 flex items-center justify-center">
+                                <IndianRupee size={14} className="text-amber-400" />
+                            </div>
+                            <span className="text-white text-xl font-bold">
+                                {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(analytics.avgDealSize)}
+                            </span>
+                        </div>
+                        <p className="text-[#5a5a70] text-xs">Avg Deal Size</p>
+                    </div>
+                    <div className="glass-card p-4">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-7 h-7 rounded-lg bg-blue-500/15 flex items-center justify-center">
+                                <Activity size={14} className="text-blue-400" />
+                            </div>
+                            <span className="text-white text-xl font-bold">{analytics.activeProjects}</span>
+                        </div>
+                        <p className="text-[#5a5a70] text-xs">Active Projects</p>
+                    </div>
+                </div>
+            )}
 
             {configError && (
                 <div className="glass-card border-yellow-500/30 p-6 mb-6 animate-fade-in">
