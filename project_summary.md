@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-19 (v6 — structured feedback system, logout feedback modal)
+> Last updated: 2026-03-20 (v7 — Phase 1 growth features: WhatsApp share, viral CTA, new landing page, email-to-client)
 
 ---
 
@@ -63,6 +63,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     /api
       /generate-pdf      → POST API route: generates PDF using Puppeteer, uploads to Supabase Storage
       /respond-proposal  → POST API route (force-dynamic): handles client actions (view, approve, request_changes), sends emails via Resend; on approval, also emails client an invoice link
+      /send-proposal     → POST API route: emails proposal link to client, updates status Draft→Sent
       /warmup             → Lightweight warm-up endpoint for serverless cold-start reduction
     /completed           → Lists all projects with status 'Completed'
     /create              → Multi-section form to create a new proposal
@@ -78,7 +79,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     /proposals/[id]      → View saved proposal detail, download/re-generate PDF
     /view/[id]           → Public shareable proposal view with approve/comment workflow
     layout.tsx           → Root layout: wraps AuthProvider + Toaster
-    page.tsx             → Landing page (hero, features, template showcase, pricing, CTA)
+    page.tsx             → Landing page (pain-first hero, before/after, 4-step workflow, features, templates, who it's for, FAQ, pricing, final CTA)
     globals.css          → Global styles, design tokens, custom utility classes
   /components
     AuthProvider.tsx          → React context: session management, exposes useAuth() hook
@@ -217,6 +218,30 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Asks one friction question: "What almost stopped you from creating a proposal today?"
 - Two actions: "Skip & Log out" (no feedback) or "Submit & Log out" (saves feedback with `feedback_type = 'logout_trigger'`).
 - Feedback silently fails if insert errors — never blocks the logout.
+
+### 11. Distribution & Sharing (Growth Features — Phase 1)
+
+**WhatsApp Share Button:**
+- Added to proposals detail page (`/proposals/[id]`).
+- Opens `wa.me/?text=` with pre-filled message containing the shareable proposal link.
+
+**"Powered by Kalvora" Viral CTA:**
+- Public view (`/view/[id]`) and invoice (`/invoice/[id]`) pages now show a clickable CTA footer: *"This proposal was created with KALVORA — Create yours in 60 seconds →"*
+- Links to the Kalvora landing page. On invoice, hidden during print.
+
+**Pain-First Landing Page:**
+- Hero: "Stop Chasing Clients on WhatsApp With Word Docs" with trust strip.
+- Before/After comparison section.
+- 4-step workflow (Fill → Template → WhatsApp → Auto Invoice).
+- Who It's For (Freelancers, Studios, Architects, Home Staging).
+- FAQ accordion (5 questions).
+- Pricing: "Free during early access. Pro at ₹999/mo — early users lock in 50% off."
+- Final CTA: "Your next proposal is 60 seconds away."
+
+**Email to Client (`POST /api/send-proposal`):**
+- Sends a branded email to the client with the proposal view link via Resend.
+- Auto-updates project status from Draft to Sent.
+- Button available on proposals detail page.
 
 ---
 
@@ -386,6 +411,7 @@ When creating a new proposal, the form fetches `designer_profiles` on mount and 
 - **No multi-user team access** — Each account is a single designer; no shared studio/team workspace.
 - **PDF is regenerated on demand** — No auto-versioning; re-generating overwrites the previous PDF record in the `proposals` table.
 - **Currency is hard-coded to INR** — `en-IN` locale and `₹` symbol. Not multi-currency.
+- **No duplicate proposal** — Cannot clone an existing project to create a variant for a different client.
 
 ---
 

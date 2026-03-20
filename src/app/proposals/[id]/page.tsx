@@ -9,7 +9,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/AuthProvider';
 import {
     Download, Copy, Check, Edit, MapPin, Phone, Mail,
-    Building, Calendar, ArrowLeft, DollarSign, ExternalLink, User, FileText
+    Building, Calendar, ArrowLeft, DollarSign, ExternalLink, User, FileText, Share2, Loader2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
@@ -45,6 +45,7 @@ export default function ProposalViewPage() {
     const [loading, setLoading] = useState(true);
     const [copied, setCopied] = useState(false);
     const [statusUpdating, setStatusUpdating] = useState(false);
+    const [sendingEmail, setSendingEmail] = useState(false);
     const { user } = useAuth();
 
     useEffect(() => {
@@ -109,6 +110,36 @@ export default function ProposalViewPage() {
         }
     };
 
+    const shareOnWhatsApp = () => {
+        const link = `${window.location.origin}/view/${projectId}`;
+        const message = `Hi! Here's your proposal for ${project?.project_type}: ${link}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    };
+
+    const emailToClient = async () => {
+        if (!project?.client_email) {
+            toast.error('No client email on this project. Add one in Edit.');
+            return;
+        }
+        setSendingEmail(true);
+        try {
+            const res = await fetch('/api/send-proposal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ projectId, clientEmail: project.client_email }),
+            });
+            if (!res.ok) throw new Error('Failed');
+            toast.success(`Proposal emailed to ${project.client_email}`);
+            if (project.status === 'Draft') {
+                setProject({ ...project, status: 'Sent' });
+            }
+        } catch {
+            toast.error('Failed to send email. Try again.');
+        } finally {
+            setSendingEmail(false);
+        }
+    };
+
     const formatCurrency = (a: number) =>
         new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(a);
 
@@ -164,6 +195,9 @@ export default function ProposalViewPage() {
                             {copied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
                             {copied ? 'Copied!' : 'Copy Shareable Link'}
                         </button>
+                        <button onClick={shareOnWhatsApp} className="btn-secondary text-sm py-2 !text-emerald-400 hover:!bg-emerald-500/10">
+                            <Share2 size={15} /> Share on WhatsApp
+                        </button>
                         {latestPdf && (
                             <a href={latestPdf.pdf_url} target="_blank" rel="noopener noreferrer" className="btn-primary text-sm py-2">
                                 <Download size={15} /> Download PDF
@@ -172,6 +206,14 @@ export default function ProposalViewPage() {
                         <Link href={`/edit/${projectId}`} className="btn-secondary text-sm py-2">
                             <Edit size={15} /> Edit Project
                         </Link>
+                        <button
+                            onClick={emailToClient}
+                            disabled={sendingEmail}
+                            className="btn-secondary text-sm py-2 !text-blue-400 hover:!bg-blue-500/10 disabled:opacity-50"
+                        >
+                            {sendingEmail ? <Loader2 size={15} className="animate-spin" /> : <Mail size={15} />}
+                            {sendingEmail ? 'Sending...' : 'Email to Client'}
+                        </button>
                     </div>
 
                     {/* Project Pipeline */}

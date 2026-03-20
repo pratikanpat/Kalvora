@@ -9,7 +9,8 @@ import { supabase } from '@/lib/supabase';
 import {
     Sparkles, Zap, FileText, Palette, Share2, Layers, LayoutTemplate,
     ArrowRight, ChevronRight, Plus, ClipboardList, Send,
-    Star, MessageSquare, Loader2, CheckCircle2, Eye
+    Star, MessageSquare, Loader2, CheckCircle2, Eye, ChevronDown,
+    X, Check, Receipt, IndianRupee, Users, Briefcase, Home as HomeIcon
 } from 'lucide-react';
 import TemplatePreviewModal from '@/components/TemplatePreviewModal';
 import toast from 'react-hot-toast';
@@ -42,24 +43,32 @@ export default function LandingPage() {
                     {/* Badge */}
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-700/10 border border-brand-700/20 text-brand-400 text-xs font-semibold uppercase tracking-wider mb-8 animate-fade-in">
                         <Sparkles size={14} />
-                        Built for Interior Design Professionals
+                        Built for Indian Interior Design Professionals
                     </div>
 
-                    {/* Headline */}
+                    {/* Headline — Pain-first */}
                     <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 animate-fade-in">
-                        <span className="text-white">Create Stunning Proposals</span>
+                        <span className="text-white">Stop Chasing Clients on</span>
                         <br />
-                        <span className="landing-gradient-text">In Seconds, Not Hours</span>
+                        <span className="landing-gradient-text">WhatsApp With Word Docs</span>
                     </h1>
 
                     {/* Subtitle */}
                     <p className="text-[#8888a0] text-lg sm:text-xl max-w-2xl mx-auto mb-4 animate-fade-in leading-relaxed">
-                        Kalvora helps interior designers generate beautiful, branded PDF proposals.
-                        Enter your project details, pick a template, and share with clients — instantly.
+                        Create branded proposals, get client approval, and auto-generate invoices — in one place.
+                        Built for Indian interior designers.
                     </p>
-                    <p className="text-brand-400 text-base sm:text-lg font-semibold max-w-2xl mx-auto mb-10 animate-fade-in tracking-tight">
-                        The fastest way for interior designers to send beautiful client proposals.
-                    </p>
+
+                    {/* Trust strip */}
+                    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[#5a5a70] text-xs sm:text-sm mb-10 animate-fade-in">
+                        <span className="flex items-center gap-1.5">🇮🇳 Made for India</span>
+                        <span className="hidden sm:inline text-[#2a2a40]">•</span>
+                        <span className="flex items-center gap-1.5"><IndianRupee size={12} /> INR + GST</span>
+                        <span className="hidden sm:inline text-[#2a2a40]">•</span>
+                        <span className="flex items-center gap-1.5"><Share2 size={12} /> WhatsApp Sharing</span>
+                        <span className="hidden sm:inline text-[#2a2a40]">•</span>
+                        <span className="flex items-center gap-1.5"><Palette size={12} /> 6 Premium Templates</span>
+                    </div>
 
                     {/* CTAs */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in">
@@ -73,10 +82,10 @@ export default function LandingPage() {
                                     <ArrowRight size={20} />
                                 </Link>
                                 <a
-                                    href="#features"
+                                    href="#how-it-works"
                                     className="btn-secondary text-base px-8 py-3.5 rounded-xl"
                                 >
-                                    Explore Features
+                                    See How It Works
                                     <ChevronRight size={18} />
                                 </a>
                             </>
@@ -86,19 +95,96 @@ export default function LandingPage() {
                                     href="/login"
                                     className="btn-primary text-base px-8 py-3.5 rounded-xl shadow-xl shadow-brand-700/25"
                                 >
-                                    Get Started
+                                    Start Free
                                     <ArrowRight size={20} />
                                 </Link>
                                 <a
-                                    href="#features"
+                                    href="#how-it-works"
                                     className="btn-secondary text-base px-8 py-3.5 rounded-xl"
                                 >
-                                    Learn More
+                                    See How It Works
                                     <ChevronRight size={18} />
                                 </a>
                             </>
                         )}
                     </div>
+                </div>
+            </section>
+
+            {/* ===== BEFORE → AFTER ===== */}
+            <section className="landing-section">
+                <div className="text-center mb-16">
+                    <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">The Difference</p>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Before vs. After Kalvora</h2>
+                    <p className="text-[#8888a0] max-w-xl mx-auto">See what your workflow looks like with and without Kalvora.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    {/* Before */}
+                    <div className="landing-card p-7 border-red-500/20 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500/60 to-red-400/30" />
+                        <div className="flex items-center gap-2 mb-5">
+                            <X size={20} className="text-red-400" />
+                            <h3 className="text-lg font-semibold text-red-400">Before Kalvora</h3>
+                        </div>
+                        <ul className="space-y-3 text-sm text-[#8888a0]">
+                            <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> Word doc proposal over WhatsApp</li>
+                            <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> &quot;Bhai thoda change karo&quot; — endless back and forth</li>
+                            <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> Manual Excel invoice after approval</li>
+                            <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> Chase payments with 10 follow-up messages</li>
+                            <li className="flex items-start gap-2"><X size={14} className="text-red-400/60 mt-0.5 flex-shrink-0" /> No idea if client even opened the doc</li>
+                        </ul>
+                    </div>
+
+                    {/* After */}
+                    <div className="landing-card p-7 border-emerald-500/20 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500/60 to-emerald-400/30" />
+                        <div className="flex items-center gap-2 mb-5">
+                            <CheckCircle2 size={20} className="text-emerald-400" />
+                            <h3 className="text-lg font-semibold text-emerald-400">After Kalvora</h3>
+                        </div>
+                        <ul className="space-y-3 text-sm text-[#8888a0]">
+                            <li className="flex items-start gap-2"><Check size={14} className="text-emerald-400/80 mt-0.5 flex-shrink-0" /> Branded PDF proposal in 60 seconds</li>
+                            <li className="flex items-start gap-2"><Check size={14} className="text-emerald-400/80 mt-0.5 flex-shrink-0" /> Client approves online with one click</li>
+                            <li className="flex items-start gap-2"><Check size={14} className="text-emerald-400/80 mt-0.5 flex-shrink-0" /> Invoice auto-generated after approval</li>
+                            <li className="flex items-start gap-2"><Check size={14} className="text-emerald-400/80 mt-0.5 flex-shrink-0" /> Payment milestones tracked automatically</li>
+                            <li className="flex items-start gap-2"><Check size={14} className="text-emerald-400/80 mt-0.5 flex-shrink-0" /> Know exactly when client views your proposal</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            {/* ===== HOW IT WORKS (4 steps) ===== */}
+            <section id="how-it-works" className="landing-section relative">
+                <div className="text-center mb-16">
+                    <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">How It Works</p>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Four Simple Steps</h2>
+                    <p className="text-[#8888a0] max-w-xl mx-auto">
+                        From project details to tracked payment — in under a minute.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+                    {/* Connecting line (desktop only) */}
+                    <div className="hidden lg:block absolute top-[60px] left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-transparent via-brand-600/30 to-transparent" />
+
+                    {[
+                        { step: '01', icon: Plus, title: 'Fill Details', desc: 'Enter client info, rooms, and pricing with smart presets.' },
+                        { step: '02', icon: Palette, title: 'Pick a Template', desc: 'Choose from 6 premium PDF templates. Add your brand.' },
+                        { step: '03', icon: Share2, title: 'Share on WhatsApp', desc: 'Send client a magic link. Know when they view it.' },
+                        { step: '04', icon: Receipt, title: 'Auto Invoice', desc: 'Client approves → invoice auto-generated → payment tracked.' },
+                    ].map((item, i) => (
+                        <div key={item.step} className={`text-center relative opacity-0 animate-scale-in stagger-${i + 1}`}>
+                            <div className="inline-flex items-center justify-center w-[80px] h-[80px] rounded-2xl bg-[#1a1a2e] border border-[#2a2a40] mb-6 relative z-10">
+                                <item.icon size={32} className="text-brand-400" />
+                                <span className="absolute -top-2 -right-2 w-7 h-7 rounded-lg bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-[11px] font-bold text-white shadow-lg">
+                                    {item.step}
+                                </span>
+                            </div>
+                            <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
+                            <p className="text-[#8888a0] text-sm max-w-[280px] mx-auto leading-relaxed">{item.desc}</p>
+                        </div>
+                    ))}
                 </div>
             </section>
 
@@ -117,9 +203,9 @@ export default function LandingPage() {
                         { icon: Zap, title: 'Instant Proposals', desc: 'Create professional, client-ready proposals in seconds with just a few inputs.' },
                         { icon: Palette, title: 'Branded Templates', desc: 'Choose from Minimal, Luxury, or Modern PDF templates. Customize colors and upload your logo.' },
                         { icon: ClipboardList, title: 'Room & Pricing', desc: 'Add rooms with square footage and detailed line-item pricing with auto-calculated totals and tax.' },
-                        { icon: Share2, title: 'Shareable Links', desc: 'Generate public links to share proposals with clients — no login required for them.' },
-                        { icon: Layers, title: 'Multiple Versions', desc: 'Generate unlimited proposal versions per project. Track every PDF with smart file naming.' },
-                        { icon: FileText, title: 'Draft Support', desc: 'Save projects as drafts and come back anytime to edit, regenerate, or share.' },
+                        { icon: Share2, title: 'WhatsApp Sharing', desc: 'Share proposals directly on WhatsApp with pre-filled messages. Know when clients view them.' },
+                        { icon: Receipt, title: 'GST Invoicing', desc: 'Auto-generate GST-compliant invoices with CGST/SGST breakdown, bank details, and UPI.' },
+                        { icon: FileText, title: 'Client Approval', desc: 'Clients approve with one click from the magic link. You get notified instantly via email.' },
                     ].map((feature, i) => (
                         <div
                             key={feature.title}
@@ -135,54 +221,60 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* ===== HOW IT WORKS ===== */}
-            <section id="how-it-works" className="landing-section relative">
+            {/* ===== TEMPLATES PREVIEW ===== */}
+            <TemplatesShowcase />
+
+            {/* ===== WHO IT'S FOR ===== */}
+            <section className="landing-section">
                 <div className="text-center mb-16">
-                    <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">How It Works</p>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Three Simple Steps</h2>
+                    <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">Who It&apos;s For</p>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Built for Your Studio</h2>
                     <p className="text-[#8888a0] max-w-xl mx-auto">
-                        From project details to a polished PDF — in under a minute.
+                        Whether you&apos;re solo or a small team, Kalvora fits your workflow.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                    {/* Connecting line (desktop only) */}
-                    <div className="hidden md:block absolute top-[60px] left-[20%] right-[20%] h-[2px] bg-gradient-to-r from-transparent via-brand-600/30 to-transparent" />
-
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
                     {[
-                        { step: '01', icon: Plus, title: 'Create Project', desc: 'Enter client details, project type, and designer info.' },
-                        { step: '02', icon: ClipboardList, title: 'Add Rooms & Pricing', desc: 'Add rooms with dimensions and itemized pricing with tax.' },
-                        { step: '03', icon: Send, title: 'Generate & Share', desc: 'Pick a template, generate a branded PDF, and share via link.' },
+                        { icon: Users, title: 'Freelance Designers', desc: 'Solo designers handling 3-10 active projects' },
+                        { icon: Briefcase, title: 'Small Studios', desc: 'Design studios with 2-5 team members' },
+                        { icon: HomeIcon, title: 'Architects', desc: 'Architects offering interior services' },
+                        { icon: Layers, title: 'Home Staging', desc: 'Home staging and decor businesses' },
                     ].map((item, i) => (
-                        <div key={item.step} className={`text-center relative opacity-0 animate-scale-in stagger-${i + 1}`}>
-                            <div className="inline-flex items-center justify-center w-[80px] h-[80px] rounded-2xl bg-[#1a1a2e] border border-[#2a2a40] mb-6 relative z-10">
-                                <item.icon size={32} className="text-brand-400" />
-                                <span className="absolute -top-2 -right-2 w-7 h-7 rounded-lg bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-[11px] font-bold text-white shadow-lg">
-                                    {item.step}
-                                </span>
+                        <div key={item.title} className={`landing-card p-6 text-center opacity-0 animate-scale-in stagger-${i + 1}`}>
+                            <div className="w-12 h-12 rounded-xl bg-brand-700/15 border border-brand-700/25 flex items-center justify-center mb-4 mx-auto">
+                                <item.icon size={22} className="text-brand-400" />
                             </div>
-                            <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
-                            <p className="text-[#8888a0] text-sm max-w-[280px] mx-auto leading-relaxed">{item.desc}</p>
+                            <h3 className="text-sm font-semibold text-white mb-1">{item.title}</h3>
+                            <p className="text-[#8888a0] text-xs leading-relaxed">{item.desc}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
-            {/* ===== TEMPLATES PREVIEW ===== */}
-            <TemplatesShowcase />
-
-            {/* ===== PRICING (Placeholder) ===== */}
+            {/* ===== PRICING ===== */}
             <section id="pricing" className="landing-section">
                 <div className="text-center">
                     <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">Pricing</p>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Simple, Transparent Pricing</h2>
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-700/10 border border-brand-700/20 text-brand-400 text-sm font-medium mt-4">
-                        <Star size={16} />
-                        Coming Soon — Currently Free During Beta
-                    </div>
-                    <p className="text-[#8888a0] max-w-lg mx-auto mt-6 leading-relaxed">
-                        Kalvora is free to use while in beta. We&apos;ll announce pricing plans before any changes take effect.
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Free During Early Access</h2>
+                    <p className="text-[#8888a0] max-w-lg mx-auto leading-relaxed mb-6">
+                        No credit card required. Use every feature, create unlimited proposals.
                     </p>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-700/10 border border-brand-700/20 text-brand-400 text-sm font-medium">
+                        <Star size={16} />
+                        Launching Pro at ₹999/mo — Early users lock in 50% off forever
+                    </div>
+                </div>
+            </section>
+
+            {/* ===== FAQ ===== */}
+            <section className="landing-section">
+                <div className="text-center mb-16">
+                    <p className="text-brand-400 text-sm font-semibold uppercase tracking-wider mb-3">FAQ</p>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Frequently Asked Questions</h2>
+                </div>
+                <div className="max-w-2xl mx-auto">
+                    <FAQSection />
                 </div>
             </section>
 
@@ -200,7 +292,7 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* ===== CTA BANNER ===== */}
+            {/* ===== FINAL CTA BANNER ===== */}
             <section className="px-4 sm:px-6 lg:px-8 pb-20 sm:pb-28">
                 <div className="max-w-4xl mx-auto relative overflow-hidden rounded-3xl">
                     <div className="absolute inset-0 bg-gradient-to-br from-brand-700/20 via-[#1a1a2e] to-brand-600/10" />
@@ -210,16 +302,16 @@ export default function LandingPage() {
                             <LayoutTemplate size={28} className="text-white" />
                         </div>
                         <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                            Ready to Create Your First Proposal?
+                            Your Next Proposal Is 60 Seconds Away
                         </h2>
                         <p className="text-[#8888a0] max-w-lg mx-auto mb-8">
-                            Join designers who save hours every week with Kalvora&apos;s instant proposal generator.
+                            Stop sending proposals in Word docs. Start closing projects faster with Kalvora.
                         </p>
                         <Link
                             href={session ? '/dashboard' : '/login'}
                             className="btn-primary text-base px-8 py-3.5 rounded-xl shadow-xl shadow-brand-700/25"
                         >
-                            Create Your First Proposal
+                            Start Creating — It&apos;s Free
                             <ArrowRight size={20} />
                         </Link>
                     </div>
@@ -239,7 +331,7 @@ export default function LandingPage() {
                                 <span className="text-sm font-bold text-white tracking-tight">K A L V O R A</span>
                             </div>
                             <p className="text-[#5a5a70] text-sm leading-relaxed">
-                                Professional proposal generator for interior design studios.
+                                Close projects faster — professional proposals, client approval, and GST invoicing for interior designers.
                             </p>
                         </div>
 
@@ -294,6 +386,39 @@ export default function LandingPage() {
                     </div>
                 </div>
             </footer>
+        </div>
+    );
+}
+
+/* ===== FAQ Section Component ===== */
+const faqItems = [
+    { q: 'Is Kalvora only for interior designers?', a: 'Kalvora is primarily built for interior designers, but architects, home stagers, and design consultants also use it for client proposals and invoicing.' },
+    { q: 'Can I add my studio logo and branding?', a: 'Absolutely! Upload your studio logo, set your brand accent color, and it appears on every proposal and invoice you generate.' },
+    { q: 'Can I share proposals on WhatsApp?', a: 'Yes! One-click WhatsApp sharing with a pre-filled message and your proposal link. Clients view it in their browser — no app needed.' },
+    { q: 'Does it support GST invoices?', a: 'Yes. Add your GSTIN and Kalvora automatically generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI info.' },
+    { q: 'Is my data secure?', a: 'Your data is stored securely on Supabase (PostgreSQL) with row-level security. Each designer can only access their own data.' },
+];
+
+function FAQSection() {
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
+    return (
+        <div className="space-y-3">
+            {faqItems.map((item, i) => (
+                <div key={i} className="glass-card overflow-hidden">
+                    <button
+                        onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                        className="w-full flex items-center justify-between px-6 py-4 text-left"
+                    >
+                        <span className="text-white text-sm font-medium pr-4">{item.q}</span>
+                        <ChevronDown size={18} className={`text-[#5a5a70] flex-shrink-0 transition-transform duration-200 ${openIndex === i ? 'rotate-180' : ''}`} />
+                    </button>
+                    {openIndex === i && (
+                        <div className="px-6 pb-4 animate-fade-in">
+                            <p className="text-[#8888a0] text-sm leading-relaxed">{item.a}</p>
+                        </div>
+                    )}
+                </div>
+            ))}
         </div>
     );
 }
