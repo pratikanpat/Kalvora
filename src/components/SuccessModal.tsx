@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Download, Copy, Check, ExternalLink } from 'lucide-react';
+import { X, Download, Copy, Check, ExternalLink, Share2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getOrCreateShortCode, buildShortUrl } from '@/lib/shortcode';
 
@@ -10,9 +10,11 @@ interface SuccessModalProps {
     pdfUrl: string;
     projectId: string;
     downloadFilename?: string;
+    clientName?: string;
+    projectType?: string;
 }
 
-export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downloadFilename }: SuccessModalProps) {
+export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downloadFilename, clientName, projectType }: SuccessModalProps) {
     const [copied, setCopied] = useState(false);
     const [shortCode, setShortCode] = useState('');
 
@@ -32,7 +34,6 @@ export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downl
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch {
-            // Fallback
             const textArea = document.createElement('textarea');
             textArea.value = shareableLink;
             document.body.appendChild(textArea);
@@ -42,6 +43,13 @@ export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downl
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         }
+    };
+
+    const handleWhatsAppShare = () => {
+        const name = clientName || 'there';
+        const type = projectType || 'your project';
+        const message = `Hi ${name}! Your ${type} proposal is ready. Please review and approve it here:\n${shareableLink}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
     };
 
     return (
@@ -64,7 +72,7 @@ export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downl
 
                 <h3 className="text-xl font-bold text-center mb-2">Proposal Generated!</h3>
                 <p className="text-[#8888a0] text-center text-sm mb-8">
-                    Your PDF proposal is ready to download and share with your client.
+                    Your PDF proposal is ready. Download, share, or send it to your client.
                 </p>
 
                 {/* Actions */}
@@ -79,6 +87,16 @@ export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downl
                         <Download size={18} />
                         Download PDF
                     </a>
+
+                    {/* WhatsApp Share — authentic green */}
+                    <button
+                        onClick={handleWhatsAppShare}
+                        className="w-full flex items-center justify-center gap-2.5 py-3 px-5 rounded-xl font-semibold text-sm transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                        style={{ background: '#25D366', color: '#ffffff' }}
+                    >
+                        <Share2 size={18} />
+                        Share on WhatsApp
+                    </button>
 
                     <button
                         onClick={handleCopyLink}

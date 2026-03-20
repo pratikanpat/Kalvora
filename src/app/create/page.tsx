@@ -274,7 +274,7 @@ export default function CreatePage() {
         }
 
         if (!validate()) {
-            toast.error('Please fix the errors before saving');
+            toast.error('Please fill in all required fields: Client Name and at least one Pricing item.', { duration: 4000 });
             return;
         }
 
@@ -944,6 +944,8 @@ export default function CreatePage() {
                 pdfUrl={generatedPdfUrl}
                 projectId={generatedProjectId}
                 downloadFilename={generatedFilename}
+                clientName={clientName}
+                projectType={projectType}
             />
 
             <TemplatePreviewModal

@@ -12,8 +12,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: 'K A L V O R A - Interior Design Proposal Generator',
-    description: 'Create beautiful, branded PDF proposals for your interior design clients. Free, fast, professional.',
+    title: 'Kalvora — Proposals & Invoicing for Interior Designers',
+    description: 'Create branded PDF proposals, get client approval, and auto-generate GST invoices in minutes. Built for Indian interior designers.',
+    icons: {
+        icon: '/favicon.png',
+        shortcut: '/favicon.png',
+        apple: '/favicon.png',
+    },
 };
 
 export default function RootLayout({

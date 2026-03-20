@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Download, MapPin, Phone, Mail, Building, User, Sparkles, CheckCircle2, MessageSquare, Clock, Send, Loader2, X, FileText } from 'lucide-react';
@@ -200,6 +201,19 @@ export default function PublicViewPage() {
 
     return (
         <div className="min-h-screen bg-[#0a0a0f]">
+            {/* Kalvora Branding Bar */}
+            <div className="border-b border-[#1a1a2e] bg-[#08080d]/90 backdrop-blur-sm">
+                <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+                    <Link href="/" className="flex items-center gap-2.5 group">
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 via-brand-600 to-brand-700 flex items-center justify-center">
+                            <Sparkles size={12} className="text-white" />
+                        </div>
+                        <span className="text-sm font-bold text-white tracking-tight">KALVORA</span>
+                    </Link>
+                    <span className="text-[#3a3a50] text-xs">Powered by Kalvora</span>
+                </div>
+            </div>
+
             {/* Hero Header */}
             <div className="relative overflow-hidden">
                 <div

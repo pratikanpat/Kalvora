@@ -61,7 +61,13 @@ export default function LandingPage() {
 
                     {/* Trust strip */}
                     <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[#5a5a70] text-xs sm:text-sm mb-10 animate-fade-in">
-                        <span className="flex items-center gap-1.5">🇮🇳 Made for India</span>
+                        <span className="flex items-center gap-1.5">
+                            {/* Indian flag — text fallback for cross-platform visibility */}
+                            <span className="inline-flex items-center font-bold text-xs" aria-label="India">
+                                <span style={{ color: '#FF9933' }}>IN</span><span style={{ color: '#ffffff' }}>DI</span><span style={{ color: '#138808' }}>A</span>
+                            </span>
+                            Made for India
+                        </span>
                         <span className="hidden sm:inline text-[#2a2a40]">•</span>
                         <span className="flex items-center gap-1.5"><IndianRupee size={12} /> INR + GST</span>
                         <span className="hidden sm:inline text-[#2a2a40]">•</span>
@@ -98,12 +104,16 @@ export default function LandingPage() {
                                     Start Free
                                     <ArrowRight size={20} />
                                 </Link>
+                                {/* WhatsApp CTA — authentic green */}
                                 <a
-                                    href="#how-it-works"
-                                    className="btn-secondary text-base px-8 py-3.5 rounded-xl"
+                                    href="https://wa.me/?text=Check%20out%20Kalvora%20-%20free%20proposal%20%26%20invoicing%20tool%20for%20interior%20designers%3A%20https%3A%2F%2Fkalvora.kaliprlabs.in"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2.5 text-base px-8 py-3.5 rounded-xl font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                                    style={{ background: '#25D366' }}
                                 >
-                                    See How It Works
-                                    <ChevronRight size={18} />
+                                    <Share2 size={18} />
+                                    Share on WhatsApp
                                 </a>
                             </>
                         )}
@@ -354,7 +364,7 @@ export default function LandingPage() {
                                 {[
                                     { label: 'Login', href: '/login' },
                                     { label: 'Sign Up', href: '/signup' },
-                                    { label: 'Dashboard', href: '/dashboard' },
+                                    { label: 'Feedback', href: '/feedback' },
                                 ].map((link) => (
                                     <a
                                         key={link.href}
