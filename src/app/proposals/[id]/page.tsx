@@ -15,6 +15,7 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import ProjectPipeline from '@/components/ProjectPipeline';
 import PaymentMilestones from '@/components/PaymentMilestones';
+import { getOrCreateShortCode, buildShortUrl } from '@/lib/shortcode';
 
 interface ProjectData {
     id: string;
@@ -53,13 +54,19 @@ export default function ProposalViewPage() {
     const [project, setProject] = useState<ProjectData | null>(null);
     const [loading, setLoading] = useState(true);
     const [copied, setCopied] = useState(false);
+    const [invoiceLinkCopied, setInvoiceLinkCopied] = useState(false);
     const [statusUpdating, setStatusUpdating] = useState(false);
     const [sendingEmail, setSendingEmail] = useState(false);
     const [duplicating, setDuplicating] = useState(false);
+    const [shortViewCode, setShortViewCode] = useState('');
+    const [shortInvoiceCode, setShortInvoiceCode] = useState('');
     const { user } = useAuth();
 
     useEffect(() => {
         loadProject();
+        // Generate short code for this project
+        getOrCreateShortCode(projectId, 'view').then(code => setShortViewCode(code)).catch(() => {});
+        getOrCreateShortCode(projectId, 'invoice').then(code => setShortInvoiceCode(code)).catch(() => {});
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [projectId]);
 
@@ -108,8 +115,10 @@ export default function ProposalViewPage() {
         }
     };
 
+    const getShareLink = () => buildShortUrl(window.location.origin, shortViewCode, 'view', projectId);
+
     const copyShareLink = async () => {
-        const link = `${window.location.origin}/view/${projectId}`;
+        const link = getShareLink();
         try {
             await navigator.clipboard.writeText(link);
             setCopied(true);
@@ -121,7 +130,7 @@ export default function ProposalViewPage() {
     };
 
     const shareOnWhatsApp = () => {
-        const link = `${window.location.origin}/view/${projectId}`;
+        const link = getShareLink();
         const message = `Hi! Here's your proposal for ${project?.project_type}: ${link}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
     };
@@ -306,6 +315,38 @@ export default function ProposalViewPage() {
                                 </button>
                             </div>
                         </div>
+                        {/* Invoice Section — shown after approval */}
+                        {['Approved', 'Paid', 'Completed'].includes(project.status) && (
+                            <div>
+                                <p className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-2">Invoice</p>
+                                <div className="flex flex-wrap gap-2">
+                                    <Link
+                                        href={`/invoice/${projectId}`}
+                                        target="_blank"
+                                        className="btn-secondary text-sm py-2 !text-emerald-400 hover:!bg-emerald-500/10"
+                                    >
+                                        <FileText size={15} /> View Invoice
+                                    </Link>
+                                    <button
+                                        onClick={async () => {
+                                            const invoiceLink = buildShortUrl(window.location.origin, shortInvoiceCode, 'invoice', projectId);
+                                            try {
+                                                await navigator.clipboard.writeText(invoiceLink);
+                                                setInvoiceLinkCopied(true);
+                                                setTimeout(() => setInvoiceLinkCopied(false), 2000);
+                                                toast.success('Invoice link copied!');
+                                            } catch {
+                                                toast.error('Failed to copy link');
+                                            }
+                                        }}
+                                        className="btn-secondary text-sm py-2"
+                                    >
+                                        {invoiceLinkCopied ? <Check size={15} className="text-emerald-400" /> : <ExternalLink size={15} />}
+                                        {invoiceLinkCopied ? 'Copied!' : 'Copy Invoice Link'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

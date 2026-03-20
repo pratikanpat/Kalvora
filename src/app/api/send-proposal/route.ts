@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
 import { Resend } from 'resend';
+import { getOrCreateShortCodeServer, buildShortUrl } from '@/lib/shortcode';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,7 +44,10 @@ export async function POST(request: Request) {
         }
 
         const resend = new Resend(process.env.RESEND_API_KEY);
-        const proposalLink = `${APP_URL}/view/${projectId}`;
+
+        // Generate short link for the proposal
+        const shortCode = await getOrCreateShortCodeServer(projectId, 'view');
+        const proposalLink = buildShortUrl(APP_URL, shortCode, 'view', projectId);
 
         const result = await resend.emails.send({
             from: 'Kalvora <notifications@kalvora.kaliprlabs.in>',

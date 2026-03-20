@@ -11,6 +11,7 @@ import { useAuth } from '@/components/AuthProvider';
 import ProfileSetupModal from '@/components/ProfileSetupModal';
 import { Plus, Trash2, FileText, Search, Calendar, ArrowRight, AlertTriangle, Sparkles, Eye, Send, Clock, CheckCircle2, Share2, BarChart3, TrendingUp, IndianRupee, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getOrCreateShortCode, buildShortUrl } from '@/lib/shortcode';
 
 interface Project {
     id: string;
@@ -30,6 +31,7 @@ export default function DashboardPage() {
     const [deleting, setDeleting] = useState<string | null>(null);
     const [configError, setConfigError] = useState('');
     const [showProfileSetup, setShowProfileSetup] = useState(false);
+    const [shortCodes, setShortCodes] = useState<Record<string, string>>({});
     const { user } = useAuth();
 
     // Removed Analytics state to simplify dashboard
@@ -146,8 +148,19 @@ export default function DashboardPage() {
         return Math.floor(diff / (1000 * 60 * 60 * 24));
     };
 
+    // Pre-generate short codes for stale proposals
+    useEffect(() => {
+        staleProposals.forEach(p => {
+            if (!shortCodes[p.id]) {
+                getOrCreateShortCode(p.id, 'view').then(code => {
+                    if (code) setShortCodes(prev => ({ ...prev, [p.id]: code }));
+                }).catch(() => {});
+            }
+        });
+    }, [staleProposals]);
+
     const openWhatsAppReminder = (clientName: string, projectId: string) => {
-        const link = `${window.location.origin}/view/${projectId}`;
+        const link = buildShortUrl(window.location.origin, shortCodes[projectId] || '', 'view', projectId);
         const message = `Hi ${clientName}! Just following up on the proposal I sent. Here's the link again in case you need it: ${link}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
     };

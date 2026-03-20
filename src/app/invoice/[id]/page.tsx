@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { FileText, Download, Building, User, Mail, Phone, MapPin, Calendar, Hash, Landmark, CreditCard, Clock } from 'lucide-react';
 
@@ -66,35 +65,15 @@ export default function InvoicePage() {
 
     const loadInvoice = async () => {
         try {
-            const { data: proj, error } = await supabase
-                .from('projects')
-                .select('*')
-                .eq('id', projectId)
-                .single();
-            if (error || !proj) { setNotFound(true); return; }
+            // Use server-side API that bypasses RLS — ensures invoice works
+            // even if public RLS policies haven't been applied
+            const res = await fetch(`/api/invoice-data?projectId=${projectId}`);
+            if (!res.ok) { setNotFound(true); return; }
 
-            const [roomsRes, itemsRes, milestonesRes] = await Promise.all([
-                supabase.from('rooms').select('*').eq('project_id', projectId),
-                supabase.from('line_items').select('*').eq('project_id', projectId),
-                supabase.from('payment_milestones').select('*').eq('project_id', projectId).order('created_at', { ascending: true }),
-            ]);
-            setMilestones(milestonesRes.data || []);
-
-            // Fetch designer profile for GST, bank, and other details
-            if (proj.user_id) {
-                const { data: profile } = await supabase
-                    .from('designer_profiles')
-                    .select('studio_name, studio_address, email, phone, gstin, pan_number, hsn_sac_code, invoice_due_days, bank_name, bank_account_number, bank_ifsc, upi_id')
-                    .eq('user_id', proj.user_id)
-                    .single();
-                if (profile) setDesignerProfile(profile);
-            }
-
-            setProject({
-                ...proj,
-                rooms: roomsRes.data || [],
-                line_items: itemsRes.data || [],
-            });
+            const data = await res.json();
+            setProject(data.project);
+            setMilestones(data.milestones || []);
+            if (data.designerProfile) setDesignerProfile(data.designerProfile);
         } catch {
             setNotFound(true);
         } finally {

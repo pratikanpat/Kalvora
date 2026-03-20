@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
 import { Resend } from 'resend';
+import { getOrCreateShortCodeServer, buildShortUrl } from '@/lib/shortcode';
 
 export const dynamic = 'force-dynamic';
 
@@ -166,6 +167,10 @@ export async function POST(request: Request) {
             const clientEmail = project.client_email;
             if (clientEmail && process.env.RESEND_API_KEY) {
                 try {
+                    // Generate short link for the invoice
+                    const invoiceShortCode = await getOrCreateShortCodeServer(projectId, 'invoice');
+                    const invoiceLink = buildShortUrl(APP_URL, invoiceShortCode, 'invoice', projectId);
+
                     const result = await resend.emails.send({
                         from: 'Kalvora <notifications@kalvora.kaliprlabs.in>',
                         to: clientEmail,
@@ -183,13 +188,13 @@ export async function POST(request: Request) {
                                     You can view and download your invoice below.
                                 </p>
                                 <div style="text-align:center;">
-                                    <a href="${APP_URL}/invoice/${projectId}" 
+                                    <a href="${invoiceLink}" 
                                        style="display:inline-block;background:#059669;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
                                        View Invoice →
                                     </a>
                                 </div>
                                 <p style="color:#999;text-align:center;margin:24px 0 0;font-size:12px;">
-                                    Generated with Kalvora • Professional Interior Design Proposals
+                                    Generated with Kalvora - Professional Interior Design Proposals
                                 </p>
                             </div>
                         `,

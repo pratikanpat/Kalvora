@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-20 (v8 — Phase 3 revenue enablers: payment milestones, auto-invoice, analytics strip)
+> Last updated: 2026-03-20 (v10 — Invoice page fixed to use server-side API, bypassing RLS)
 
 ---
 
@@ -23,7 +23,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 2. Completes studio profile (name, logo, branding, payment terms)
 3. Creates a new proposal (fills 8-section form)
 4. Saves as draft OR generates PDF immediately
-5. Shares proposal with client via a public magic link (`/view/[id]`)
+5. Shares proposal with client via a short link (`/p/KV-xxxxx` → `/view/[id]`)
 6. Client views, leaves comments, and approves/requests changes
 7. Designer receives email notifications via Resend on client actions
 
@@ -62,6 +62,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   /app
     /api
       /generate-pdf      → POST API route: generates PDF using Puppeteer, uploads to Supabase Storage
+      /invoice-data      → GET API route (force-dynamic): returns all invoice data using service role (bypasses RLS), for the public invoice page
       /respond-proposal  → POST API route (force-dynamic): handles client actions (view, approve, request_changes), sends emails via Resend; on approval, auto-creates payment milestones and emails client an invoice link
       /send-proposal     → POST API route: emails proposal link to client, updates status Draft→Sent
       /analytics         → GET API route (force-dynamic): returns 4 dashboard stats (total proposals, approval rate, avg deal size, active projects) for authenticated user
@@ -79,6 +80,8 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     /profile             → Designer studio profile setup/edit page
     /proposals/[id]      → View saved proposal detail, download/re-generate PDF
     /view/[id]           → Public shareable proposal view with approve/comment workflow
+    /p/[code]            → Short link redirect for proposals (resolves KV-xxxxx → /view/[id])
+    /i/[code]            → Short link redirect for invoices (resolves KV-xxxxx → /invoice/[id])
     layout.tsx           → Root layout: wraps AuthProvider + Toaster
     page.tsx             → Landing page (pain-first hero, before/after, 4-step workflow, features, templates, who it's for, FAQ, pricing, final CTA)
     globals.css          → Global styles, design tokens, custom utility classes
@@ -97,6 +100,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     TemplatePreviewModal.tsx  → Template preview carousel modal on create page
   /lib
     supabase.ts    → Supabase browser client + build-safe server client (service role, returns placeholder when env vars missing) + config checker
+    shortcode.ts   → Short link generation and resolution (KV-xxxxx codes), client-side + server-side variants
     templates.ts   → All 6 PDF HTML templates (48 KB) — raw HTML/CSS strings rendered by Puppeteer
 
 /supabase
@@ -108,6 +112,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   invoice_profile_migration.sql → Adds gstin, pan_number, hsn_sac_code, invoice_due_days, bank_name, bank_account_number, bank_ifsc, upi_id to designer_profiles
   cascade_delete_migration.sql   → Enables ON DELETE CASCADE for projects.user_id
   payment_milestones_migration.sql → Creates payment_milestones table for tracking advance/mid/final payments
+  short_links_migration.sql → Creates short_codes table, fixes RLS for public proposal access (all non-Draft statuses), adds public read policies for rooms/line_items/proposals/payment_milestones/comments
 ```
 
 ---
@@ -202,11 +207,13 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 
 ### 9. Invoice Page (`/invoice/[id]`)
 - Public page (no auth required) — accessible after approval or via email link.
+- **Data fetched via `/api/invoice-data`** (server-side, service role) — bypasses RLS so the page always works regardless of anon RLS config.
 - Displays: Invoice number (auto-generated), Invoice Date, **Due Date** (calculated from `invoice_due_days`), From (designer/studio info + **GSTIN**), Bill To (client info), project details, line items table with **HSN/SAC column**, totals with **CGST/SGST breakdown** (when GST registered), payment terms.
 - **Payment Details** section showing Bank Name, Account Number, IFSC, and UPI ID (from designer profile).
 - **Status badge**: Shows "Unpaid" (replaces the old "Approved" badge).
 - "Print / Save as PDF" button (uses `window.print()` with print-optimized CSS).
 - After approval, client receives an email with a link to this page.
+- **Designer access**: "View Invoice" and "Copy Invoice Link" buttons appear on `/proposals/[id]` for Approved/Paid/Completed projects.
 
 ### 10. Feedback System
 
@@ -242,11 +249,24 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Final CTA: "Your next proposal is 60 seconds away."
 
 **Email to Client (`POST /api/send-proposal`):**
-- Sends a branded email to the client with the proposal view link via Resend.
+- Sends a branded email to the client with a short proposal link (e.g., `https://kalvora.kaliprlabs.in/p/KV-R7x3mQ`) via Resend.
 - Auto-updates project status from Draft to Sent.
 - Button available on proposals detail page.
 
-### 12. Dashboard Intelligence (Growth Features — Phase 2)
+### 12. Short Link System
+
+**Short Codes (`short_codes` table + `src/lib/shortcode.ts`):**
+- All shareable links now use short, readable codes like `KV-R7x3mQ` instead of raw UUIDs.
+- Format: `https://kalvora.kaliprlabs.in/p/KV-R7x3mQ` (proposals) or `/i/KV-R7x3mQ` (invoices).
+- Short codes are 8 characters: `KV-` prefix + 6 base62 alphanumeric chars.
+- Codes are generated on-demand and cached in the `short_codes` table.
+- Two redirect routes: `/p/[code]` → `/view/[id]` and `/i/[code]` → `/invoice/[id]`.
+- Falls back to full UUID URLs if short code generation fails.
+- Server-side variant (`getOrCreateShortCodeServer`) used in API routes (bypasses RLS).
+- Client-side variant (`getOrCreateShortCode`) used in frontend components.
+- All link generation points updated: proposals page, SuccessModal, dashboard WhatsApp reminders, send-proposal email, respond-proposal email.
+
+### 13. Dashboard Intelligence (Growth Features — Phase 2)
 
 **Updated Status Pipeline (`ProjectPipeline.tsx`):**
 - Now 6-step: Draft → Sent → Viewed → Approved → Paid → Completed.
@@ -269,7 +289,7 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Clones project data, rooms, and line_items with new UUID and "Draft" status.
 - Redirects to edit page for the new copy.
 
-### 13. Revenue Enablers (Growth Features — Phase 3)
+### 14. Revenue Enablers (Growth Features — Phase 3)
 
 **Payment Milestone Tracking (`PaymentMilestones.tsx`):**
 - Dedicated component on proposals detail page (`/proposals/[id]`).
@@ -415,6 +435,15 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 | paid_at | TIMESTAMPTZ | Set when marked as paid |
 | created_at | TIMESTAMPTZ | |
 
+### Table: `short_codes`
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID | PK |
+| code | VARCHAR(12) | Unique, e.g. `KV-R7x3mQ` |
+| project_id | UUID | FK → projects (cascade delete) |
+| link_type | VARCHAR(10) | `view` or `invoice` |
+| created_at | TIMESTAMPTZ | |
+
 **Supabase Storage Buckets:**
 - `logos` — public, stores designer studio logos
 - `proposals` — public, stores generated PDF files
@@ -450,13 +479,17 @@ When creating a new proposal, the form fetches `designer_profiles` on mount and 
 
 ### Public Proposal Sharing
 - Project status is set to `"Sent"` when PDF is generated.
-- Supabase RLS policy allows **public** SELECT on `projects` where `status = 'Sent'`.
+- Supabase RLS policy allows **public** SELECT on `projects` where `status IN ('Sent', 'Approved', 'Paid', 'Completed')`.
+- Public read policies also exist on `rooms`, `line_items`, `proposals`, `payment_milestones`, and `comments` tables — scoped to projects with shareable statuses.
 - The `/view/[id]` page uses this to display the proposal without requiring login.
+- All shared links use short codes (e.g., `/p/KV-R7x3mQ`) that redirect to full `/view/[id]` routes.
 
 ### RLS Strategy
 - All tables use Row Level Security.
-- `projects` — users can only CRUD their own rows (`user_id = auth.uid()`).
-- `rooms`, `line_items`, `proposals` — access is gated via project ownership check.
+- `projects` — users can only CRUD their own rows (`user_id = auth.uid()`). Public SELECT allowed for non-Draft statuses.
+- `rooms`, `line_items`, `proposals`, `payment_milestones` — access is gated via project ownership check + public read for shared proposals.
+- `comments` — public INSERT/SELECT via "Allow all" policy + additional public read for shared proposals.
+- `short_codes` — public SELECT (anyone can resolve a code), INSERT restricted to authenticated project owners.
 - `designer_profiles` — fully user-scoped.
 - `feedback` — public INSERT, authenticated SELECT.
 - Server API routes use the **service role key** which bypasses RLS (needed for cross-user PDF generation).
@@ -467,11 +500,11 @@ When creating a new proposal, the form fetches `designer_profiles` on mount and 
 
 - **No payment tracking** — ~~No way to record partial payments or payment milestones.~~ **RESOLVED in Phase 3** — Payment milestones now track advance/mid/final payments.
 - **No project analytics** — ~~No dashboard stats.~~ **RESOLVED in Phase 3** — Analytics strip shows total proposals, approval rate, avg deal size, active projects.
+- **No short URLs** — ~~All shared links used raw UUIDs.~~ **RESOLVED** — Short link system with `KV-xxxxx` codes and `/p/`, `/i/` redirect routes.
 - **No revision history** — Editing a project replaces data; there is no versioning of proposals.
 - **No multi-user team access** — Each account is a single designer; no shared studio/team workspace.
 - **PDF is regenerated on demand** — No auto-versioning; re-generating overwrites the previous PDF record in the `proposals` table.
 - **Currency is hard-coded to INR** — `en-IN` locale and `₹` symbol. Not multi-currency.
-- **No duplicate proposal** — Cannot clone an existing project to create a variant for a different client.
 
 ---
 
@@ -480,12 +513,8 @@ When creating a new proposal, the form fetches `designer_profiles` on mount and 
 Based on the product direction and current gaps:
 
 1. **Stripe Subscription & Billing** — Monetize with Free/Pro/Business tiers.
-2. **Invoice generator** — After approval, generate a formal invoice from the same project data.
-3. **Payment tracking** — Record advance, mid-project, and final payment milestones.
-4. **Project analytics dashboard** — Revenue trends, project counts, template usage stats.
-5. **Revision history** — Keep old PDF versions, allow the designer to compare drafts.
-6. **Multi-currency support** — Allow designers to select currency during proposal creation.
-7. **Team / studio accounts** — Multiple designers under one studio account.
-8. **Client portal** — Dedicated login for clients to see all their proposals and invoices.
-9. **WhatsApp Integration** — Share proposals via WhatsApp (critical for Indian market).
-10. **AI-Powered Scope Generator** — Paste a client brief → AI auto-fills rooms, services, and line items.
+2. **Revision history** — Keep old PDF versions, allow the designer to compare drafts.
+3. **Multi-currency support** — Allow designers to select currency during proposal creation.
+4. **Team / studio accounts** — Multiple designers under one studio account.
+5. **Client portal** — Dedicated login for clients to see all their proposals and invoices.
+6. **AI-Powered Scope Generator** — Paste a client brief → AI auto-fills rooms, services, and line items.

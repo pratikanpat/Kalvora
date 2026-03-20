@@ -1,7 +1,8 @@
 'use client';
 
 import { X, Download, Copy, Check, ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getOrCreateShortCode, buildShortUrl } from '@/lib/shortcode';
 
 interface SuccessModalProps {
     isOpen: boolean;
@@ -13,10 +14,17 @@ interface SuccessModalProps {
 
 export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downloadFilename }: SuccessModalProps) {
     const [copied, setCopied] = useState(false);
+    const [shortCode, setShortCode] = useState('');
+
+    useEffect(() => {
+        if (isOpen && projectId) {
+            getOrCreateShortCode(projectId, 'view').then(code => setShortCode(code)).catch(() => {});
+        }
+    }, [isOpen, projectId]);
 
     if (!isOpen) return null;
 
-    const shareableLink = `${window.location.origin}/view/${projectId}`;
+    const shareableLink = buildShortUrl(window.location.origin, shortCode, 'view', projectId);
 
     const handleCopyLink = async () => {
         try {
