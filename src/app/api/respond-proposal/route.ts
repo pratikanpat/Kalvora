@@ -86,6 +86,46 @@ export async function POST(request: Request) {
                 })
                 .eq('id', projectId);
 
+            // ── Auto-create default payment milestones (30/40/30) ──
+            try {
+                // Check if milestones already exist
+                const { data: existingMilestones } = await supabase
+                    .from('payment_milestones')
+                    .select('id')
+                    .eq('project_id', projectId)
+                    .limit(1);
+
+                if (!existingMilestones || existingMilestones.length === 0) {
+                    // Fetch line items to compute grand total
+                    const { data: lineItems } = await supabase
+                        .from('line_items')
+                        .select('quantity, unit_price')
+                        .eq('project_id', projectId);
+
+                    if (lineItems && lineItems.length > 0) {
+                        const subtotal = lineItems.reduce((s, i) => s + (i.quantity * i.unit_price), 0);
+                        const taxRate = (await supabase.from('projects').select('tax_rate').eq('id', projectId).single()).data?.tax_rate || 0;
+                        const grandTotal = subtotal + (subtotal * (taxRate / 100));
+
+                        const milestonePresets = [
+                            { label: 'Advance', pct: 30 },
+                            { label: 'Mid-project', pct: 40 },
+                            { label: 'Final', pct: 30 },
+                        ];
+
+                        await supabase.from('payment_milestones').insert(
+                            milestonePresets.map(p => ({
+                                project_id: projectId,
+                                label: p.label,
+                                amount: Math.round(grandTotal * (p.pct / 100)),
+                            }))
+                        );
+                    }
+                }
+            } catch (milestoneErr) {
+                console.error('Auto-milestone creation failed (non-blocking):', milestoneErr);
+            }
+
             // Email the designer
             if (targetEmail && process.env.RESEND_API_KEY) {
                 try {
