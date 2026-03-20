@@ -243,6 +243,29 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Auto-updates project status from Draft to Sent.
 - Button available on proposals detail page.
 
+### 12. Dashboard Intelligence (Growth Features — Phase 2)
+
+**Updated Status Pipeline (`ProjectPipeline.tsx`):**
+- Now 6-step: Draft → Sent → Viewed → Approved → Paid → Completed.
+- "Viewed" is a virtual step — status stays "Sent" but `client_viewed_at` is set.
+- `clientViewedAt` prop passed from dashboard and proposals pages.
+
+**Action Prompt Cards:**
+- Shown at top of dashboard project list when relevant.
+- "X proposals awaiting response" (Sent, not viewed) — amber card.
+- "X viewed — awaiting approval" (Sent + viewed) — blue card.
+- "X invoices pending payment" (Approved) — emerald card.
+- Each card is clickable → filters the project list to that status.
+
+**Follow-up Reminders:**
+- Inline nudges for proposals "Sent" 3+ days ago with no client view.
+- Shows "No response in X days — Remind [Client Name]?" with WhatsApp reminder button.
+
+**Duplicate Proposal:**
+- One-click button on proposals detail page (`/proposals/[id]`).
+- Clones project data, rooms, and line_items with new UUID and "Draft" status.
+- Redirects to edit page for the new copy.
+
 ---
 
 ## 5. Database Schema

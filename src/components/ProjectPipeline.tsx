@@ -1,13 +1,21 @@
 'use client';
 
-const STEPS = ['Draft', 'Sent', 'Approved', 'Paid', 'Completed'] as const;
+const STEPS = ['Draft', 'Sent', 'Viewed', 'Approved', 'Paid', 'Completed'] as const;
 
 interface ProjectPipelineProps {
     status: string;
+    clientViewedAt?: string | null;
 }
 
-export default function ProjectPipeline({ status }: ProjectPipelineProps) {
-    const currentIndex = STEPS.indexOf(status as typeof STEPS[number]);
+export default function ProjectPipeline({ status, clientViewedAt }: ProjectPipelineProps) {
+    // Determine the effective step index
+    // "Viewed" is a virtual status — the actual status stays "Sent" but client_viewed_at is set
+    let effectiveStatus = status;
+    if (status === 'Sent' && clientViewedAt) {
+        effectiveStatus = 'Viewed';
+    }
+    
+    const currentIndex = STEPS.indexOf(effectiveStatus as typeof STEPS[number]);
 
     return (
         <div className="flex items-center gap-1">

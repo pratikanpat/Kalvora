@@ -9,7 +9,7 @@ import ProjectPipeline from '@/components/ProjectPipeline';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/AuthProvider';
 import ProfileSetupModal from '@/components/ProfileSetupModal';
-import { Plus, Trash2, FileText, Search, Calendar, ArrowRight, AlertTriangle, Sparkles, Eye } from 'lucide-react';
+import { Plus, Trash2, FileText, Search, Calendar, ArrowRight, AlertTriangle, Sparkles, Eye, Send, Clock, CheckCircle2, Share2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface Project {
@@ -124,6 +124,29 @@ export default function DashboardPage() {
         });
     };
 
+    // ── Action Prompt counts (Feature 6) ─────────────────────
+    const awaitingResponse = projects.filter(p => p.status === 'Sent' && !p.client_viewed_at).length;
+    const viewedAwaitingApproval = projects.filter(p => p.status === 'Sent' && p.client_viewed_at).length;
+    const invoicesPending = projects.filter(p => p.status === 'Approved').length;
+
+    // ── Follow-up reminders (Feature 7) ─────────────────────
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    const staleProposals = projects.filter(
+        p => p.status === 'Sent' && !p.client_viewed_at && new Date(p.created_at) < threeDaysAgo
+    );
+
+    const getDaysAgo = (dateStr: string) => {
+        const diff = Date.now() - new Date(dateStr).getTime();
+        return Math.floor(diff / (1000 * 60 * 60 * 24));
+    };
+
+    const openWhatsAppReminder = (clientName: string, projectId: string) => {
+        const link = `${window.location.origin}/view/${projectId}`;
+        const message = `Hi ${clientName}! Just following up on the proposal I sent. Here's the link again in case you need it: ${link}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    };
+
     return (
         <DashboardLayout>
             {/* Header */}
@@ -205,6 +228,70 @@ export default function DashboardPage() {
                         </select>
                     </div>
 
+                    {/* ── Action Prompt Cards (Feature 6) ── */}
+                    {(awaitingResponse > 0 || viewedAwaitingApproval > 0 || invoicesPending > 0) && (
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 animate-fade-in">
+                            {awaitingResponse > 0 && (
+                                <button
+                                    onClick={() => setStatusFilter('Sent')}
+                                    className="glass-card p-4 text-left hover:border-amber-500/30 transition-all group"
+                                >
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <Send size={14} className="text-amber-400" />
+                                        <span className="text-amber-400 text-2xl font-bold">{awaitingResponse}</span>
+                                    </div>
+                                    <p className="text-[#8888a0] text-xs">Proposals awaiting response</p>
+                                </button>
+                            )}
+                            {viewedAwaitingApproval > 0 && (
+                                <button
+                                    onClick={() => setStatusFilter('Sent')}
+                                    className="glass-card p-4 text-left hover:border-blue-500/30 transition-all group"
+                                >
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <Eye size={14} className="text-blue-400" />
+                                        <span className="text-blue-400 text-2xl font-bold">{viewedAwaitingApproval}</span>
+                                    </div>
+                                    <p className="text-[#8888a0] text-xs">Viewed — awaiting approval</p>
+                                </button>
+                            )}
+                            {invoicesPending > 0 && (
+                                <button
+                                    onClick={() => setStatusFilter('Approved')}
+                                    className="glass-card p-4 text-left hover:border-emerald-500/30 transition-all group"
+                                >
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <CheckCircle2 size={14} className="text-emerald-400" />
+                                        <span className="text-emerald-400 text-2xl font-bold">{invoicesPending}</span>
+                                    </div>
+                                    <p className="text-[#8888a0] text-xs">Invoices pending payment</p>
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    {/* ── Follow-up Reminders (Feature 7) ── */}
+                    {staleProposals.length > 0 && (
+                        <div className="space-y-2 mb-6 animate-fade-in">
+                            {staleProposals.map(p => (
+                                <div key={p.id} className="glass-card p-3 sm:p-4 flex items-center justify-between gap-3 border-amber-500/15">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <Clock size={14} className="text-amber-400 flex-shrink-0" />
+                                        <p className="text-[#8888a0] text-xs sm:text-sm truncate">
+                                            No response in <span className="text-amber-400 font-semibold">{getDaysAgo(p.created_at)} days</span> — Remind <span className="text-white font-medium">{p.client_name}</span>?
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => openWhatsAppReminder(p.client_name, p.id)}
+                                        className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/15 px-3 py-1.5 rounded-lg transition-all flex-shrink-0"
+                                    >
+                                        <Share2 size={12} /> Remind
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     {/* Projects Table (desktop) */}
                     <div className="hidden md:block glass-card overflow-hidden animate-fade-in" style={{ animationDelay: '150ms' }}>
                         <table className="w-full">
@@ -256,7 +343,7 @@ export default function DashboardPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <ProjectPipeline status={project.status} />
+                                            <ProjectPipeline status={project.status} clientViewedAt={project.client_viewed_at} />
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center justify-end gap-1">
@@ -297,7 +384,7 @@ export default function DashboardPage() {
                                         <h3 className="text-white font-semibold">{project.client_name}</h3>
                                         <p className="text-[#5a5a70] text-sm">{project.project_type}</p>
                                     </div>
-                                    <ProjectPipeline status={project.status} />
+                                    <ProjectPipeline status={project.status} clientViewedAt={project.client_viewed_at} />
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">

@@ -17,6 +17,7 @@ import ProjectPipeline from '@/components/ProjectPipeline';
 
 interface ProjectData {
     id: string;
+    user_id: string;
     client_name: string;
     client_email: string;
     client_phone: string;
@@ -32,6 +33,13 @@ interface ProjectData {
     tax_rate: number;
     status: string;
     created_at: string;
+    client_viewed_at: string | null;
+    project_size: string;
+    logo_url: string;
+    services_included: string[];
+    quotation_validity: number;
+    estimated_start_date: string;
+    estimated_timeline: string;
     rooms: { name: string; square_footage: number }[];
     line_items: { item_name: string; quantity: number; unit_price: number }[];
     proposals: { id: string; pdf_url: string; created_at: string }[];
@@ -46,6 +54,7 @@ export default function ProposalViewPage() {
     const [copied, setCopied] = useState(false);
     const [statusUpdating, setStatusUpdating] = useState(false);
     const [sendingEmail, setSendingEmail] = useState(false);
+    const [duplicating, setDuplicating] = useState(false);
     const { user } = useAuth();
 
     useEffect(() => {
@@ -140,6 +149,61 @@ export default function ProposalViewPage() {
         }
     };
 
+    const duplicateProject = async () => {
+        if (!project || !user) return;
+        setDuplicating(true);
+        try {
+            const { data: newProject, error: projError } = await supabase
+                .from('projects')
+                .insert({
+                    user_id: user.id,
+                    client_name: project.client_name + ' (Copy)',
+                    client_email: project.client_email,
+                    client_phone: project.client_phone,
+                    project_address: project.project_address,
+                    project_type: project.project_type,
+                    designer_name: project.designer_name,
+                    designer_email: project.designer_email,
+                    designer_phone: project.designer_phone,
+                    accent_color: project.accent_color,
+                    notes: project.notes,
+                    payment_terms: project.payment_terms,
+                    template: project.template,
+                    tax_rate: project.tax_rate,
+                    status: 'Draft',
+                })
+                .select('id')
+                .single();
+
+            if (projError || !newProject) throw projError;
+
+            const roomInserts = project.rooms.map(r => ({
+                project_id: newProject.id,
+                name: r.name,
+                square_footage: r.square_footage,
+            }));
+            const itemInserts = project.line_items.map(li => ({
+                project_id: newProject.id,
+                item_name: li.item_name,
+                quantity: li.quantity,
+                unit_price: li.unit_price,
+            }));
+
+            const promises = [];
+            if (roomInserts.length > 0) promises.push(supabase.from('rooms').insert(roomInserts));
+            if (itemInserts.length > 0) promises.push(supabase.from('line_items').insert(itemInserts));
+            await Promise.all(promises);
+
+            toast.success('Proposal duplicated!');
+            router.push(`/edit/${newProject.id}`);
+        } catch (err) {
+            console.error(err);
+            toast.error('Failed to duplicate proposal');
+        } finally {
+            setDuplicating(false);
+        }
+    };
+
     const formatCurrency = (a: number) =>
         new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(a);
 
@@ -214,11 +278,19 @@ export default function ProposalViewPage() {
                             {sendingEmail ? <Loader2 size={15} className="animate-spin" /> : <Mail size={15} />}
                             {sendingEmail ? 'Sending...' : 'Email to Client'}
                         </button>
+                        <button
+                            onClick={duplicateProject}
+                            disabled={duplicating}
+                            className="btn-secondary text-sm py-2 disabled:opacity-50"
+                        >
+                            {duplicating ? <Loader2 size={15} className="animate-spin" /> : <Copy size={15} />}
+                            {duplicating ? 'Duplicating...' : 'Duplicate'}
+                        </button>
                     </div>
 
                     {/* Project Pipeline */}
                     <div className="px-6 pb-6 -mt-1">
-                        <ProjectPipeline status={project.status} />
+                        <ProjectPipeline status={project.status} clientViewedAt={project.client_viewed_at} />
                     </div>
                 </div>
 
