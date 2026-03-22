@@ -61,11 +61,6 @@ export default function LandingPage() {
 
                     {/* Trust strip */}
                     <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[#5a5a70] text-xs sm:text-sm mb-10 animate-fade-in">
-                        <span className="flex items-center gap-1.5">
-                            Made for <span className="inline-flex items-center font-bold text-xs" aria-label="India">
-                                <span style={{ color: '#FF9933' }}>IN</span><span style={{ color: '#ffffff' }}>DI</span><span style={{ color: '#138808' }}>AN</span>
-                            </span> Professionals
-                        </span>
                         <span className="hidden sm:inline text-[#2a2a40]">•</span>
                         <span className="flex items-center gap-1.5"><IndianRupee size={12} /> INR + GST</span>
                         <span className="hidden sm:inline text-[#2a2a40]">•</span>
@@ -102,13 +97,13 @@ export default function LandingPage() {
                                     Get Early Access
                                     <ArrowRight size={20} />
                                 </Link>
-                                <a
-                                    href="#how-it-works"
+                                <Link
+                                    href="/try"
                                     className="btn-secondary text-base px-8 py-3.5 rounded-xl"
                                 >
-                                    See How It Works
+                                    See a Live Demo
                                     <ChevronRight size={18} />
-                                </a>
+                                </Link>
                             </>
                         )}
                     </div>

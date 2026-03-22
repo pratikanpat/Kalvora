@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: 'Kalvora — Proposals & Invoicing for Interior Designers',
+    title: 'Kalvora - Proposals & Invoicing for Interior Designers',
     description: 'Create branded PDF proposals, get client approval, and auto-generate GST invoices in minutes. Built for Indian interior designers.',
     icons: {
         icon: '/favicon.png',

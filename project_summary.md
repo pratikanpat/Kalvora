@@ -73,6 +73,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     /admin               → Hidden admin dashboard (Overview, Feedback, Users) — protected by ADMIN_EMAILS env var
     /admin/feedback      → Admin feedback viewer with type filters and expandable detail rows
     /admin/users         → Admin users list with studio names, proposal counts, last active
+    /try                 → Zero-auth demo page: enter client name + project type + budget → instant proposal preview with template switcher
     /completed           → Lists all projects with status 'Completed'
     /create              → Multi-section form to create a new proposal
     /dashboard           → Lists all user projects (with search, status filter, delete)
