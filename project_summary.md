@@ -223,6 +223,16 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Validates required fields (name, ease rating, PMF answer) before submission.
 - Stores structured data in `feedback` table with `feedback_type = 'structured'`.
 
+**Public Feedback Page (`/public-feedback`):**
+- Standalone page for non-registered visitors (no auth required).
+- One focused question: "What almost stopped you from trying Kalvora today?"
+- 6 selectable blocker options (multi-select): "Didn't understand what it does", "Looks too basic", "I already use another tool", "No pricing clarity", "Need more features first", "Just browsing".
+- Open text area for additional thoughts.
+- Optional name and email fields.
+- Stores feedback in `feedback` table with `feedback_type = 'public_landing'` and `user_id = null`.
+- Landing page CTA routes logged-out users to `/public-feedback`, logged-in users to `/feedback`.
+- Footer "Feedback" link also points to `/public-feedback`.
+
 **Logout Feedback Modal (`LogoutFeedbackModal.tsx`):**
 - Triggered when a user clicks "Log out" in the Sidebar (intercepts logout flow).
 - Asks one friction question: "What almost stopped you from creating a proposal today?"
