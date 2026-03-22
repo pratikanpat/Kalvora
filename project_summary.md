@@ -67,6 +67,12 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
       /send-proposal     → POST API route: emails proposal link to client, updates status Draft→Sent
       /analytics         → GET API route (force-dynamic): returns 4 dashboard stats (total proposals, approval rate, avg deal size, active projects) for authenticated user
       /warmup             → Lightweight warm-up endpoint for serverless cold-start reduction
+      /admin/stats       → GET API route (force-dynamic): returns admin overview metrics (total users, projects by status, feedback by type, weekly stats)
+      /admin/feedback     → GET API route (force-dynamic): returns all feedback entries with optional type filter
+      /admin/users        → GET API route (force-dynamic): returns all users with profiles and proposal counts
+    /admin               → Hidden admin dashboard (Overview, Feedback, Users) — protected by ADMIN_EMAILS env var
+    /admin/feedback      → Admin feedback viewer with type filters and expandable detail rows
+    /admin/users         → Admin users list with studio names, proposal counts, last active
     /completed           → Lists all projects with status 'Completed'
     /create              → Multi-section form to create a new proposal
     /dashboard           → Lists all user projects (with search, status filter, delete)
@@ -94,6 +100,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     ProtectedRoute.tsx        → HOC to redirect unauthenticated users to /login
     LogoutFeedbackModal.tsx   → Modal shown on logout to capture friction feedback
     Sidebar.tsx               → Left nav sidebar for authenticated views (with red dot for incomplete profile, logout → feedback modal)
+    AdminGuard.tsx            → Admin route protector: checks email against NEXT_PUBLIC_ADMIN_EMAILS, redirects non-admins to /dashboard
     StatusBadge.tsx           → Badge component (Draft / Sent / Approved / Completed)
     PaymentMilestones.tsx     → Payment milestone management (add/edit/delete/mark paid) with default presets (30/40/30)
     SuccessModal.tsx          → Post-generation success modal with PDF download/share links
@@ -321,6 +328,35 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Approval Rate = (Approved + Paid + Completed) / (Sent + Approved + Paid + Completed) × 100.
 - Avg Deal Size = average grand_total (with tax) across approved/paid/completed projects.
 - Active Projects = count of non-Draft, non-Completed projects.
+
+### 15. Hidden Admin Dashboard (`/admin`)
+
+**Access Control:**
+- Protected by `ADMIN_EMAILS` environment variable (comma-separated email whitelist).
+- `AdminGuard.tsx` component checks logged-in user's email against `NEXT_PUBLIC_ADMIN_EMAILS`.
+- Non-admin users are silently redirected to `/dashboard`. No links to admin exist anywhere on the site.
+- API routes verify admin email server-side using `ADMIN_EMAILS` env var.
+
+**Overview Page (`/admin`):**
+- 4 metric cards: Total Users, Total Proposals, Total Feedback, Approval Rate.
+- Weekly stats: signups this week, proposals this week.
+- Proposals by Status bar chart (Draft/Sent/Approved/Paid/Completed).
+- Feedback by Source breakdown (Structured, Logout Modal, Public Landing).
+
+**Feedback Viewer (`/admin/feedback`):**
+- Table of all feedback entries across all users and visitors.
+- Filter by feedback type (All / Structured / Logout / Public Landing).
+- Expandable detail rows showing ease rating, best feature, frustrations, feature wish, PMF answer.
+- Color-coded type badges, newest-first sorting.
+
+**Users List (`/admin/users`):**
+- Table of all registered users with designer name, email, studio name, proposal count, signup date, last active.
+- Desktop table view + responsive mobile cards.
+
+**Admin Layout:**
+- Separate amber-themed sidebar (distinct from user sidebar) with Overview, Feedback, Users navigation.
+- "Back to Dashboard" link in sidebar footer.
+- Mobile tab bar for responsive access.
 
 ---
 

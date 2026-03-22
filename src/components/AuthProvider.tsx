@@ -23,7 +23,7 @@ export function useAuth() {
     return useContext(AuthContext);
 }
 
-const PUBLIC_ROUTES = ['/', '/login', '/signup', '/view', '/forgot-password', '/reset-password'];
+const PUBLIC_ROUTES = ['/', '/login', '/signup', '/view', '/forgot-password', '/reset-password', '/public-feedback', '/admin', '/p/', '/i/', '/invoice'];
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
