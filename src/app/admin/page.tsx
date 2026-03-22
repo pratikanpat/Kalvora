@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
-import { supabase } from '@/lib/supabase';
 import {
-    Users, FileText, MessageSquare, TrendingUp,
-    ArrowUpRight, ArrowDownRight, Loader2
+    Users, FileText, MessageSquare, TrendingUp, Loader2,
+    type LucideIcon
 } from 'lucide-react';
 
 interface AdminStats {
@@ -195,7 +194,7 @@ export default function AdminOverviewPage() {
 }
 
 function MetricCard({ icon: Icon, label, value, sub, color }: {
-    icon: React.ComponentType<{ size: number; className?: string }>;
+    icon: LucideIcon;
     label: string;
     value: number | string;
     sub?: string;
