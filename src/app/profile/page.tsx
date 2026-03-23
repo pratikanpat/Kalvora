@@ -12,6 +12,11 @@ import {
     CreditCard, Landmark, Receipt, Hash
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import {
+    validateEmail, validatePhone, validateGSTIN, validatePAN,
+    validateIFSC, validateBankAccount, validateUpiId, validateHsnSac,
+    validateNumericRange
+} from '@/lib/validators';
 
 interface ProfileSnapshot {
     studioName: string;
@@ -42,6 +47,7 @@ export default function ProfilePage() {
     const [uploading, setUploading] = useState(false);
     const [isNew, setIsNew] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
+    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
     // Profile fields — original
     const [studioName, setStudioName] = useState('');
@@ -175,9 +181,47 @@ export default function ProfilePage() {
         reader.readAsDataURL(file);
     };
 
-    const saveProfile = async () => {
+    const validateProfile = (): boolean => {
+        const errs: Record<string, string> = {};
+
         if (!studioName.trim() && !designerName.trim()) {
-            toast.error('Please enter at least a studio name or designer name');
+            errs.studioName = 'Enter at least a studio name or designer name';
+        }
+
+        const emailRes = validateEmail(email);
+        if (!emailRes.valid) errs.email = emailRes.message!;
+
+        const phoneRes = validatePhone(phone);
+        if (!phoneRes.valid) errs.phone = phoneRes.message!;
+
+        const gstinRes = validateGSTIN(gstin);
+        if (!gstinRes.valid) errs.gstin = gstinRes.message!;
+
+        const panRes = validatePAN(panNumber);
+        if (!panRes.valid) errs.panNumber = panRes.message!;
+
+        const hsnRes = validateHsnSac(hsnSacCode);
+        if (!hsnRes.valid) errs.hsnSacCode = hsnRes.message!;
+
+        const dueRes = validateNumericRange(String(invoiceDueDays), 1, 365, 'Invoice due days');
+        if (!dueRes.valid) errs.invoiceDueDays = dueRes.message!;
+
+        const accountRes = validateBankAccount(bankAccountNumber);
+        if (!accountRes.valid) errs.bankAccountNumber = accountRes.message!;
+
+        const ifscRes = validateIFSC(bankIfsc);
+        if (!ifscRes.valid) errs.bankIfsc = ifscRes.message!;
+
+        const upiRes = validateUpiId(upiId);
+        if (!upiRes.valid) errs.upiId = upiRes.message!;
+
+        setValidationErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
+    const saveProfile = async () => {
+        if (!validateProfile()) {
+            toast.error('Please fix the errors before saving');
             return;
         }
 
@@ -228,6 +272,10 @@ export default function ProfilePage() {
             setSavedSnapshot(newSnap);
             // Exit edit mode after successful save
             setIsEditing(false);
+            // Clear validation errors
+            setValidationErrors({});
+            // Scroll to top of the page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
             console.error('Error saving profile:', err);
             toast.error('Failed to save profile');
@@ -253,7 +301,7 @@ export default function ProfilePage() {
         <DashboardLayout>
             <div className="max-w-3xl mx-auto">
                 {/* Header */}
-                <div className="mb-8 animate-fade-in flex items-start justify-between">
+                <div className="mb-8 animate-fade-in flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div>
                         <h1 className="text-2xl font-bold text-white tracking-tight">Studio Profile</h1>
                         <p className="text-[#5a5a70] text-sm mt-1.5">
@@ -264,7 +312,7 @@ export default function ProfilePage() {
                     {!isNew && (
                         <button
                             onClick={() => isEditing ? handleCancel() : setIsEditing(true)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex-shrink-0 ml-4 ${isEditing
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex-shrink-0 ${isEditing
                                     ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
                                     : 'bg-brand-700/15 text-brand-400 border border-brand-700/25 hover:bg-brand-700/25'
                                 }`}
@@ -366,15 +414,17 @@ export default function ProfilePage() {
                                 <label className="input-label">Email</label>
                                 <div className="relative">
                                     <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@studio.com" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@studio.com" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.email ? 'border-red-500' : ''}`} readOnly={!isEditing} />
                                 </div>
+                                {validationErrors.email && <p className="text-red-400 text-xs mt-1">{validationErrors.email}</p>}
                             </div>
                             <div>
                                 <label className="input-label">Phone</label>
                                 <div className="relative">
                                     <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.phone ? 'border-red-500' : ''}`} readOnly={!isEditing} />
                                 </div>
+                                {validationErrors.phone && <p className="text-red-400 text-xs mt-1">{validationErrors.phone}</p>}
                             </div>
                         </div>
                     </div>
@@ -435,15 +485,17 @@ export default function ProfilePage() {
                                 <label className="input-label">GSTIN <span className="text-[#5a5a70] font-normal">(GST Number)</span></label>
                                 <div className="relative">
                                     <Hash size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={gstin} onChange={(e) => setGstin(e.target.value.toUpperCase())} placeholder="e.g. 22AAAAA0000A1Z5" maxLength={15} className={`input-field pl-10 uppercase ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                    <input type="text" value={gstin} onChange={(e) => setGstin(e.target.value.toUpperCase())} placeholder="e.g. 22AAAAA0000A1Z5" maxLength={15} className={`input-field pl-10 uppercase ${inputReadonlyClass} ${validationErrors.gstin ? 'border-red-500' : ''}`} readOnly={!isEditing} />
                                 </div>
+                                {validationErrors.gstin && <p className="text-red-400 text-xs mt-1">{validationErrors.gstin}</p>}
                             </div>
                             <div>
                                 <label className="input-label">PAN Number <span className="text-[#5a5a70] font-normal">(Optional)</span></label>
                                 <div className="relative">
                                     <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={panNumber} onChange={(e) => setPanNumber(e.target.value.toUpperCase())} placeholder="e.g. ABCDE1234F" maxLength={10} className={`input-field pl-10 uppercase ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                    <input type="text" value={panNumber} onChange={(e) => setPanNumber(e.target.value.toUpperCase())} placeholder="e.g. ABCDE1234F" maxLength={10} className={`input-field pl-10 uppercase ${inputReadonlyClass} ${validationErrors.panNumber ? 'border-red-500' : ''}`} readOnly={!isEditing} />
                                 </div>
+                                {validationErrors.panNumber && <p className="text-red-400 text-xs mt-1">{validationErrors.panNumber}</p>}
                             </div>
                         </div>
 
@@ -452,17 +504,17 @@ export default function ProfilePage() {
                                 <label className="input-label">HSN/SAC Code <span className="text-[#5a5a70] font-normal">(Default)</span></label>
                                 <div className="relative">
                                     <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={hsnSacCode} onChange={(e) => setHsnSacCode(e.target.value)} placeholder="9971" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                    <input type="text" value={hsnSacCode} onChange={(e) => setHsnSacCode(e.target.value)} placeholder="9971" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.hsnSacCode ? 'border-red-500' : ''}`} readOnly={!isEditing} />
                                 </div>
-                                <p className="text-[#5a5a70] text-xs mt-1">Interior design services are typically SAC 9971</p>
+                                {validationErrors.hsnSacCode ? <p className="text-red-400 text-xs mt-1">{validationErrors.hsnSacCode}</p> : <p className="text-[#5a5a70] text-xs mt-1">Interior design services are typically SAC 9971</p>}
                             </div>
                             <div>
                                 <label className="input-label">Invoice Due Days <span className="text-[#5a5a70] font-normal">(Default)</span></label>
                                 <div className="relative">
                                     <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="number" value={invoiceDueDays} onChange={(e) => setInvoiceDueDays(parseInt(e.target.value) || 7)} placeholder="7" min={1} max={90} className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                    <input type="number" value={invoiceDueDays} onChange={(e) => setInvoiceDueDays(parseInt(e.target.value) || 7)} placeholder="7" min={1} max={365} className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.invoiceDueDays ? 'border-red-500' : ''}`} readOnly={!isEditing} />
                                 </div>
-                                <p className="text-[#5a5a70] text-xs mt-1">Number of days after invoice creation until payment is due</p>
+                                {validationErrors.invoiceDueDays ? <p className="text-red-400 text-xs mt-1">{validationErrors.invoiceDueDays}</p> : <p className="text-[#5a5a70] text-xs mt-1">Number of days after invoice creation until payment is due</p>}
                             </div>
                         </div>
                     </div>
@@ -493,8 +545,9 @@ export default function ProfilePage() {
                                 <label className="input-label">Account Number</label>
                                 <div className="relative">
                                     <Hash size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={bankAccountNumber} onChange={(e) => setBankAccountNumber(e.target.value)} placeholder="e.g. 1234567890123" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                    <input type="text" value={bankAccountNumber} onChange={(e) => setBankAccountNumber(e.target.value)} placeholder="e.g. 1234567890123" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.bankAccountNumber ? 'border-red-500' : ''}`} readOnly={!isEditing} />
                                 </div>
+                                {validationErrors.bankAccountNumber && <p className="text-red-400 text-xs mt-1">{validationErrors.bankAccountNumber}</p>}
                             </div>
                         </div>
 
@@ -503,15 +556,17 @@ export default function ProfilePage() {
                                 <label className="input-label">IFSC Code</label>
                                 <div className="relative">
                                     <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={bankIfsc} onChange={(e) => setBankIfsc(e.target.value.toUpperCase())} placeholder="e.g. HDFC0001234" maxLength={11} className={`input-field pl-10 uppercase ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                    <input type="text" value={bankIfsc} onChange={(e) => setBankIfsc(e.target.value.toUpperCase())} placeholder="e.g. HDFC0001234" maxLength={11} className={`input-field pl-10 uppercase ${inputReadonlyClass} ${validationErrors.bankIfsc ? 'border-red-500' : ''}`} readOnly={!isEditing} />
                                 </div>
+                                {validationErrors.bankIfsc && <p className="text-red-400 text-xs mt-1">{validationErrors.bankIfsc}</p>}
                             </div>
                             <div>
                                 <label className="input-label">UPI ID</label>
                                 <div className="relative">
                                     <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="e.g. studio@upi" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                    <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="e.g. studio@upi" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.upiId ? 'border-red-500' : ''}`} readOnly={!isEditing} />
                                 </div>
+                                {validationErrors.upiId && <p className="text-red-400 text-xs mt-1">{validationErrors.upiId}</p>}
                             </div>
                         </div>
                     </div>

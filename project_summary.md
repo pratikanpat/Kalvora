@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-20 (v10 — Invoice page fixed to use server-side API, bypassing RLS)
+> Last updated: 2026-03-23 (v11 — Mobile responsiveness, input validation, scroll-to-top fix)
 
 ---
 
@@ -109,6 +109,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   /lib
     supabase.ts    → Supabase browser client + build-safe server client (service role, returns placeholder when env vars missing) + config checker
     shortcode.ts   → Short link generation and resolution (KV-xxxxx codes), client-side + server-side variants
+    validators.ts  → Centralized input validation (email, phone, GSTIN, PAN, IFSC, bank account, UPI ID, HSN/SAC, numeric range)
     templates.ts   → All 6 PDF HTML templates (48 KB) — raw HTML/CSS strings rendered by Puppeteer
 
 /supabase
@@ -543,11 +544,36 @@ When creating a new proposal, the form fetches `designer_profiles` on mount and 
 
 ---
 
+### 16. Mobile Responsiveness & Input Validation
+
+**Mobile / Tablet Responsiveness:**
+- Touch-friendly tap targets: all inputs, selects, and buttons enforce 44px minimum height on mobile (Apple/Google HIG).
+- Font size 16px on mobile inputs prevents iOS auto-zoom on focus.
+- Tablet-specific adjustments (42px input height for 769–1024px screens).
+- Safe area insets for notched phones (iPhone X+).
+- Action buttons on create/edit pages stack vertically on mobile (`flex-col sm:flex-row`).
+- Profile header wraps cleanly on small screens (`flex-col sm:flex-row`).
+- Glass card border-radius slightly reduced on mobile for better fit.
+
+**Input Validation (`src/lib/validators.ts`):**
+- Centralized validation utility with regex-based validators.
+- All validators return `{ valid: boolean, message?: string }` for inline error display.
+- Validators: `validateEmail`, `validatePhone` (Indian 10-digit), `validateGSTIN` (15-char), `validatePAN` (10-char), `validateIFSC` (11-char), `validateBankAccount` (9–18 digits), `validateUpiId`, `validateHsnSac` (4–8 digits), `validateNumericRange`.
+- Profile page: validates all banking/tax fields on save, shows inline red error messages, blocks save on invalid data.
+- Create/Edit pages: validates client email and phone format before submission.
+- Login/Signup pages: validates email format before submission.
+
+**Scroll to Top After Profile Save:**
+- After successful profile save, page smoothly scrolls to top via `window.scrollTo({ top: 0, behavior: 'smooth' })`.
+
+---
+
 ## 7. Current Limitations
 
 - **No payment tracking** — ~~No way to record partial payments or payment milestones.~~ **RESOLVED in Phase 3** — Payment milestones now track advance/mid/final payments.
 - **No project analytics** — ~~No dashboard stats.~~ **RESOLVED in Phase 3** — Analytics strip shows total proposals, approval rate, avg deal size, active projects.
 - **No short URLs** — ~~All shared links used raw UUIDs.~~ **RESOLVED** — Short link system with `KV-xxxxx` codes and `/p/`, `/i/` redirect routes.
+- **No input validation** — ~~Banking credentials and contact fields had no constraints.~~ **RESOLVED** — Centralized validators for email, phone, GSTIN, PAN, IFSC, bank account, UPI, HSN/SAC.
 - **No revision history** — Editing a project replaces data; there is no versioning of proposals.
 - **No multi-user team access** — Each account is a single designer; no shared studio/team workspace.
 - **PDF is regenerated on demand** — No auto-versioning; re-generating overwrites the previous PDF record in the `proposals` table.

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { Mail, Lock, LogIn, Sparkles, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { validateEmail } from '@/lib/validators';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -21,6 +22,12 @@ export default function LoginPage() {
 
         if (!email.trim() || !password.trim()) {
             setError('Please enter both email and password.');
+            return;
+        }
+
+        const emailCheck = validateEmail(email);
+        if (!emailCheck.valid) {
+            setError(emailCheck.message!);
             return;
         }
 

@@ -710,3 +710,50 @@ html {
     font-size: 20px;
   }
 }
+
+/* ---- Mobile / Tablet Responsiveness ---- */
+
+/* Touch-friendly tap targets (44px minimum per Apple / Google HIG) */
+@media (max-width: 768px) {
+  .input-field {
+    min-height: 44px;
+    font-size: 16px; /* prevents iOS zoom on input focus */
+  }
+
+  select.input-field {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  /* Slightly reduce glass card padding on small screens */
+  .glass-card {
+    border-radius: 1rem;
+  }
+
+  /* Improve section header tap targets */
+  .section-title {
+    font-size: 1.125rem;
+  }
+}
+
+/* Tablet specific adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .input-field {
+    min-height: 42px;
+  }
+}
+
+/* Safe area insets for notched phones (iPhone X+) */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}

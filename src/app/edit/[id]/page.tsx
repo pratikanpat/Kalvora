@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import TemplatePreviewModal from '@/components/TemplatePreviewModal';
+import { validateEmail, validatePhone } from '@/lib/validators';
 
 interface Room {
     id?: string;
@@ -177,6 +178,13 @@ export default function EditPage() {
     const validate = () => {
         const errs: Record<string, string> = {};
         if (!clientName.trim()) errs.clientName = 'Client name is required';
+
+        const emailRes = validateEmail(clientEmail);
+        if (!emailRes.valid) errs.clientEmail = emailRes.message!;
+
+        const phoneRes = validatePhone(clientPhone);
+        if (!phoneRes.valid) errs.clientPhone = phoneRes.message!;
+
         if (lineItems.filter((i) => i.item_name.trim()).length === 0) errs.lineItems = 'Add at least one line item';
         setErrors(errs);
         return Object.keys(errs).length === 0;
@@ -294,8 +302,8 @@ export default function EditPage() {
                                     </div>
                                     {errors.clientName && <p className="text-red-400 text-xs mt-1">{errors.clientName}</p>}
                                 </div>
-                                <div><label className="input-label">Email</label><div className="relative"><Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" /><input type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="client@email.com" className="input-field pl-10" /></div></div>
-                                <div><label className="input-label">Phone</label><div className="relative"><Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" /><input type="tel" value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="+91 98765 43210" className="input-field pl-10" /></div></div>
+                                <div><label className="input-label">Email</label><div className="relative"><Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" /><input type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="client@email.com" className={`input-field pl-10 ${errors.clientEmail ? 'border-red-500' : ''}`} /></div>{errors.clientEmail && <p className="text-red-400 text-xs mt-1">{errors.clientEmail}</p>}</div>
+                                <div><label className="input-label">Phone</label><div className="relative"><Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" /><input type="tel" value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="+91 98765 43210" className={`input-field pl-10 ${errors.clientPhone ? 'border-red-500' : ''}`} /></div>{errors.clientPhone && <p className="text-red-400 text-xs mt-1">{errors.clientPhone}</p>}</div>
                                 <div className="md:col-span-2"><label className="input-label">Project Address</label><div className="relative"><MapPin size={16} className="absolute left-3 top-3 text-[#5a5a70]" /><textarea value={projectAddress} onChange={(e) => setProjectAddress(e.target.value)} placeholder="Full project address" rows={2} className="input-field pl-10" /></div></div>
                             </div>
                         )}

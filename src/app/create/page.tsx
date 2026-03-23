@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import TemplatePreviewModal from '@/components/TemplatePreviewModal';
+import { validateEmail, validatePhone } from '@/lib/validators';
 
 interface Room {
     name: string;
@@ -258,6 +259,12 @@ export default function CreatePage() {
         if (!clientName.trim()) errs.clientName = 'Client name is required';
         if (!projectType) errs.projectType = 'Select a project type';
 
+        const emailRes = validateEmail(clientEmail);
+        if (!emailRes.valid) errs.clientEmail = emailRes.message!;
+
+        const phoneRes = validatePhone(clientPhone);
+        if (!phoneRes.valid) errs.clientPhone = phoneRes.message!;
+
         const validItems = lineItems.filter((i) => i.item_name.trim());
         if (validItems.length === 0) errs.lineItems = 'Add at least one line item';
 
@@ -465,9 +472,10 @@ export default function CreatePage() {
                                             value={clientEmail}
                                             onChange={(e) => setClientEmail(e.target.value)}
                                             placeholder="client@email.com"
-                                            className="input-field pl-10"
+                                            className={`input-field pl-10 ${errors.clientEmail ? 'border-red-500' : ''}`}
                                         />
                                     </div>
+                                    {errors.clientEmail && <p className="text-red-400 text-xs mt-1">{errors.clientEmail}</p>}
                                 </div>
                                 <div>
                                     <label className="input-label">Phone</label>
@@ -478,9 +486,10 @@ export default function CreatePage() {
                                             value={clientPhone}
                                             onChange={(e) => setClientPhone(e.target.value)}
                                             placeholder="+91 98765 43210"
-                                            className="input-field pl-10"
+                                            className={`input-field pl-10 ${errors.clientPhone ? 'border-red-500' : ''}`}
                                         />
                                     </div>
+                                    {errors.clientPhone && <p className="text-red-400 text-xs mt-1">{errors.clientPhone}</p>}
                                 </div>
                                 <div className="md:col-span-2">
                                     <label className="input-label">Project Address</label>
