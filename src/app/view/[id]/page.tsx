@@ -413,7 +413,7 @@ export default function PublicViewPage() {
                 {/* Powered by Kalvora — Viral CTA */}
                 <div className="text-center pt-6 pb-2">
                     <a
-                        href="https://kalvora.kaliprlabs.in"
+                        href="/try"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-700/10 border border-brand-700/20 hover:bg-brand-700/20 hover:border-brand-700/30 transition-all duration-200 group"
@@ -421,7 +421,7 @@ export default function PublicViewPage() {
                         <span className="text-[#5a5a70] text-xs">This proposal was created with</span>
                         <span className="text-brand-400 text-xs font-bold tracking-wider">KALVORA</span>
                         <span className="text-[#5a5a70] text-xs hidden sm:inline">-</span>
-                        <span className="text-brand-400 text-xs font-medium hidden sm:inline group-hover:underline">Create yours in 60 seconds →</span>
+                        <span className="text-brand-400 text-xs font-medium hidden sm:inline group-hover:underline">Try it free - no signup needed →</span>
                     </a>
                 </div>
             </div>

@@ -205,7 +205,12 @@ function buildBody(data: TemplateData, cfg: {
     </div>
   </div>
 
-  <div class="footer">${cfg.footerText}</div>`;
+  <div class="footer">
+    <span class="footer-designer">${cfg.footerText}</span>
+    <span class="footer-sep">|</span>
+    <span class="footer-brand">Powered by <strong>KALVORA</strong></span>
+    <span class="footer-tagline">kalvora.kaliprlabs.in</span>
+  </div>`;
 }
 
 
@@ -340,10 +345,16 @@ export function minimalTemplate(data: TemplateData): string {
 
   /* Footer */
   .footer {
-    position: absolute; bottom: 20px; left: 44px; right: 44px;
-    text-align: center; font-size: 8px; color: #cbd5e1;
-    border-top: 1px solid #f1f5f9; padding-top: 8px; letter-spacing: 0.5px;
+    position: absolute; bottom: 14px; left: 44px; right: 44px;
+    text-align: center; font-size: 10px; color: #94a3b8;
+    border-top: 1.5px solid #e2e8f0; padding-top: 12px; margin-top: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
   }
+  .footer-designer { color: #64748b; font-weight: 500; }
+  .footer-sep { color: #cbd5e1; font-weight: 300; }
+  .footer-brand { color: #475569; font-weight: 600; letter-spacing: 0.5px; font-size: 10px; }
+  .footer-brand strong { color: #2563EB; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
+  .footer-tagline { color: #94a3b8; font-size: 8.5px; font-weight: 400; }
 </style>
 </head>
 <body>
@@ -505,10 +516,16 @@ export function luxuryTemplate(data: TemplateData): string {
 
   /* Footer */
   .footer {
-    position: absolute; bottom: 20px; left: 44px; right: 44px;
-    text-align: center; font-size: 8px; color: #d6d3d1;
-    border-top: 1px solid #E8DCC8; padding-top: 8px; letter-spacing: 1px;
+    position: absolute; bottom: 14px; left: 44px; right: 44px;
+    text-align: center; font-size: 10px; color: #a8a29e;
+    border-top: 1.5px solid #E8DCC8; padding-top: 12px; margin-top: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
   }
+  .footer-designer { color: #78716c; font-weight: 500; }
+  .footer-sep { color: #d6d3d1; font-weight: 300; }
+  .footer-brand { color: #57534e; font-weight: 600; letter-spacing: 0.5px; font-size: 10px; }
+  .footer-brand strong { color: #B8963E; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
+  .footer-tagline { color: #a8a29e; font-size: 8.5px; font-weight: 400; }
 </style>
 </head>
 <body>
@@ -660,10 +677,16 @@ export function modernTemplate(data: TemplateData): string {
 
   /* Footer */
   .footer {
-    position: absolute; bottom: 16px; left: 44px; right: 44px;
-    text-align: center; font-size: 8px; color: #d1d5db;
-    border-top: 1px solid #f3f4f6; padding-top: 8px; letter-spacing: 0.5px;
+    position: absolute; bottom: 12px; left: 44px; right: 44px;
+    text-align: center; font-size: 10px; color: #9ca3af;
+    border-top: 1.5px solid #e5e7eb; padding-top: 12px; margin-top: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
   }
+  .footer-designer { color: #6b7280; font-weight: 500; }
+  .footer-sep { color: #d1d5db; font-weight: 300; }
+  .footer-brand { color: #4b5563; font-weight: 600; letter-spacing: 0.5px; font-size: 10px; }
+  .footer-brand strong { color: #4c6ef5; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
+  .footer-tagline { color: #9ca3af; font-size: 8.5px; font-weight: 400; }
 </style>
 </head>
 <body>
@@ -851,10 +874,16 @@ export function blueprintTemplate(data: TemplateData): string {
 
   /* Footer */
   .footer {
-    position: absolute; bottom: 20px; left: 44px; right: 44px;
-    text-align: center; font-size: 8px; color: #cbd5e0;
-    border-top: 1px solid ${lineColor}; padding-top: 8px; letter-spacing: 0.5px;
+    position: absolute; bottom: 14px; left: 44px; right: 44px;
+    text-align: center; font-size: 10px; color: #a0aec0;
+    border-top: 1.5px solid ${lineColor}; padding-top: 12px; margin-top: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
   }
+  .footer-designer { color: #718096; font-weight: 500; }
+  .footer-sep { color: #a0aec0; font-weight: 300; }
+  .footer-brand { color: #4a5568; font-weight: 600; letter-spacing: 0.5px; font-size: 10px; }
+  .footer-brand strong { color: ${navy}; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
+  .footer-tagline { color: #a0aec0; font-size: 8.5px; font-weight: 400; }
 
   .divider { height: 1px; background: ${lineColor}; margin: 4px 0 12px; }
 </style>
@@ -1099,11 +1128,16 @@ export function editorialTemplate(data: TemplateData): string {
 
   /* Footer */
   .footer {
-    position: absolute; bottom: 20px; left: 48px; right: 48px;
-    text-align: center; font-size: 8px; color: #d6cbb8;
-    border-top: 1px solid ${divider}; padding-top: 8px; letter-spacing: 1px;
-    font-style: italic;
+    position: absolute; bottom: 14px; left: 48px; right: 48px;
+    text-align: center; font-size: 10px; color: #c4b89a;
+    border-top: 1.5px solid ${divider}; padding-top: 12px; margin-top: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
   }
+  .footer-designer { color: #a09070; font-style: italic; font-weight: 500; }
+  .footer-sep { color: #c4b89a; font-weight: 300; }
+  .footer-brand { color: #8a7a5a; font-weight: 600; letter-spacing: 0.5px; font-style: normal; font-size: 10px; }
+  .footer-brand strong { color: ${muted}; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
+  .footer-tagline { color: #c4b89a; font-size: 8.5px; font-style: normal; font-weight: 400; }
 </style>
 </head>
 <body>
@@ -1259,10 +1293,16 @@ export function highContrastTemplate(data: TemplateData): string {
 
   /* Footer */
   .footer {
-    position: absolute; bottom: 16px; left: 44px; right: 44px;
-    text-align: center; font-size: 8px; color: #cbd5e1;
-    border-top: 1px solid #f1f5f9; padding-top: 8px; letter-spacing: 0.5px;
+    position: absolute; bottom: 12px; left: 44px; right: 44px;
+    text-align: center; font-size: 10px; color: #94a3b8;
+    border-top: 1.5px solid #e2e8f0; padding-top: 12px; margin-top: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
   }
+  .footer-designer { color: #64748b; font-weight: 500; }
+  .footer-sep { color: #cbd5e1; font-weight: 300; }
+  .footer-brand { color: #475569; font-weight: 600; letter-spacing: 0.5px; font-size: 10px; }
+  .footer-brand strong { color: #2563EB; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
+  .footer-tagline { color: #94a3b8; font-size: 8.5px; font-weight: 400; }
 </style>
 </head>
 <body>
