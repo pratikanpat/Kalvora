@@ -8,10 +8,20 @@ function isConfigured(): boolean {
 }
 
 // Browser client (uses anon key)
-// Uses a safe fallback URL during build/when not configured to prevent crashes
+// persistSession: true (default) — stores tokens in localStorage
+// autoRefreshToken: true (default) — Supabase's internal refresh timer
+// detectSessionInUrl: true — needed for OAuth redirects (Google login)
 export const supabase: SupabaseClient = createClient(
     supabaseUrl || 'https://placeholder.supabase.co',
-    supabaseAnonKey || 'placeholder-key'
+    supabaseAnonKey || 'placeholder-key',
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true,
+            storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+        },
+    }
 );
 
 // Helper to check if Supabase is properly configured
@@ -44,7 +54,6 @@ export function createServerClient() {
         console.error(
             'Missing Supabase server credentials. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.'
         );
-        // Return a placeholder client during build — actual API calls will fail gracefully at runtime
         return createClient(
             url || 'https://placeholder.supabase.co',
             serviceRoleKey || 'placeholder-key'
