@@ -15,7 +15,11 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     }
 
     if (!session) {
-        return null; // AuthProvider handles redirect
+        return (
+            <div className="min-h-screen bg-[#0a0a0f] page-bg flex items-center justify-center">
+                <LoadingSpinner text="Redirecting to login..." />
+            </div>
+        );
     }
 
     return <>{children}</>;

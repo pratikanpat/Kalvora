@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase, checkSupabaseConfig } from '@/lib/supabase';
@@ -32,6 +32,7 @@ export default function DashboardPage() {
     const [configError, setConfigError] = useState('');
     const [showProfileSetup, setShowProfileSetup] = useState(false);
     const [shortCodes, setShortCodes] = useState<Record<string, string>>({});
+    const [fetchError, setFetchError] = useState(false);
     const { user } = useAuth();
 
     // Removed Analytics state to simplify dashboard
@@ -47,6 +48,31 @@ export default function DashboardPage() {
         });
     }, [projects, router]);
 
+    const fetchProjects = useCallback(async (retry = 0): Promise<void> => {
+        if (!user) return;
+        setFetchError(false);
+        try {
+            const { data, error } = await supabase
+                .from('projects')
+                .select('id, client_name, project_type, status, created_at, client_viewed_at')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setProjects(data || []);
+        } catch (err) {
+            console.error('Error fetching projects:', err);
+            if (retry < 2) {
+                await new Promise(r => setTimeout(r, 1500 * (retry + 1)));
+                return fetchProjects(retry + 1);
+            }
+            setFetchError(true);
+            toast.error('Failed to load projects');
+        } finally {
+            setLoading(false);
+        }
+    }, [user]);
+
     useEffect(() => {
         const { configured, message } = checkSupabaseConfig();
         if (!configured) {
@@ -57,7 +83,7 @@ export default function DashboardPage() {
         if (user) {
             fetchProjects();
         }
-    }, [user]);
+    }, [user, fetchProjects]);
 
 
 
@@ -78,24 +104,6 @@ export default function DashboardPage() {
                 }
             });
     }, [user]);
-
-    const fetchProjects = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('projects')
-                .select('id, client_name, project_type, status, created_at, client_viewed_at')
-                .eq('user_id', user!.id)
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-            setProjects(data || []);
-        } catch (err) {
-            console.error('Error fetching projects:', err);
-            toast.error('Failed to load projects');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const deleteProject = async (id: string) => {
         if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) return;
@@ -139,9 +147,9 @@ export default function DashboardPage() {
     // ── Follow-up reminders (Feature 7) ─────────────────────
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-    const staleProposals = projects.filter(
+    const staleProposals = useMemo(() => projects.filter(
         p => p.status === 'Sent' && !p.client_viewed_at && new Date(p.created_at) < threeDaysAgo
-    );
+    ), [projects]);
 
     const getDaysAgo = (dateStr: string) => {
         const diff = Date.now() - new Date(dateStr).getTime();
@@ -149,7 +157,9 @@ export default function DashboardPage() {
     };
 
     // Pre-generate short codes for stale proposals
+    const staleIds = useMemo(() => staleProposals.map(p => p.id).join(','), [staleProposals]);
     useEffect(() => {
+        if (!staleIds) return;
         staleProposals.forEach(p => {
             if (!shortCodes[p.id]) {
                 getOrCreateShortCode(p.id, 'view').then(code => {
@@ -157,7 +167,7 @@ export default function DashboardPage() {
                 }).catch(() => {});
             }
         });
-    }, [staleProposals]);
+    }, [staleIds]);
 
     const openWhatsAppReminder = (clientName: string, projectId: string) => {
         const link = buildShortUrl(window.location.origin, shortCodes[projectId] || '', 'view', projectId);
@@ -194,6 +204,19 @@ export default function DashboardPage() {
                             <p className="text-[#8888a0] text-sm whitespace-pre-wrap">{configError}</p>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {fetchError && !loading && (
+                <div className="glass-card flex flex-col items-center justify-center py-16 px-8 text-center animate-slide-up mb-6">
+                    <div className="w-16 h-16 rounded-2xl bg-red-500/15 flex items-center justify-center mb-4">
+                        <AlertTriangle size={28} className="text-red-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2">Failed to load projects</h3>
+                    <p className="text-[#6a6a80] text-sm mb-6 max-w-sm">Something went wrong while fetching your projects. Please check your connection and try again.</p>
+                    <button onClick={() => { setLoading(true); setFetchError(false); fetchProjects(); }} className="btn-primary">
+                        Try Again
+                    </button>
                 </div>
             )}
 

@@ -38,6 +38,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
+        }).catch(() => {
+            setLoading(false);
         });
 
         // Listen for auth changes
