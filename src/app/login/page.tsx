@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/components/AuthProvider';
 import { Mail, Lock, LogIn, Sparkles, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { validateEmail } from '@/lib/validators';
 
@@ -15,6 +16,15 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
+
+    // Redirect if already logged in
+    const { session: existingSession, loading: authLoading } = useAuth();
+
+    useEffect(() => {
+        if (!authLoading && existingSession) {
+            router.replace('/dashboard');
+        }
+    }, [authLoading, existingSession, router]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,7 +43,7 @@ export default function LoginPage() {
 
         setLoading(true);
         try {
-            const { error: authError } = await supabase.auth.signInWithPassword({
+            const { data, error: authError } = await supabase.auth.signInWithPassword({
                 email: email.trim(),
                 password,
             });
@@ -49,6 +59,14 @@ export default function LoginPage() {
                 return;
             }
 
+            // Wait briefly for AuthProvider's onAuthStateChange to process the SIGNED_IN event.
+            // signInWithPassword already set the session in Supabase storage internally,
+            // but React state needs a tick to update.
+            if (data.session) {
+                // Small delay to let AuthProvider's onAuthStateChange fire and update React state
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
             router.replace('/dashboard');
         } catch {
             setError('Something went wrong. Please try again.');
@@ -56,6 +74,7 @@ export default function LoginPage() {
             setLoading(false);
         }
     };
+
 
     const handleGoogleLogin = async () => {
         setGoogleLoading(true);

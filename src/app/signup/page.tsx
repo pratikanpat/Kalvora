@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/components/AuthProvider';
 import { Mail, Lock, UserPlus, Sparkles, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { validateEmail } from '@/lib/validators';
 
@@ -16,6 +17,15 @@ export default function SignupPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
+
+    // Redirect if already logged in
+    const { session: existingSession, loading: authLoading } = useAuth();
+
+    useEffect(() => {
+        if (!authLoading && existingSession) {
+            router.replace('/dashboard');
+        }
+    }, [authLoading, existingSession, router]);
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -59,6 +69,8 @@ export default function SignupPage() {
             }
 
             // Supabase auto-signs-in after signup (if email confirmation is disabled)
+            // Wait briefly for AuthProvider to process the SIGNED_IN event
+            await new Promise(resolve => setTimeout(resolve, 100));
             router.replace('/dashboard');
         } catch {
             setError('Something went wrong. Please try again.');
