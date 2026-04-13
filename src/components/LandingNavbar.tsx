@@ -16,13 +16,6 @@ export default function LandingNavbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const navLinks = [
-        { label: 'Features', href: '#features' },
-        { label: 'How It Works', href: '#how-it-works' },
-        { label: 'Templates', href: '#templates' },
-        { label: 'Pricing', href: '#pricing' },
-    ];
-
     const isLoggedIn = !loading && !!session;
 
     return (
@@ -44,20 +37,7 @@ export default function LandingNavbar() {
                         </span>
                     </Link>
 
-                    {/* Desktop nav links */}
-                    <div className="hidden md:flex items-center gap-1">
-                        {navLinks.map((link) => (
-                            <a
-                                key={link.href}
-                                href={link.href}
-                                className="px-4 py-2 text-sm text-[#8888a0] hover:text-white transition-colors rounded-lg hover:bg-[#1a1a2e]/50"
-                            >
-                                {link.label}
-                            </a>
-                        ))}
-                    </div>
-
-                    {/* Desktop auth buttons */}
+                    {/* Desktop — 3 items max: Demo ghost link + primary CTA */}
                     <div className="hidden md:flex items-center gap-3">
                         {isLoggedIn ? (
                             <Link
@@ -70,16 +50,16 @@ export default function LandingNavbar() {
                         ) : (
                             <>
                                 <Link
-                                    href="/login"
+                                    href="/try"
                                     className="px-4 py-2 text-sm text-[#8888a0] hover:text-white transition-colors rounded-lg hover:bg-[#1a1a2e]/50"
                                 >
-                                    Login
+                                    Try Demo
                                 </Link>
                                 <Link
                                     href="/signup"
                                     className="btn-primary text-sm px-5 py-2"
                                 >
-                                    Sign Up
+                                    Get Started
                                 </Link>
                             </>
                         )}
@@ -100,17 +80,6 @@ export default function LandingNavbar() {
             {mobileOpen && (
                 <div className="md:hidden bg-[#0d0d16]/98 backdrop-blur-xl border-t border-[#2a2a40]/60 animate-fade-in">
                     <div className="px-4 py-4 space-y-1">
-                        {navLinks.map((link) => (
-                            <a
-                                key={link.href}
-                                href={link.href}
-                                onClick={() => setMobileOpen(false)}
-                                className="block px-4 py-3 text-sm text-[#8888a0] hover:text-white hover:bg-[#1a1a2e]/50 rounded-xl transition-colors"
-                            >
-                                {link.label}
-                            </a>
-                        ))}
-                        <hr className="border-[#2a2a40] my-3" />
                         {isLoggedIn ? (
                             <Link
                                 href="/dashboard"
@@ -123,18 +92,19 @@ export default function LandingNavbar() {
                         ) : (
                             <>
                                 <Link
-                                    href="/login"
+                                    href="/try"
                                     onClick={() => setMobileOpen(false)}
                                     className="block px-4 py-3 text-sm text-[#8888a0] hover:text-white hover:bg-[#1a1a2e]/50 rounded-xl transition-colors"
                                 >
-                                    Login
+                                    Try Demo
                                 </Link>
+                                <hr className="border-[#2a2a40] my-2" />
                                 <Link
                                     href="/signup"
                                     onClick={() => setMobileOpen(false)}
                                     className="block px-4 py-3 text-sm text-white bg-gradient-to-r from-brand-700 to-brand-600 rounded-xl text-center font-semibold"
                                 >
-                                    Sign Up
+                                    Get Started
                                 </Link>
                             </>
                         )}
