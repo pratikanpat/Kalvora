@@ -48,11 +48,8 @@ export default function TryPage() {
             {/* Navbar */}
             <nav className="fixed top-0 inset-x-0 z-50 bg-[#08080d]/90 backdrop-blur-xl border-b border-[#1a1a2e]">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
-                            <Sparkles size={16} className="text-white" />
-                        </div>
-                        <span className="text-white font-bold text-lg tracking-tight">KALVORA</span>
+                    <Link href="/" className="group">
+                        <span className="brand-wordmark text-lg group-hover:opacity-80 transition-opacity">Kalvora</span>
                     </Link>
                     <div className="flex items-center gap-3">
                         <Link href="/login" className="text-sm text-[#8888a0] hover:text-white transition-colors hidden sm:block">
@@ -201,11 +198,10 @@ export default function TryPage() {
                                 <button
                                     key={t.id}
                                     onClick={() => setSelectedTemplate(i)}
-                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                        selectedTemplate === i
+                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${selectedTemplate === i
                                             ? 'bg-brand-500/15 text-brand-400 border border-brand-500/30'
                                             : 'bg-[#12121a] text-[#5a5a70] border border-[#1a1a2e] hover:text-white hover:border-[#3a3a55]'
-                                    }`}
+                                        }`}
                                 >
                                     <Palette size={12} />
                                     {t.label}

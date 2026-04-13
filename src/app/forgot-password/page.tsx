@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { Mail, Sparkles, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Mail, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
@@ -49,12 +49,10 @@ export default function ForgotPasswordPage() {
                 </Link>
 
                 {/* Logo */}
-                <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 via-brand-600 to-brand-700 shadow-xl shadow-brand-700/30 mb-5">
-                        <Sparkles size={28} className="text-white" />
-                    </div>
-                    <h1 className="text-2xl font-bold text-white tracking-tight">Reset Password</h1>
-                    <p className="text-[#5a5a70] text-sm mt-1.5">
+                <div className="text-center mb-12">
+                    <h1 className="brand-wordmark text-4xl mb-3">Kalvora</h1>
+                    <h2 className="text-lg font-semibold text-white mb-1">Reset Password</h2>
+                    <p className="text-[#5a5a70] text-sm">
                         {sent ? 'Check your email for the reset link' : 'Enter your email to receive a reset link'}
                     </p>
                 </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from './AuthProvider';
-import { Sparkles, Menu, X, LayoutDashboard } from 'lucide-react';
+import { Menu, X, LayoutDashboard } from 'lucide-react';
 
 export default function LandingNavbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -21,19 +21,16 @@ export default function LandingNavbar() {
     return (
         <nav
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-                    ? 'bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-[#2a2a40]/60 shadow-lg shadow-black/20'
-                    : 'bg-transparent'
+                ? 'bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-[#2a2a40]/60 shadow-lg shadow-black/20'
+                : 'bg-transparent'
                 }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-[72px]">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 via-brand-600 to-brand-700 flex items-center justify-center shadow-lg shadow-brand-700/25 group-hover:shadow-brand-600/40 transition-shadow">
-                            <Sparkles size={20} className="text-white" />
-                        </div>
-                        <span className="text-[15px] font-bold text-white tracking-tight">
-                            K A L V O R A
+                    <Link href="/" className="group">
+                        <span className="brand-wordmark text-[28px] mt-1 inline-block group-hover:opacity-80 transition-opacity">
+                            Kalvora
                         </span>
                     </Link>
 

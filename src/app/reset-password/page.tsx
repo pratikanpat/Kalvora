@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { Lock, Sparkles, Loader2, Eye, EyeOff, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Lock, Loader2, Eye, EyeOff, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 export default function ResetPasswordPage() {
     const router = useRouter();
@@ -75,12 +75,10 @@ export default function ResetPasswordPage() {
                 </Link>
 
                 {/* Logo */}
-                <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 via-brand-600 to-brand-700 shadow-xl shadow-brand-700/30 mb-5">
-                        <Sparkles size={28} className="text-white" />
-                    </div>
-                    <h1 className="text-2xl font-bold text-white tracking-tight">Set New Password</h1>
-                    <p className="text-[#5a5a70] text-sm mt-1.5">Choose a strong password for your account</p>
+                <div className="text-center mb-12">
+                    <h1 className="brand-wordmark text-4xl mb-3">Kalvora</h1>
+                    <h2 className="text-lg font-semibold text-white mb-1">Set New Password</h2>
+                    <p className="text-[#5a5a70] text-sm">Choose a strong password for your account</p>
                 </div>
 
                 <div className="glass-card p-8">

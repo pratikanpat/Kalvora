@@ -204,13 +204,10 @@ export default function PublicViewPage() {
             {/* Kalvora Branding Bar */}
             <div className="border-b border-[#1a1a2e] bg-[#08080d]/90 backdrop-blur-sm">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2.5 group">
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 via-brand-600 to-brand-700 flex items-center justify-center">
-                            <Sparkles size={12} className="text-white" />
-                        </div>
-                        <span className="text-sm font-bold text-white tracking-tight">KALVORA</span>
+                    <Link href="/" className="group">
+                        <span className="brand-wordmark text-sm group-hover:opacity-80 transition-opacity">Kalvora</span>
                     </Link>
-                    <span className="text-[#3a3a50] text-xs">Powered by Kalvora</span>
+                    <span className="text-[#3a3a50] text-xs">Powered by <span className="brand-wordmark-inline text-[#5a5a70] text-xs">Kalvora</span></span>
                 </div>
             </div>
 
@@ -349,11 +346,10 @@ export default function PublicViewPage() {
                             {comments.map((c) => (
                                 <div key={c.id} className="pl-3 sm:pl-4 border-l-2 border-[#2a2a40]">
                                     <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                                            c.author_type === 'Client'
+                                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.author_type === 'Client'
                                                 ? 'bg-amber-500/15 text-amber-400'
                                                 : 'bg-brand-700/20 text-brand-400'
-                                        }`}>
+                                            }`}>
                                             {c.author_type === 'Client' ? project.client_name : (project.designer_name || 'Designer')}
                                         </span>
                                         <span className="text-[#5a5a70] text-[11px] flex items-center gap-1">
@@ -419,7 +415,7 @@ export default function PublicViewPage() {
                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-700/10 border border-brand-700/20 hover:bg-brand-700/20 hover:border-brand-700/30 transition-all duration-200 group"
                     >
                         <span className="text-[#5a5a70] text-xs">This proposal was created with</span>
-                        <span className="text-brand-400 text-xs font-bold tracking-wider">KALVORA</span>
+                        <span className="brand-wordmark-inline text-brand-400 text-xs">Kalvora</span>
                         <span className="text-[#5a5a70] text-xs hidden sm:inline">-</span>
                         <span className="text-brand-400 text-xs font-medium hidden sm:inline group-hover:underline">Try it free - no signup needed →</span>
                     </a>

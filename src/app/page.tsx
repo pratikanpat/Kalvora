@@ -30,7 +30,7 @@ export default function LandingPage() {
                 Q: "What is this and why should I care?"
                 Framework: Pain → Promise → Proof → CTA
                 ═══════════════════════════════════════ */}
-            <section className="relative pt-32 pb-12 sm:pt-40 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            <section className="relative pt-16 pb-12 sm:pt-20 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 {/* Ambient background — subtle depth, not distracting */}
                 <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                     <div className="absolute top-[8%] left-[12%] w-[600px] h-[600px] rounded-full bg-brand-600/[0.06] blur-[150px]" />
@@ -410,11 +410,8 @@ export default function LandingPage() {
             <footer className="border-t border-[#1a1a2e] bg-[#08080d]/80 backdrop-blur-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                        <Link href="/" className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 via-brand-600 to-brand-700 flex items-center justify-center">
-                                <Sparkles size={14} className="text-white" />
-                            </div>
-                            <span className="text-sm font-bold text-white tracking-tight">K A L V O R A</span>
+                        <Link href="/" className="group">
+                            <span className="brand-wordmark text-lg group-hover:opacity-80 transition-opacity">Kalvora</span>
                         </Link>
 
                         <div className="flex items-center gap-6 text-sm text-[#5a5a70]">
@@ -424,7 +421,7 @@ export default function LandingPage() {
                         </div>
 
                         <p className="text-[#3a3a50] text-xs">
-                            © 2026 <span className="text-[#5a5a70]">KALVORA</span> · Kalipr Labs
+                            © 2026 <span className="brand-wordmark-inline text-[#5a5a70] text-xs">Kalvora</span> · Kalipr Labs
                         </p>
                     </div>
                 </div>
@@ -480,15 +477,13 @@ function FAQSection() {
                         </span>
                         <ChevronDown
                             size={18}
-                            className={`text-[#5a5a70] flex-shrink-0 transition-transform duration-300 ${
-                                openIndex === i ? 'rotate-180 text-brand-400' : ''
-                            }`}
+                            className={`text-[#5a5a70] flex-shrink-0 transition-transform duration-300 ${openIndex === i ? 'rotate-180 text-brand-400' : ''
+                                }`}
                         />
                     </button>
                     <div
-                        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                            openIndex === i ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
-                        }`}
+                        className={`overflow-hidden transition-all duration-300 ease-in-out ${openIndex === i ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
+                            }`}
                     >
                         <div className="px-5 sm:px-6 pb-4">
                             <p className="text-[#8888a0] text-sm leading-relaxed">{item.a}</p>

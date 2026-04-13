@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Playfair_Display } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 import AuthProvider from '@/components/AuthProvider';
 import './globals.css';
@@ -9,6 +9,13 @@ const inter = Inter({
     weight: ['300', '400', '500', '600', '700', '800'],
     display: 'swap',
     variable: '--font-inter',
+});
+
+const playfair = Playfair_Display({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700', '800'],
+    display: 'swap',
+    variable: '--font-playfair',
 });
 
 export const metadata: Metadata = {
@@ -27,7 +34,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className={inter.variable}>
+        <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
             <body className="antialiased">
                 <AuthProvider>
                     <Toaster

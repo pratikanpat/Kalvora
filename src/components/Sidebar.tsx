@@ -13,7 +13,6 @@ import {
     MessageSquare,
     PanelLeftClose,
     PanelLeft,
-    Sparkles,
     LogOut,
     User,
     Building,
@@ -104,15 +103,11 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         `}
             >
                 {/* Logo */}
-                <Link href="/" className={`flex items-center h-[72px] px-5 border-b border-[#1a1a2e]/80 hover:bg-[#1a1a2e]/30 transition-colors ${collapsed ? 'justify-center px-3' : 'gap-3'}`}>
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 via-brand-600 to-brand-700 flex items-center justify-center flex-shrink-0 shadow-lg shadow-brand-700/25">
-                        <Sparkles size={20} className="text-white" />
-                    </div>
-                    {!collapsed && (
-                        <div className="animate-fade-in">
-                            <h1 className="text-[15px] font-bold text-white tracking-tight">K A L V O R A</h1>
-                            <p className="text-[10px] text-[#5a5a70] font-medium tracking-[0.15em] uppercase">Design Studio</p>
-                        </div>
+                <Link href="/" className={`flex items-center h-[72px] px-5 border-b border-[#1a1a2e]/80 hover:bg-[#1a1a2e]/30 transition-colors ${collapsed ? 'justify-center px-3' : ''}`}>
+                    {collapsed ? (
+                        <span className="brand-wordmark text-lg">K</span>
+                    ) : (
+                        <h1 className="brand-wordmark text-[22px] animate-fade-in">Kalvora</h1>
                     )}
                 </Link>
 

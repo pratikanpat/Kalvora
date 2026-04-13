@@ -118,7 +118,8 @@ body {
   /* ---- Form Elements ---- */
   .input-field {
     @apply w-full bg-[#0d0d14] border border-[#2a2a40] rounded-xl px-4 py-3 text-[#f0f0f5] placeholder-[#5a5a70] focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all duration-200 outline-none text-sm;
-    color-scheme: dark; /* Ensures native text inputs and dropdowns use dark UI */
+    color-scheme: dark;
+    /* Ensures native text inputs and dropdowns use dark UI */
   }
 
   /* Fix for browser autofill changing background to white/yellow */
@@ -294,7 +295,34 @@ body {
   background: linear-gradient(90deg, rgba(76, 110, 245, 0.04), transparent);
 }
 
-/* ---- Landing Page Utilities ---- */
+/* ---- Brand Wordmark ---- */
+.brand-wordmark {
+  font-family: var(--font-playfair), 'Playfair Display', 'Georgia', serif;
+  letter-spacing: 0.45em;
+  font-weight: 600;
+  color: #f0f0f5;
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+}
+
+.brand-wordmark-sm {
+  font-family: var(--font-playfair), 'Playfair Display', 'Georgia', serif;
+  letter-spacing: 0.35em;
+  font-weight: 600;
+  color: #f0f0f5;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Inline variant for footers, CTAs, and smaller brand mentions */
+.brand-wordmark-inline {
+  font-family: var(--font-playfair), 'Playfair Display', 'Georgia', serif;
+  letter-spacing: 0.3em;
+  font-weight: 600;
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+}
 html {
   scroll-behavior: smooth;
 }
@@ -326,12 +354,29 @@ html {
   animation: scaleIn 0.25s ease-out forwards;
 }
 
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.1s; }
-.stagger-3 { animation-delay: 0.15s; }
-.stagger-4 { animation-delay: 0.2s; }
-.stagger-5 { animation-delay: 0.25s; }
-.stagger-6 { animation-delay: 0.3s; }
+.stagger-1 {
+  animation-delay: 0.05s;
+}
+
+.stagger-2 {
+  animation-delay: 0.1s;
+}
+
+.stagger-3 {
+  animation-delay: 0.15s;
+}
+
+.stagger-4 {
+  animation-delay: 0.2s;
+}
+
+.stagger-5 {
+  animation-delay: 0.25s;
+}
+
+.stagger-6 {
+  animation-delay: 0.3s;
+}
 
 /* ---- Landing Cards ---- */
 .landing-card {
@@ -371,8 +416,17 @@ html {
 }
 
 @keyframes proofPulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
-  50% { opacity: 0.6; box-shadow: 0 0 16px rgba(52, 211, 153, 0.3); }
+
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
+  }
+
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 16px rgba(52, 211, 153, 0.3);
+  }
 }
 
 /* ---- Landing Page CTA Buttons ---- */
@@ -411,8 +465,15 @@ html {
 }
 
 @keyframes ctaGlowPulse {
-  0%, 100% { box-shadow: 0 4px 20px rgba(76, 110, 245, 0.25); }
-  50% { box-shadow: 0 4px 30px rgba(76, 110, 245, 0.45), 0 0 40px rgba(76, 110, 245, 0.1); }
+
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(76, 110, 245, 0.25);
+  }
+
+  50% {
+    box-shadow: 0 4px 30px rgba(76, 110, 245, 0.45), 0 0 40px rgba(76, 110, 245, 0.1);
+  }
 }
 
 .landing-cta-ghost {
@@ -545,13 +606,25 @@ html {
 
 /* ---- Template Preview Modal ---- */
 @keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalZoomIn {
-  from { opacity: 0; transform: scale(0.88) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .template-modal-overlay {
@@ -578,7 +651,7 @@ html {
   border: 1px solid #2a2a40;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.03);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03);
   animation: modalZoomIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -626,7 +699,7 @@ html {
   height: auto;
   object-fit: contain;
   border-radius: 8px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
   transition: opacity 0.25s ease;
 }
 
@@ -655,8 +728,13 @@ html {
   border-color: #3a3a55;
 }
 
-.template-modal-nav-prev { left: 12px; }
-.template-modal-nav-next { right: 12px; }
+.template-modal-nav-prev {
+  left: 12px;
+}
+
+.template-modal-nav-next {
+  right: 12px;
+}
 
 /* Dot indicators */
 .template-modal-dots {
@@ -852,7 +930,8 @@ html {
 @media (max-width: 768px) {
   .input-field {
     min-height: 44px;
-    font-size: 16px; /* prevents iOS zoom on input focus */
+    font-size: 16px;
+    /* prevents iOS zoom on input focus */
   }
 
   select.input-field {
