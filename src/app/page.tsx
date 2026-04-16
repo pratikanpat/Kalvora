@@ -444,7 +444,7 @@ const faqItems = [
     },
     {
         q: 'Does it support GST invoices?',
-        a: 'Yes. Add your GSTIN and Kalvora auto-generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI — after every client approval.',
+        a: 'Yes. Add your GSTIN and Kalvora auto-generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI - after every client approval.',
     },
     {
         q: 'Can I try it without signing up?',
@@ -456,7 +456,7 @@ const faqItems = [
     },
     {
         q: 'Can I use my own branding?',
-        a: 'Yes. Upload your studio logo, set your accent color, add your payment terms. Every proposal and invoice carries your brand — not ours.',
+        a: 'Yes. Upload your studio logo, set your accent color, add your payment terms. Every proposal and invoice carries your brand - not ours.',
     },
 ];
 
