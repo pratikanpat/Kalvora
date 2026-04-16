@@ -30,7 +30,7 @@ export default function LandingPage() {
                 Q: "What is this and why should I care?"
                 Framework: Pain → Promise → Proof → CTA
                 ═══════════════════════════════════════ */}
-            <section className="relative pt-16 pb-12 sm:pt-20 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            <section className="relative pt-24 pb-12 sm:pt-20 sm:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 {/* Ambient background — subtle depth, not distracting */}
                 <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                     <div className="absolute top-[8%] left-[12%] w-[600px] h-[600px] rounded-full bg-brand-600/[0.06] blur-[150px]" />
@@ -43,7 +43,7 @@ export default function LandingPage() {
                     {/* Social proof badge — top of page, builds instant trust */}
                     <div className="landing-proof-badge animate-fade-in">
                         <span className="landing-proof-dot" />
-                        Free during Early Access — No credit card required
+                        Free during Early Access - No credit card required
                     </div>
 
                     {/* Headline — 8 words total. Pain (line 1) + Promise (line 2).
@@ -59,7 +59,7 @@ export default function LandingPage() {
                         they know exactly what Kalvora does and who it's for. */}
                     <p className="text-[#9090a8] text-base sm:text-lg lg:text-xl max-w-2xl mx-auto mb-10 animate-fade-in leading-relaxed">
                         Kalvora creates branded proposals and auto-generates GST invoices
-                        for interior designers — <span className="text-white font-medium">in 60 seconds.</span>
+                        for interior designers - <span className="text-white font-medium">in 60 seconds.</span>
                     </p>
 
                     {/* CTA Pair — One dominant action, one escape hatch.
@@ -108,7 +108,7 @@ export default function LandingPage() {
                     <div className="landing-problem-card">
                         <p className="text-white text-base sm:text-lg lg:text-xl font-semibold leading-relaxed text-center max-w-2xl">
                             &ldquo;You lose deals because your Word doc looks unprofessional
-                            <span className="text-[#9090a8] font-normal"> — compared to what your client expects from a designer.&rdquo;</span>
+                            <span className="text-[#9090a8] font-normal"> - compared to what your client expects from a designer.&rdquo;</span>
                         </p>
                     </div>
                 </div>
@@ -160,7 +160,7 @@ export default function LandingPage() {
                             <ul className="space-y-3.5 text-sm text-[#9090a8]">
                                 {[
                                     'Branded PDF proposal in 60 seconds',
-                                    'Client approves online — invoice auto-created',
+                                    'Client approves online - invoice auto-created',
                                     'Know exactly when they view your proposal',
                                     'Payment milestones tracked automatically',
                                 ].map((item, i) => (
@@ -198,7 +198,7 @@ export default function LandingPage() {
                                 step: '1',
                                 icon: FileText,
                                 title: 'Fill Details',
-                                desc: 'Client info, rooms, pricing — smart presets do the heavy lifting.'
+                                desc: 'Client info, rooms, pricing - smart presets do the heavy lifting.'
                             },
                             {
                                 step: '2',
@@ -210,7 +210,7 @@ export default function LandingPage() {
                                 step: '3',
                                 icon: Receipt,
                                 title: 'Get Paid',
-                                desc: 'Client approves online. Invoice + payment milestones — instantly.'
+                                desc: 'Client approves online. Invoice + payment milestones - instantly.'
                             },
                         ].map((item, i) => (
                             <div key={item.step} className="text-center relative px-4">
@@ -242,13 +242,13 @@ export default function LandingPage() {
                             {
                                 icon: Zap,
                                 statement: 'Branded PDF in 60 seconds.',
-                                detail: '6 premium templates. Your logo, your colors. Clients see a professional — not a freelancer with a Word doc.',
+                                detail: '6 premium templates. Your logo, your colors. Clients see a professional - not a freelancer with a Word doc.',
                                 accent: 'brand',
                             },
                             {
                                 icon: Clock,
                                 statement: 'Client approves. Invoice auto-created.',
-                                detail: 'One-click approval via magic link. GST invoice with CGST/SGST, bank details, and UPI — generated instantly.',
+                                detail: 'One-click approval via magic link. GST invoice with CGST/SGST, bank details, and UPI - generated instantly.',
                                 accent: 'emerald',
                             },
                             {
@@ -332,7 +332,7 @@ export default function LandingPage() {
                                 {/* Urgency badge — amber = scarcity signal */}
                                 <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-amber-500/8 border border-amber-500/12 text-amber-400 text-sm font-medium mb-8">
                                     <Sparkles size={14} />
-                                    Pro at ₹999/mo — Early users lock in 50% off forever
+                                    Pro at ₹999/mo - Early users lock in 50% off forever
                                 </div>
                                 <div>
                                     <Link
@@ -388,7 +388,7 @@ export default function LandingPage() {
                             Your next proposal is 60 seconds away.
                         </h2>
                         <p className="text-[#8888a0] max-w-md mx-auto mb-8 text-sm sm:text-base leading-relaxed">
-                            Join designers who closed projects faster — the moment they stopped sending Word docs.
+                            Join designers who closed projects faster - the moment they stopped sending Word docs.
                         </p>
                         <Link
                             href={session ? '/dashboard' : '/try'}
