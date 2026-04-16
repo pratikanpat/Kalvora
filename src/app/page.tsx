@@ -395,7 +395,7 @@ export default function LandingPage() {
                             className="landing-cta-primary inline-flex"
                             id="final-cta"
                         >
-                            Start Free — No Signup
+                            Start Free - No Signup
                             <ArrowRight size={20} />
                         </Link>
                     </div>
