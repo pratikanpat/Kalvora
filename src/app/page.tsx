@@ -73,12 +73,12 @@ export default function LandingPage() {
                             </Link>
                         ) : (
                             <>
-                                <Link href="/try" className="landing-cta-primary" id="hero-cta-primary">
-                                    Try It Free — No Signup
+                                <Link href="/signup" className="landing-cta-primary" id="hero-cta-primary">
+                                    Create Account
                                     <ArrowRight size={20} />
                                 </Link>
-                                <Link href="/signup" className="landing-cta-ghost" id="hero-cta-secondary">
-                                    Create Account
+                                <Link href="/try" className="landing-cta-ghost" id="hero-cta-secondary">
+                                    Try Demo
                                     <ArrowRight size={16} />
                                 </Link>
                             </>
@@ -391,11 +391,11 @@ export default function LandingPage() {
                             Join designers who closed projects faster - the moment they stopped sending Word docs.
                         </p>
                         <Link
-                            href={session ? '/dashboard' : '/try'}
+                            href={session ? '/dashboard' : '/signup'}
                             className="landing-cta-primary inline-flex"
                             id="final-cta"
                         >
-                            Start Free - No Signup
+                            {session ? 'Go to Dashboard' : 'Get Started'}
                             <ArrowRight size={20} />
                         </Link>
                     </div>
