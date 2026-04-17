@@ -99,6 +99,54 @@ export default function LandingPage() {
             </section>
 
             {/* ═══════════════════════════════════════
+                DASHBOARD SHOWCASE — The Product Shot
+                Q: "What does it actually look like?"
+                Positioned right after hero for maximum impact.
+                Perspective tilt + ambient glow = premium feel.
+                Visible for ALL users (new + signed up).
+                ═══════════════════════════════════════ */}
+            <section className="relative px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24 -mt-2 sm:mt-0">
+                {/* Ambient glow behind the screenshot */}
+                <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[70%] rounded-full bg-brand-600/[0.07] blur-[120px]" />
+                </div>
+
+                <div className="relative max-w-5xl mx-auto">
+                    {/* Caption above the screenshot */}
+                    {/* <p className="text-center text-[#5a5a70] text-xs sm:text-sm font-medium uppercase tracking-[0.2em] mb-6 sm:mb-8 animate-fade-in">
+                        Your Command Center
+                    </p> */}
+
+                    {/* Dashboard image with premium frame */}
+                    <div className="dashboard-showcase animate-fade-in">
+                        <div className="dashboard-showcase-inner">
+                            {/* Top bar — mimics a browser/app chrome */}
+                            <div className="dashboard-showcase-chrome">
+                                <div className="flex items-center gap-1.5">
+                                    <span className="w-[10px] h-[10px] rounded-full bg-[#ff5f57]" />
+                                    <span className="w-[10px] h-[10px] rounded-full bg-[#febc2e]" />
+                                    <span className="w-[10px] h-[10px] rounded-full bg-[#28c840]" />
+                                </div>
+                                <span className="text-[10px] sm:text-xs text-[#5a5a70] font-medium tracking-wide">kalvora.in/dashboard</span>
+                                <div className="w-[46px]" />
+                            </div>
+
+                            {/* The actual screenshot */}
+                            <img
+                                src="/dash.png"
+                                alt="Kalvora Dashboard — manage proposals, track client views, and auto-generate invoices"
+                                className="w-full h-auto block"
+                                loading="eager"
+                            />
+                        </div>
+
+                        {/* Bottom fade — dissolves into the page background */}
+                        <div className="dashboard-showcase-fade" />
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════
                 PROBLEM — The "Aha" Moment
                 Q: "Do they understand MY problem?"
                 One sentence that forces emotional recognition.
