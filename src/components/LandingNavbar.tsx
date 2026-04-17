@@ -46,12 +46,14 @@ export default function LandingNavbar() {
                             </Link>
                         ) : (
                             <>
+                                {/* HIDDEN: Marketing strategy — re-enable when ready
                                 <Link
                                     href="/try"
                                     className="px-4 py-2 text-sm text-[#8888a0] hover:text-white transition-colors rounded-lg hover:bg-[#1a1a2e]/50"
                                 >
                                     Try Demo
                                 </Link>
+                                */}
                                 <Link
                                     href="/signup"
                                     className="btn-primary text-sm px-5 py-2"
@@ -88,6 +90,7 @@ export default function LandingNavbar() {
                             </Link>
                         ) : (
                             <>
+                                {/* HIDDEN: Marketing strategy — re-enable when ready
                                 <Link
                                     href="/try"
                                     onClick={() => setMobileOpen(false)}
@@ -96,6 +99,7 @@ export default function LandingNavbar() {
                                     Try Demo
                                 </Link>
                                 <hr className="border-[#2a2a40] my-2" />
+                                */}
                                 <Link
                                     href="/signup"
                                     onClick={() => setMobileOpen(false)}

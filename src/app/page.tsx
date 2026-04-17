@@ -77,10 +77,12 @@ export default function LandingPage() {
                                     Create Account
                                     <ArrowRight size={20} />
                                 </Link>
+                                {/* HIDDEN: Marketing strategy — re-enable when ready
                                 <Link href="/try" className="landing-cta-ghost" id="hero-cta-secondary">
                                     Try Demo
                                     <ArrowRight size={16} />
                                 </Link>
+                                */}
                             </>
                         )}
                     </div>
@@ -415,7 +417,9 @@ export default function LandingPage() {
                         </Link>
 
                         <div className="flex items-center gap-6 text-sm text-[#5a5a70]">
+                            {/* HIDDEN: Marketing strategy — re-enable when ready
                             <Link href="/try" className="hover:text-brand-400 transition-colors">Demo</Link>
+                            */}
                             <Link href="/login" className="hover:text-brand-400 transition-colors">Login</Link>
                             <Link href="/public-feedback" className="hover:text-brand-400 transition-colors">Feedback</Link>
                         </div>
