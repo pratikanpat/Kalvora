@@ -34,16 +34,30 @@ export default function LandingNavbar() {
                         </span>
                     </Link>
 
-                    {/* Desktop — 3 items max: Demo ghost link + primary CTA */}
-                    <div className="hidden md:flex items-center gap-3">
+                    {/* Desktop — context-aware nav items */}
+                    <div className="hidden md:flex items-center gap-2">
                         {isLoggedIn ? (
-                            <Link
-                                href="/dashboard"
-                                className="btn-primary text-sm px-5 py-2"
-                            >
-                                <LayoutDashboard size={16} />
-                                Dashboard
-                            </Link>
+                            <>
+                                <Link
+                                    href="/create"
+                                    className="px-4 py-2 text-sm text-[#8888a0] hover:text-white transition-colors rounded-lg hover:bg-[#1a1a2e]/50"
+                                >
+                                    Create Proposal
+                                </Link>
+                                <Link
+                                    href="/profile"
+                                    className="px-4 py-2 text-sm text-[#8888a0] hover:text-white transition-colors rounded-lg hover:bg-[#1a1a2e]/50"
+                                >
+                                    Profile
+                                </Link>
+                                <Link
+                                    href="/dashboard"
+                                    className="btn-primary text-sm px-5 py-2"
+                                >
+                                    <LayoutDashboard size={16} />
+                                    Dashboard
+                                </Link>
+                            </>
                         ) : (
                             <>
                                 {/* HIDDEN: Marketing strategy — re-enable when ready
@@ -80,14 +94,30 @@ export default function LandingNavbar() {
                 <div className="md:hidden bg-[#0d0d16]/98 backdrop-blur-xl border-t border-[#2a2a40]/60 animate-fade-in">
                     <div className="px-4 py-4 space-y-1">
                         {isLoggedIn ? (
-                            <Link
-                                href="/dashboard"
-                                onClick={() => setMobileOpen(false)}
-                                className="flex items-center gap-2 px-4 py-3 text-sm text-white bg-gradient-to-r from-brand-700 to-brand-600 rounded-xl font-semibold justify-center"
-                            >
-                                <LayoutDashboard size={16} />
-                                Dashboard
-                            </Link>
+                            <>
+                                <Link
+                                    href="/create"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block px-4 py-3 text-sm text-[#8888a0] hover:text-white hover:bg-[#1a1a2e]/50 rounded-xl transition-colors"
+                                >
+                                    Create Proposal
+                                </Link>
+                                <Link
+                                    href="/profile"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block px-4 py-3 text-sm text-[#8888a0] hover:text-white hover:bg-[#1a1a2e]/50 rounded-xl transition-colors"
+                                >
+                                    Profile
+                                </Link>
+                                <Link
+                                    href="/dashboard"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="flex items-center gap-2 px-4 py-3 text-sm text-white bg-gradient-to-r from-brand-700 to-brand-600 rounded-xl font-semibold justify-center"
+                                >
+                                    <LayoutDashboard size={16} />
+                                    Dashboard
+                                </Link>
+                            </>
                         ) : (
                             <>
                                 {/* HIDDEN: Marketing strategy — re-enable when ready

@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-03-23 (v11 — Mobile responsiveness, input validation, scroll-to-top fix)
+> Last updated: 2026-04-26 (v12 — Auth-state-aware landing page: Sales Machine + Closing Engine)
 
 ---
 
@@ -90,12 +90,12 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     /p/[code]            → Short link redirect for proposals (resolves KV-xxxxx → /view/[id])
     /i/[code]            → Short link redirect for invoices (resolves KV-xxxxx → /invoice/[id])
     layout.tsx           → Root layout: wraps AuthProvider + Toaster
-    page.tsx             → Landing page (pain-first hero, before/after, 4-step workflow, features, templates, who it's for, FAQ, pricing, final CTA)
+    page.tsx             → Auth-state-aware entry point: Sales landing (not logged in) OR Closing Engine command center (logged in)
     globals.css          → Global styles, design tokens, custom utility classes
   /components
     AuthProvider.tsx          → React context: session management, exposes useAuth() hook
     DashboardLayout.tsx       → Authenticated page wrapper with sidebar
-    LandingNavbar.tsx         → Public navbar (shows Dashboard link if logged in)
+    LandingNavbar.tsx         → Public navbar (shows Dashboard/Create/Profile links if logged in, Get Started if not)
     LoadingSpinner.tsx        → Reusable loading UI
     ProfileSetupModal.tsx     → First-time profile setup modal on dashboard
     ProtectedRoute.tsx        → HOC to redirect unauthenticated users to /login
@@ -106,6 +106,8 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     PaymentMilestones.tsx     → Payment milestone management (add/edit/delete/mark paid) with default presets (30/40/30)
     SuccessModal.tsx          → Post-generation success modal with PDF download/share links
     TemplatePreviewModal.tsx  → Template preview carousel modal on create page
+    LoggedInHome.tsx          → Closing Engine: action-driven command center for logged-in users at /
+    SocialProof.tsx           → Designer testimonial cards for sales landing page
   /lib
     supabase.ts    → Supabase browser client + build-safe server client (service role, returns placeholder when env vars missing) + config checker
     shortcode.ts   → Short link generation and resolution (KV-xxxxx codes), client-side + server-side variants
@@ -258,14 +260,28 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Public view (`/view/[id]`) and invoice (`/invoice/[id]`) pages now show a clickable CTA footer: *"This proposal was created with KALVORA — Create yours in 60 seconds →"*
 - Links to the Kalvora landing page. On invoice, hidden during print.
 
-**Pain-First Landing Page:**
-- Hero: "Stop Chasing Clients on WhatsApp With Word Docs" with trust strip.
-- Before/After comparison section.
-- 4-step workflow (Fill → Template → WhatsApp → Auto Invoice).
-- Who It's For (Freelancers, Studios, Architects, Home Staging).
-- FAQ accordion (5 questions).
-- Pricing: "Free during early access. Pro at ₹999/mo — early users lock in 50% off."
-- Final CTA: "Your next proposal is 60 seconds away."
+**Auth-State-Aware Landing Page (`/`):**
+- **State A (Not Logged In) — Sales Machine:**
+  - Hero: "Stop Sending Proposals on WhatsApp Like It's 2012" with highlighter effect on key subheadline phrases ("track views", "get approvals").
+  - Dashboard product screenshot with perspective tilt.
+  - Pain Section: "Your current process is costing you projects" — step-by-step chaos walkthrough with punchline.
+  - Before/After comparison (rewritten: messy process vs clean Kalvora workflow).
+  - 6 Core Features as benefits: Create in minutes, Share on WhatsApp, Edit anytime, All proposals saved, Auto invoice, Track every project.
+  - Power Feature spotlight: "Know When Your Client Sees Your Proposal" — animated eye icon, mock notification card.
+  - Who It's For (Interior Designers, Freelancers, Small Studios, Anyone chasing clients).
+  - Designer Reviews: 3 testimonial cards (`SocialProof.tsx`) — Sneha Arora, Rajesh Kapoor, Ananya Mehta.
+  - Pricing: "Simple pricing. No surprises." — Free early access + Pro ₹999/mo.
+  - FAQ accordion (5 objection-handler questions).
+  - Final CTA: "Stop chasing clients. Start closing them."
+- **State B (Logged In) — Closing Engine (`LoggedInHome.tsx`):**
+  - Time-of-day greeting with user name.
+  - Pipeline Strip (top): Draft → Sent → Viewed → Approved → Paid → Completed counts, clickable.
+  - Primary Action Strip: Context-aware single dominant action (no profile → first proposal → resume draft → nudge viewed → follow up sent → invoice reminder → create new).
+  - Needs Your Attention: Stuck-project alarm system (stale proposals 3+ days, viewed not approved, approved not paid).
+  - Proposal Activity feed: Real-time-feeling client interaction feed ("Rahul viewed 2h ago", "Priya hasn't opened yet").
+  - Wins: Celebration cards for approvals (🎉), payments (💰), completions (✅).
+  - Quick nav link to full `/dashboard`.
+- Both states render at `/` — no redirects. Auth detected via `useAuth()` session.
 
 **Email to Client (`POST /api/send-proposal`):**
 - Sends a branded email to the client with a short proposal link (e.g., `https://kalvora.kaliprlabs.in/p/KV-R7x3mQ`) via Resend.

@@ -1070,3 +1070,457 @@ html {
     padding-right: env(safe-area-inset-right);
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   HIGHLIGHTER EFFECT — Notebook marker sweep animation
+   Used on landing page subheadline key phrases.
+   ═══════════════════════════════════════════════════════ */
+.highlighter-mark {
+  position: relative;
+  display: inline;
+  padding: 0 4px;
+}
+
+.highlighter-mark::after {
+  content: '';
+  position: absolute;
+  left: -3px;
+  right: -3px;
+  bottom: 2px;
+  height: 38%;
+  background: linear-gradient(
+    135deg,
+    rgba(76, 110, 245, 0.30),
+    rgba(92, 124, 250, 0.22),
+    rgba(129, 140, 248, 0.18)
+  );
+  border-radius: 2px 6px 4px 5px;
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: highlighterSweep 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-delay: 1.2s;
+}
+
+@keyframes highlighterSweep {
+  0% {
+    transform: scaleX(0);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAIN SECTION — Chaos walkthrough steps
+   ═══════════════════════════════════════════════════════ */
+.pain-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 0;
+  color: #9090a8;
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.pain-step-number {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(250, 82, 82, 0.08);
+  border: 1px solid rgba(250, 82, 82, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fa5252;
+}
+
+.pain-punchline {
+  position: relative;
+  display: inline-block;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fa5252;
+  padding: 0 6px;
+}
+
+.pain-punchline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: linear-gradient(90deg, #fa5252, rgba(250, 82, 82, 0.2));
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   FEATURE BENEFIT CARDS — 6 core features as benefits
+   ═══════════════════════════════════════════════════════ */
+.feature-benefit-card {
+  @apply bg-[#12122a]/80 border border-[#2a2a40] rounded-2xl p-6 transition-all duration-300 relative overflow-hidden;
+  backdrop-filter: blur(12px);
+}
+
+.feature-benefit-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--feature-accent, rgba(76, 110, 245, 0.4)), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.feature-benefit-card:hover {
+  @apply border-[#3a3a55];
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(76, 110, 245, 0.08);
+}
+
+.feature-benefit-card:hover::before {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════
+   POWER FEATURE SECTION — USP spotlight
+   ═══════════════════════════════════════════════════════ */
+.power-feature-section {
+  position: relative;
+  padding: 48px 32px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(76, 110, 245, 0.08), rgba(18, 18, 42, 0.95), rgba(76, 110, 245, 0.04));
+  border: 1px solid rgba(76, 110, 245, 0.15);
+  overflow: hidden;
+}
+
+.power-feature-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(76, 110, 245, 0.06) 0%, transparent 50%);
+  animation: powerPulse 4s ease-in-out infinite;
+}
+
+@keyframes powerPulse {
+  0%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+.power-feature-icon-ring {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(76, 110, 245, 0.2), rgba(76, 110, 245, 0.08));
+  border: 1px solid rgba(76, 110, 245, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: float 3s ease-in-out infinite;
+}
+
+.power-feature-icon-ring::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 28px;
+  border: 1px solid rgba(76, 110, 245, 0.1);
+  animation: powerRingPulse 2s ease-in-out infinite;
+}
+
+@keyframes powerRingPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SOCIAL PROOF / TESTIMONIAL CARDS
+   ═══════════════════════════════════════════════════════ */
+.testimonial-card {
+  @apply bg-[#12122a]/90 border border-[#2a2a40] rounded-2xl p-6 sm:p-7 transition-all duration-300;
+  backdrop-filter: blur(12px);
+}
+
+.testimonial-card:hover {
+  @apply border-[#3a3a55];
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(76, 110, 245, 0.06);
+}
+
+.testimonial-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.testimonial-stars {
+  display: flex;
+  gap: 2px;
+  color: #fbbf24;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CLOSING ENGINE — Logged-in Home Components
+   ═══════════════════════════════════════════════════════ */
+
+/* Pipeline Strip */
+.pipeline-strip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 0;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.pipeline-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.pipeline-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: rgba(18, 18, 42, 0.6);
+  color: #5a5a70;
+}
+
+.pipeline-step:hover {
+  background: rgba(26, 26, 46, 0.8);
+  border-color: #2a2a40;
+  color: #8888a0;
+}
+
+.pipeline-step-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0 5px;
+}
+
+.pipeline-step-arrow {
+  color: #2a2a40;
+  flex-shrink: 0;
+}
+
+/* Primary Action Strip */
+.action-strip-card {
+  position: relative;
+  padding: 28px 32px;
+  border-radius: 20px;
+  border: 1px solid rgba(76, 110, 245, 0.2);
+  background: linear-gradient(135deg, rgba(76, 110, 245, 0.08), rgba(18, 18, 42, 0.95));
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.action-strip-card:hover {
+  border-color: rgba(76, 110, 245, 0.3);
+  box-shadow: 0 8px 32px rgba(76, 110, 245, 0.1);
+  transform: translateY(-2px);
+}
+
+.action-strip-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(76, 110, 245, 0.5), transparent);
+}
+
+/* Needs Attention Cards */
+.attention-card {
+  @apply rounded-xl p-5 transition-all duration-200 border;
+  background: rgba(18, 18, 42, 0.8);
+}
+
+.attention-card:hover {
+  transform: translateY(-1px);
+}
+
+.attention-card-amber {
+  border-color: rgba(255, 153, 51, 0.15);
+  background: linear-gradient(135deg, rgba(255, 153, 51, 0.05), rgba(18, 18, 42, 0.9));
+}
+
+.attention-card-amber:hover {
+  border-color: rgba(255, 153, 51, 0.25);
+  box-shadow: 0 4px 16px rgba(255, 153, 51, 0.06);
+}
+
+.attention-card-blue {
+  border-color: rgba(76, 110, 245, 0.15);
+  background: linear-gradient(135deg, rgba(76, 110, 245, 0.05), rgba(18, 18, 42, 0.9));
+}
+
+.attention-card-blue:hover {
+  border-color: rgba(76, 110, 245, 0.25);
+  box-shadow: 0 4px 16px rgba(76, 110, 245, 0.06);
+}
+
+.attention-card-emerald {
+  border-color: rgba(16, 185, 129, 0.15);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(18, 18, 42, 0.9));
+}
+
+.attention-card-emerald:hover {
+  border-color: rgba(16, 185, 129, 0.25);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.06);
+}
+
+/* Activity Feed */
+.activity-feed-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(18, 18, 42, 0.6);
+  border: 1px solid rgba(42, 42, 64, 0.5);
+  transition: all 0.2s ease;
+}
+
+.activity-feed-item:hover {
+  background: rgba(26, 26, 46, 0.8);
+  border-color: #2a2a40;
+}
+
+.activity-feed-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Win / Celebration Cards */
+.win-card {
+  position: relative;
+  padding: 16px 20px;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.win-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.win-card:hover::before {
+  opacity: 0.8;
+}
+
+.win-card-approved {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(18, 18, 42, 0.9));
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.win-card-paid {
+  background: linear-gradient(135deg, rgba(76, 110, 245, 0.08), rgba(18, 18, 42, 0.9));
+  border: 1px solid rgba(76, 110, 245, 0.15);
+}
+
+.win-card-completed {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(18, 18, 42, 0.9));
+  border: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+/* All Caught Up state */
+.all-caught-up {
+  text-align: center;
+  padding: 32px 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.04), rgba(18, 18, 42, 0.6));
+  border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+/* Section headers for closing engine */
+.engine-section-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #5a5a70;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Responsive adjustments for closing engine */
+@media (max-width: 640px) {
+  .action-strip-card {
+    padding: 20px 20px;
+    border-radius: 16px;
+  }
+
+  .pipeline-step {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .power-feature-section {
+    padding: 32px 20px;
+    border-radius: 18px;
+  }
+}
