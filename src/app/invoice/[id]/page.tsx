@@ -204,10 +204,11 @@ export default function InvoicePage() {
                                         Due Date: <span className="text-white print-dark-text font-medium">{formatDate(dueDate.toISOString())}</span>
                                     </span>
                                 </div>
-                                {/* Status */}
+                                {/* TEMPORARILY HIDDEN — paid/unpaid status badge
                                 <div className="inline-flex items-center gap-1.5 bg-amber-500/15 border border-amber-500/30 text-amber-400 px-3 py-1 rounded-full text-xs font-semibold mt-2">
                                     ◉ Unpaid
                                 </div>
+                                */}
                             </div>
                         </div>
 
@@ -382,7 +383,9 @@ export default function InvoicePage() {
                                                 <th className="text-left py-2 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Milestone</th>
                                                 <th className="text-right py-2 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Amount</th>
                                                 <th className="text-center py-2 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Due Date</th>
+                                                {/* TEMPORARILY HIDDEN — status column header
                                                 <th className="text-center py-2 text-[#5a5a70] font-semibold uppercase text-xs tracking-wider">Status</th>
+                                                */}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -393,6 +396,7 @@ export default function InvoicePage() {
                                                     <td className="py-2.5 text-center text-[#8888a0] print-gray-text">
                                                         {m.due_date ? new Date(m.due_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                                                     </td>
+                                                    {/* TEMPORARILY HIDDEN — paid/unpaid status cell
                                                     <td className="py-2.5 text-center">
                                                         {m.paid_at ? (
                                                             <span className="inline-flex items-center gap-1 text-emerald-400 text-xs font-semibold">✓ Paid</span>
@@ -400,6 +404,7 @@ export default function InvoicePage() {
                                                             <span className="inline-flex items-center gap-1 text-amber-400 text-xs font-semibold">◉ Unpaid</span>
                                                         )}
                                                     </td>
+                                                    */}
                                                 </tr>
                                             ))}
                                         </tbody>
