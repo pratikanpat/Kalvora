@@ -479,7 +479,7 @@ const faqItems = [
     },
     {
         q: 'Can I try it without signing up?',
-        a: 'Absolutely. Click "Try demo" to create a sample proposal instantly. No account needed. Sign up only when you\'re ready to save and share with real clients. [Right now this feature is disabled]',
+        a: 'Absolutely. Click "Try demo" to create a sample proposal instantly. No account needed. Sign up only when you\'re ready to save and share with real clients. [Right now this feature is under development]',
     },
     {
         q: 'What happens when the client approves?',

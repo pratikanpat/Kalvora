@@ -273,55 +273,61 @@ export default function DashboardPage() {
 
                     {/* ── Needs Attention (CRM) ── */}
                     {(awaitingResponse > 0 || viewedAwaitingApproval > 0 || invoicesPending > 0 || staleProposals.length > 0) && (
-                        <div className="mb-6 animate-fade-in">
-                            <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-3">Needs Attention</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div className="mb-4 sm:mb-6 animate-fade-in">
+                            <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-2 sm:mb-3">Needs Attention</h3>
+                            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                                 {awaitingResponse > 0 && (
-                                    <button onClick={() => setStatusFilter('Sent')} className="glass-card p-4 text-left hover:border-[#FF9933]/30 transition-all group border-[#FF9933]/10 bg-gradient-to-br from-[#FF9933]/5 to-transparent">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <div className="w-7 h-7 rounded-lg bg-[#FF9933]/15 flex items-center justify-center">
-                                                <Send size={14} className="text-[#FF9933]" />
+                                    <button onClick={() => setStatusFilter('Sent')} className="glass-card p-2.5 sm:p-4 text-left hover:border-[#FF9933]/30 transition-all group border-[#FF9933]/10 bg-gradient-to-br from-[#FF9933]/5 to-transparent">
+                                        <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                                            <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#FF9933]/15 flex items-center justify-center">
+                                                <Send size={10} className="text-[#FF9933] sm:hidden" />
+                                                <Send size={14} className="text-[#FF9933] hidden sm:block" />
                                             </div>
-                                            <span className="text-[#FF9933] text-2xl font-bold">{awaitingResponse}</span>
+                                            <span className="text-[#FF9933] text-lg sm:text-2xl font-bold">{awaitingResponse}</span>
                                         </div>
-                                        <p className="text-[#8888a0] text-xs">Awaiting response</p>
+                                        <p className="text-[#8888a0] text-[10px] sm:text-xs leading-tight">Awaiting response</p>
                                     </button>
                                 )}
                                 {viewedAwaitingApproval > 0 && (
-                                    <button onClick={() => setStatusFilter('Sent')} className="glass-card p-4 text-left hover:border-brand-500/30 transition-all group border-brand-500/10 bg-gradient-to-br from-brand-500/5 to-transparent">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <div className="w-7 h-7 rounded-lg bg-brand-500/15 flex items-center justify-center">
-                                                <Eye size={14} className="text-brand-400" />
+                                    <button onClick={() => setStatusFilter('Sent')} className="glass-card p-2.5 sm:p-4 text-left hover:border-brand-500/30 transition-all group border-brand-500/10 bg-gradient-to-br from-brand-500/5 to-transparent">
+                                        <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                                            <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-brand-500/15 flex items-center justify-center">
+                                                <Eye size={10} className="text-brand-400 sm:hidden" />
+                                                <Eye size={14} className="text-brand-400 hidden sm:block" />
                                             </div>
-                                            <span className="text-brand-400 text-2xl font-bold">{viewedAwaitingApproval}</span>
+                                            <span className="text-brand-400 text-lg sm:text-2xl font-bold">{viewedAwaitingApproval}</span>
                                         </div>
-                                        <p className="text-[#8888a0] text-xs">Viewed - awaiting approval</p>
+                                        <p className="text-[#8888a0] text-[10px] sm:text-xs leading-tight">Viewed - awaiting approval</p>
                                     </button>
                                 )}
                                 {invoicesPending > 0 && (
-                                    <button onClick={() => setStatusFilter('Approved')} className="glass-card p-4 text-left hover:border-[#138808]/30 transition-all group border-[#138808]/10 bg-gradient-to-br from-[#138808]/5 to-transparent">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <div className="w-7 h-7 rounded-lg bg-[#138808]/15 flex items-center justify-center">
-                                                <CheckCircle2 size={14} className="text-[#22c55e]" />
+                                    <button onClick={() => setStatusFilter('Approved')} className="glass-card p-2.5 sm:p-4 text-left hover:border-[#138808]/30 transition-all group border-[#138808]/10 bg-gradient-to-br from-[#138808]/5 to-transparent">
+                                        <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                                            <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#138808]/15 flex items-center justify-center">
+                                                <CheckCircle2 size={10} className="text-[#22c55e] sm:hidden" />
+                                                <CheckCircle2 size={14} className="text-[#22c55e] hidden sm:block" />
                                             </div>
-                                            <span className="text-[#22c55e] text-2xl font-bold">{invoicesPending}</span>
+                                            <span className="text-[#22c55e] text-lg sm:text-2xl font-bold">{invoicesPending}</span>
                                         </div>
-                                        <p className="text-[#8888a0] text-xs">Invoices pending payment</p>
+                                        <p className="text-[#8888a0] text-[10px] sm:text-xs leading-tight">Invoices pending</p>
                                     </button>
                                 )}
                                 {staleProposals.length > 0 && (
-                                    <div className="glass-card p-4 flex flex-col justify-between border-[#25D366]/20 bg-gradient-to-br from-[#25D366]/5 to-transparent">
+                                    <div className="glass-card p-2.5 sm:p-4 flex flex-col justify-between border-[#25D366]/20 bg-gradient-to-br from-[#25D366]/5 to-transparent">
                                         <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <div className="w-7 h-7 rounded-lg bg-[#25D366]/15 flex items-center justify-center">
-                                                    <Clock size={14} className="text-[#25D366]" />
+                                            <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                                                <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#25D366]/15 flex items-center justify-center">
+                                                    <Clock size={10} className="text-[#25D366] sm:hidden" />
+                                                    <Clock size={14} className="text-[#25D366] hidden sm:block" />
                                                 </div>
-                                                <span className="text-[#25D366] text-2xl font-bold">{staleProposals.length}</span>
+                                                <span className="text-[#25D366] text-lg sm:text-2xl font-bold">{staleProposals.length}</span>
                                             </div>
-                                            <p className="text-[#8888a0] text-xs mb-3">Needs follow-up</p>
+                                            <p className="text-[#8888a0] text-[10px] sm:text-xs leading-tight mb-1.5 sm:mb-3">Needs follow-up</p>
                                         </div>
-                                        <button onClick={() => openWhatsAppReminder(staleProposals[0].client_name, staleProposals[0].id)} className="flex items-center justify-center gap-1.5 text-xs font-medium text-[#25D366] hover:text-[#2aea7a] bg-[#25D366]/10 hover:bg-[#25D366]/15 py-1.5 rounded-lg transition-all w-full">
-                                            <Share2 size={12} /> Remind {staleProposals[0].client_name.split(' ')[0]}
+                                        <button onClick={() => openWhatsAppReminder(staleProposals[0].client_name, staleProposals[0].id)} className="flex items-center justify-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-medium text-[#25D366] hover:text-[#2aea7a] bg-[#25D366]/10 hover:bg-[#25D366]/15 py-1 sm:py-1.5 rounded-md sm:rounded-lg transition-all w-full">
+                                            <Share2 size={10} className="sm:hidden" />
+                                            <Share2 size={12} className="hidden sm:block" />
+                                            Remind {staleProposals[0].client_name.split(' ')[0]}
                                         </button>
                                     </div>
                                 )}
@@ -413,15 +419,17 @@ export default function DashboardPage() {
                             <Link
                                 key={project.id}
                                 href={`/proposals/${project.id}`}
-                                className="glass-card-hover block p-5 animate-fade-in"
+                                className="glass-card-hover block p-4 animate-fade-in"
                                 style={{ animationDelay: `${index * 60}ms` }}
                             >
-                                <div className="flex items-start justify-between mb-3">
-                                    <div>
-                                        <h3 className="text-white font-semibold">{project.client_name}</h3>
-                                        <p className="text-[#5a5a70] text-sm">{project.project_type}</p>
+                                <div className="flex items-center justify-between gap-2 mb-2.5">
+                                    <div className="w-[38%] min-w-0">
+                                        <h3 className="text-white font-semibold text-sm truncate">{project.client_name}</h3>
+                                        <p className="text-[#5a5a70] text-xs truncate">{project.project_type}</p>
                                     </div>
-                                    <ProjectPipeline status={project.status} clientViewedAt={project.client_viewed_at} />
+                                    <div className="w-[60%] flex justify-end">
+                                        <ProjectPipeline status={project.status} clientViewedAt={project.client_viewed_at} />
+                                    </div>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">

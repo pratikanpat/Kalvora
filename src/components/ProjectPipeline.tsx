@@ -18,7 +18,7 @@ export default function ProjectPipeline({ status, clientViewedAt }: ProjectPipel
     const currentIndex = STEPS.indexOf(effectiveStatus as typeof STEPS[number]);
 
     return (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
             {STEPS.map((step, i) => {
                 const isCompleted = i < currentIndex;
                 const isCurrent = i === currentIndex;
@@ -29,7 +29,7 @@ export default function ProjectPipeline({ status, clientViewedAt }: ProjectPipel
                         <div className="flex flex-col items-center">
                             <div
                                 className={`
-                                    w-2.5 h-2.5 rounded-full transition-all duration-300
+                                    w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300
                                     ${isCompleted
                                         ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.4)]'
                                         : isCurrent
@@ -40,7 +40,7 @@ export default function ProjectPipeline({ status, clientViewedAt }: ProjectPipel
                             />
                             <span
                                 className={`
-                                    text-[9px] mt-1 font-medium tracking-wide
+                                    text-[7px] sm:text-[9px] mt-0.5 sm:mt-1 font-medium tracking-wide whitespace-nowrap
                                     ${isCompleted
                                         ? 'text-emerald-400/80'
                                         : isCurrent
@@ -57,7 +57,7 @@ export default function ProjectPipeline({ status, clientViewedAt }: ProjectPipel
                         {i < STEPS.length - 1 && (
                             <div
                                 className={`
-                                    w-4 h-[2px] mx-0.5 mt-[-10px] rounded-full transition-all duration-300
+                                    w-1.5 sm:w-4 h-[1.5px] sm:h-[2px] mx-0 sm:mx-0.5 mt-[-8px] sm:mt-[-10px] rounded-full transition-all duration-300
                                     ${i < currentIndex
                                         ? 'bg-emerald-400/50'
                                         : 'bg-[#2a2a40]'
