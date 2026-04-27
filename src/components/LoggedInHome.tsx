@@ -380,7 +380,7 @@ export default function LoggedInHome() {
                                 <h2 className="text-lg sm:text-xl font-bold text-white mb-1">
                                     Finish your draft for {primaryAction.project.client_name}
                                 </h2>
-                                <p className="text-[#8888a0] text-sm">Your proposal is almost ready — complete and send it to close faster.</p>
+                                <p className="text-[#8888a0] text-sm">Your proposal is almost ready - complete and send it to close faster.</p>
                             </div>
                             <ArrowRight size={20} className="text-[#5a5a70] group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
                         </div>

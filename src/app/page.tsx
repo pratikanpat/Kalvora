@@ -81,10 +81,11 @@ export default function LandingPage() {
 
                     {/* Subheadline with highlighter effect */}
                     <p className="text-[#9090a8] text-base sm:text-lg lg:text-xl max-w-2xl mx-auto mb-10 animate-fade-in leading-relaxed">
-                        Create professional interior design proposals, send a simple link,{' '}
+                        Create professional interior design proposals,{' '}
+                        <span className="highlighter-mark text-white font-medium">send a simple link</span>,{' '}
                         <span className="highlighter-mark text-white font-medium">track views</span>, and{' '}
                         <span className="highlighter-mark text-white font-medium">get approvals</span>{' '}
-                        — all in one place.
+                        - all in one place.
                     </p>
 
                     {/* CTAs */}
@@ -310,7 +311,7 @@ export default function LandingPage() {
                             <p className="text-[#9090a8] text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-6">
                                 No more guessing. No more awkward follow-ups.
                                 <br />
-                                Get clarity on when to follow up — and close faster.
+                                Get clarity on when to follow up - and close faster.
                             </p>
                             {/* Mock notification */}
                             <div className="inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-brand-700/10 border border-brand-700/15 animate-float">
@@ -478,7 +479,7 @@ const faqItems = [
     },
     {
         q: 'Can I try it without signing up?',
-        a: 'Absolutely. Click "Try It Free" to create a sample proposal instantly. No account needed. Sign up only when you\'re ready to save and share with real clients.',
+        a: 'Absolutely. Click "Try demo" to create a sample proposal instantly. No account needed. Sign up only when you\'re ready to save and share with real clients. [Right now this feature is disabled]',
     },
     {
         q: 'What happens when the client approves?',
