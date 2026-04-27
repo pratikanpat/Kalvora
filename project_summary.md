@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-04-26 (v12 — Auth-state-aware landing page: Sales Machine + Closing Engine)
+> Last updated: 2026-04-27 (v13 — Accuracy audit: verified every line against actual codebase)
 
 ---
 
@@ -52,6 +52,8 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 - `BROWSERLESS_API_TOKEN` (Browserless.io API key for remote browser PDF generation)
 - `RESEND_API_KEY` (Resend API key for transactional email notifications)
 - `NEXT_PUBLIC_APP_URL` (production URL for email links — defaults to `https://kalvora.kaliprlabs.in`)
+- `ADMIN_EMAILS` (server-side comma-separated admin email whitelist for API routes)
+- `NEXT_PUBLIC_ADMIN_EMAILS` (client-side comma-separated admin email whitelist for AdminGuard)
 
 ---
 
@@ -61,19 +63,19 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 /src
   /app
     /api
-      /generate-pdf      → POST API route: generates PDF using Puppeteer, uploads to Supabase Storage
+      /generate-pdf      → POST API route: generates PDF via Browserless REST API, uploads to Supabase Storage
       /invoice-data      → GET API route (force-dynamic): returns all invoice data using service role (bypasses RLS), for the public invoice page
       /respond-proposal  → POST API route (force-dynamic): handles client actions (view, approve, request_changes), sends emails via Resend; on approval, auto-creates payment milestones and emails client an invoice link
       /send-proposal     → POST API route: emails proposal link to client, updates status Draft→Sent
       /analytics         → GET API route (force-dynamic): returns 4 dashboard stats (total proposals, approval rate, avg deal size, active projects) for authenticated user
-      /warmup             → Lightweight warm-up endpoint for serverless cold-start reduction
+
       /admin/stats       → GET API route (force-dynamic): returns admin overview metrics (total users, projects by status, feedback by type, weekly stats)
       /admin/feedback     → GET API route (force-dynamic): returns all feedback entries with optional type filter
       /admin/users        → GET API route (force-dynamic): returns all users with profiles and proposal counts
     /admin               → Hidden admin dashboard (Overview, Feedback, Users) — protected by ADMIN_EMAILS env var
     /admin/feedback      → Admin feedback viewer with type filters and expandable detail rows
     /admin/users         → Admin users list with studio names, proposal counts, last active
-    /try                 → Zero-auth demo page: enter client name + project type + budget → instant proposal preview with template switcher
+    /try                 → Zero-auth demo page: enter client name + preset project type (2BHK/3BHK/Villa/Office/Kitchen/Single Room) + budget → instant proposal preview with 4-template switcher
     /completed           → Lists all projects with status 'Completed'
     /create              → Multi-section form to create a new proposal
     /dashboard           → Lists all user projects (with search, status filter, delete)
@@ -90,7 +92,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     /p/[code]            → Short link redirect for proposals (resolves KV-xxxxx → /view/[id])
     /i/[code]            → Short link redirect for invoices (resolves KV-xxxxx → /invoice/[id])
     layout.tsx           → Root layout: wraps AuthProvider + Toaster
-    page.tsx             → Auth-state-aware entry point: Sales landing (not logged in) OR Closing Engine command center (logged in)
+    page.tsx             → Auth-state-aware entry point: Sales landing (not logged in) OR Closing Engine command center via LoggedInHome (logged in)
     globals.css          → Global styles, design tokens, custom utility classes
   /components
     AuthProvider.tsx          → React context: session management, exposes useAuth() hook
@@ -102,17 +104,18 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     LogoutFeedbackModal.tsx   → Modal shown on logout to capture friction feedback
     Sidebar.tsx               → Left nav sidebar for authenticated views (with red dot for incomplete profile, logout → feedback modal)
     AdminGuard.tsx            → Admin route protector: checks email against NEXT_PUBLIC_ADMIN_EMAILS, redirects non-admins to /dashboard
-    StatusBadge.tsx           → Badge component (Draft / Sent / Approved / Completed)
+    StatusBadge.tsx           → Badge component (Draft / Sent / Approved / Paid / Completed)
     PaymentMilestones.tsx     → Payment milestone management (add/edit/delete/mark paid) with default presets (30/40/30)
     SuccessModal.tsx          → Post-generation success modal with PDF download/share links
     TemplatePreviewModal.tsx  → Template preview carousel modal on create page
     LoggedInHome.tsx          → Closing Engine: action-driven command center for logged-in users at /
-    SocialProof.tsx           → Designer testimonial cards for sales landing page
+    SocialProof.tsx           → Designer testimonial cards for sales landing page (currently commented out on landing page)
   /lib
     supabase.ts    → Supabase browser client + build-safe server client (service role, returns placeholder when env vars missing) + config checker
     shortcode.ts   → Short link generation and resolution (KV-xxxxx codes), client-side + server-side variants
     validators.ts  → Centralized input validation (email, phone, GSTIN, PAN, IFSC, bank account, UPI ID, HSN/SAC, numeric range)
-    templates.ts   → All 6 PDF HTML templates (48 KB) — raw HTML/CSS strings rendered by Puppeteer
+    templates.ts   → All 6 PDF HTML templates (~50 KB) — raw HTML/CSS strings rendered by Browserless REST API
+    demoData.ts    → Demo project presets (6 types: 2BHK/3BHK/Villa/Office/Kitchen/Single Room) with budget-proportioned line items for /try page
 
 /supabase
   migration.sql          → Initial DB schema (projects, rooms, line_items, proposals tables)
@@ -136,7 +139,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 - **Forgot Password** flow: email input → Supabase sends reset link → `/reset-password` page lets user set a new password.
 - Session persisted via `AuthProvider` (`useAuth()` hook).
 - All dashboard/create/edit/profile routes are protected — redirects to `/` (landing page) if unauthenticated.
-- Landing page shows a "Dashboard" button in hero when user is logged in.
+- Landing page renders the full **Closing Engine** (`LoggedInHome.tsx`) when user is logged in — no redirect, the entire page switches content.
 
 ### 2. Studio Profile
 - Designer fills in studio name, logo, email, phone, website, Instagram, address, default accent colour, and payment terms.
@@ -165,7 +168,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 - Profile data fetched on mount to auto-populate payment terms.
 
 ### 4. PDF Generation
-- Triggered via `POST /api/generate-pdf` with `project_id` (max duration: 30s).
+- Triggered via `POST /api/generate-pdf` with `project_id` in request body (max duration: 30s).
 - Server-side API route uses `createServerClient()` (service role) to fetch all project data (project, rooms, line_items) in parallel.
 - Fills data into an HTML template string from `src/lib/templates.ts`.
 - Generates PDF via **Browserless REST API** (`POST https://chrome.browserless.io/pdf`) — single HTTP POST with HTML + print options, no WebSocket or browser handshake.
@@ -221,9 +224,10 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - **Data fetched via `/api/invoice-data`** (server-side, service role) — bypasses RLS so the page always works regardless of anon RLS config.
 - Displays: Invoice number (auto-generated), Invoice Date, **Due Date** (calculated from `invoice_due_days`), From (designer/studio info + **GSTIN**), Bill To (client info), project details, line items table with **HSN/SAC column**, totals with **CGST/SGST breakdown** (when GST registered), payment terms.
 - **Payment Details** section showing Bank Name, Account Number, IFSC, and UPI ID (from designer profile).
-- **Status badge**: Shows "Unpaid" (replaces the old "Approved" badge).
+- **Status badge**: Currently **temporarily hidden** (commented out in code) — was designed to show "Unpaid".
 - "Print / Save as PDF" button (uses `window.print()` with print-optimized CSS).
 - After approval, client receives an email with a link to this page.
+- **Payment Schedule** table (read-only): shows milestones from the `payment_milestones` table — status column also **temporarily hidden** (Paid/Unpaid cells commented out).
 - **Designer access**: "View Invoice" and "Copy Invoice Link" buttons appear on `/proposals/[id]` for Approved/Paid/Completed projects.
 
 ### 10. Feedback System
@@ -257,7 +261,7 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Opens `wa.me/?text=` with pre-filled message containing the shareable proposal link.
 
 **"Powered by Kalvora" Viral CTA:**
-- Public view (`/view/[id]`) and invoice (`/invoice/[id]`) pages now show a clickable CTA footer: *"This proposal was created with KALVORA — Try it free - no signup needed →"*
+- Public view (`/view/[id]`) and invoice (`/invoice/[id]`) pages now show a clickable CTA footer: *"This invoice/proposal was created with Kalvora — Try it free - no signup needed →"*
 - Links to the Kalvora landing page (`/`). On invoice, hidden during print.
 
 **Auth-State-Aware Landing Page (`/`):**
@@ -267,12 +271,12 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
   - Pain Section: "Your current process is costing you projects" — step-by-step chaos walkthrough with punchline.
   - Before/After comparison (rewritten: messy process vs clean Kalvora workflow).
   - 6 Core Features as benefits: Create in minutes, Share on WhatsApp, Edit anytime, All proposals saved, Auto invoice, Track every project.
-  - Power Feature spotlight: "Know When Your Client Sees Your Proposal" — animated eye icon, mock notification card.
-  - Who It's For (Interior Designers, Freelancers, Small Studios, Anyone chasing clients).
-  - Designer Reviews: 3 testimonial cards (`SocialProof.tsx`) — Sneha Arora, Rajesh Kapoor, Ananya Mehta.
+  - Power Feature spotlight: "Finally… Know When Your Client Sees Your Proposal" — animated eye icon, mock notification card.
+  - Who It's For: "Built for Your Studio" (Interior Designers, Freelancers, Small Design Studios, Tired of Chasing?).
+  - Designer Reviews: 3 testimonial cards (`SocialProof.tsx`) — Sneha Arora, Rajesh Kapoor, Ananya Mehta. **Currently commented out** (`{/* <SocialProof /> */}`).
   - Pricing: "Simple pricing. No surprises." — Free early access + Pro ₹999/mo.
   - FAQ accordion (5 objection-handler questions).
-  - Final CTA: "Stop chasing clients. Start closing them."
+  - Final CTA: "Your next proposal is 60 seconds away." with subheadline "Stop chasing clients. Start closing them."
 - **State B (Logged In) — Closing Engine (`LoggedInHome.tsx`):**
   - Time-of-day greeting with user name.
   - Pipeline Strip (top): Draft → Sent → Viewed → Approved → Paid → Completed counts, clickable.
@@ -350,7 +354,7 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 ### 15. Hidden Admin Dashboard (`/admin`)
 
 **Access Control:**
-- Protected by `ADMIN_EMAILS` environment variable (comma-separated email whitelist).
+- Protected by two environment variables: `NEXT_PUBLIC_ADMIN_EMAILS` (client-side, used by `AdminGuard.tsx`) and `ADMIN_EMAILS` (server-side, used by API routes).
 - `AdminGuard.tsx` component checks logged-in user's email against `NEXT_PUBLIC_ADMIN_EMAILS`.
 - Non-admin users are silently redirected to `/dashboard`. No links to admin exist anywhere on the site.
 - API routes verify admin email server-side using `ADMIN_EMAILS` env var.
@@ -400,7 +404,7 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 | payment_terms | TEXT | |
 | template | TEXT | One of 6 template keys |
 | tax_rate | NUMERIC | Percentage |
-| status | TEXT | `Draft` / `Sent` / `Approved` / `Completed` |
+| status | TEXT | `Draft` / `Sent` / `Approved` / `Paid` / `Completed` |
 | client_viewed_at | TIMESTAMPTZ | Set when client opens magic link |
 | quotation_validity | INTEGER | Days (default 30) |
 | estimated_start_date | TEXT | |
@@ -475,7 +479,7 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 | frustrations | TEXT | Free-text pain points |
 | feature_wish | TEXT | Free-text dream feature |
 | pmf_answer | TEXT | `very_disappointed` / `somewhat_disappointed` / `not_disappointed` |
-| feedback_type | TEXT | `structured` (form) or `logout_trigger` (modal). Default: `structured` |
+| feedback_type | TEXT | `structured` (form), `logout_trigger` (modal), or `public_landing` (public feedback page). Default: `structured` |
 | user_id | UUID | Optional FK to auth.users |
 | created_at | TIMESTAMPTZ | |
 
@@ -543,7 +547,7 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 When creating a new proposal, the form fetches `designer_profiles` on mount and pre-fills `payment_terms`. On save, it copies `studio_name`, `designer_name`, `email`, `phone`, `logo_url`, and `accent_color` from the profile snapshot into the `projects` row. This ensures PDFs always show the correct branding even if the profile changes later.
 
 ### Public Proposal Sharing
-- Project status is set to `"Sent"` when PDF is generated.
+- Project status is set to `"Sent"` when PDF is generated (only if the previous status was `"Draft"`).
 - Supabase RLS policy allows **public** SELECT on `projects` where `status IN ('Sent', 'Approved', 'Paid', 'Completed')`.
 - Public read policies also exist on `rooms`, `line_items`, `proposals`, `payment_milestones`, and `comments` tables — scoped to projects with shareable statuses.
 - The `/view/[id]` page uses this to display the proposal without requiring login.
