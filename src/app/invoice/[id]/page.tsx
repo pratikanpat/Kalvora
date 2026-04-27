@@ -456,7 +456,7 @@ export default function InvoicePage() {
                         {/* Powered by Kalvora — Viral CTA */}
                         <div className="border-t border-[#1a1a2e] print-border pt-6 text-center">
                             <a
-                                href="/try"
+                                href="/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="no-print inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-700/10 border border-brand-700/20 hover:bg-brand-700/20 hover:border-brand-700/30 transition-all duration-200 group"

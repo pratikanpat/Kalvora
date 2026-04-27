@@ -44,12 +44,12 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
                     graceTimer.current = setTimeout(() => {
                         // After the grace period, if still no session, redirect.
                         setRedirecting(true);
-                        router.replace('/login');
+                        router.replace('/');
                     }, GRACE_PERIOD_MS);
                 }
             } else {
                 // Never had a session at all — redirect immediately.
-                router.replace('/login');
+                router.replace('/');
             }
         }
 

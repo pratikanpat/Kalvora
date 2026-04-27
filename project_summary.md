@@ -135,7 +135,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
 - **Google OAuth** sign-in/sign-up on both login and signup pages.
 - **Forgot Password** flow: email input → Supabase sends reset link → `/reset-password` page lets user set a new password.
 - Session persisted via `AuthProvider` (`useAuth()` hook).
-- All dashboard/create/edit/profile routes are protected — redirects to `/login` if unauthenticated.
+- All dashboard/create/edit/profile routes are protected — redirects to `/` (landing page) if unauthenticated.
 - Landing page shows a "Dashboard" button in hero when user is logged in.
 
 ### 2. Studio Profile
@@ -257,8 +257,8 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 - Opens `wa.me/?text=` with pre-filled message containing the shareable proposal link.
 
 **"Powered by Kalvora" Viral CTA:**
-- Public view (`/view/[id]`) and invoice (`/invoice/[id]`) pages now show a clickable CTA footer: *"This proposal was created with KALVORA — Create yours in 60 seconds →"*
-- Links to the Kalvora landing page. On invoice, hidden during print.
+- Public view (`/view/[id]`) and invoice (`/invoice/[id]`) pages now show a clickable CTA footer: *"This proposal was created with KALVORA — Try it free - no signup needed →"*
+- Links to the Kalvora landing page (`/`). On invoice, hidden during print.
 
 **Auth-State-Aware Landing Page (`/`):**
 - **State A (Not Logged In) — Sales Machine:**
@@ -518,7 +518,8 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 
 ### Authentication Flow
 - `AuthProvider` wraps the entire app in `layout.tsx`. It sets up a Supabase `onAuthStateChange` listener to keep `user` state fresh.
-- `ProtectedRoute` component checks `user`; if null, redirects to `/login`.
+- `ProtectedRoute` component checks `user`; if null, redirects to `/` (landing page).
+- On explicit sign-out, `AuthProvider.signOut()` clears the session and redirects to `/` via `window.location.href`.
 - `DashboardLayout` and `Sidebar` are only rendered in authenticated routes.
 
 ### Proposal Creation Flow

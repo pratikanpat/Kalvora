@@ -206,6 +206,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         explicitSignOut.current = true;
         authLog('Explicit sign-out initiated');
         await supabase.auth.signOut();
+        // Redirect to landing page after sign-out
+        window.location.href = '/';
     }, []);
 
     return (

@@ -409,7 +409,7 @@ export default function PublicViewPage() {
                 {/* Powered by Kalvora — Viral CTA */}
                 <div className="text-center pt-6 pb-2">
                     <a
-                        href="/try"
+                        href="/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-700/10 border border-brand-700/20 hover:bg-brand-700/20 hover:border-brand-700/30 transition-all duration-200 group"
