@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Loader2, X, LogOut } from 'lucide-react';
-import toast from 'react-hot-toast';
 
 interface LogoutFeedbackModalProps {
     isOpen: boolean;
@@ -41,29 +40,26 @@ export default function LogoutFeedbackModal({ isOpen, onClose, onConfirmLogout, 
     };
 
     return (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[70] p-4 animate-in fade-in duration-200">
-            <div className="glass-card w-full max-w-md p-6 relative animate-slide-up">
-                {/* Close */}
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[70] p-4">
+            <div className="bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl w-full max-w-md p-6 relative animate-fade-in">
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-[#5a5a70] hover:text-white transition-colors"
+                    className="absolute top-4 right-4 text-[#78716C] hover:text-[#1E1E1E] transition-colors"
                 >
                     <X size={18} />
                 </button>
 
-                {/* Icon */}
                 <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center">
-                        <LogOut size={18} className="text-amber-400" />
+                    <div className="w-10 h-10 rounded-[10px] bg-[#F0EBE6] border border-[#D9D1C9] flex items-center justify-center">
+                        <LogOut size={18} className="text-[#C47A5A]" />
                     </div>
                     <div>
-                        <h3 className="text-white font-bold text-base">Before you go...</h3>
-                        <p className="text-[#5a5a70] text-xs">One quick question (optional)</p>
+                        <h3 className="text-[#1E1E1E] font-bold text-base">Before you go...</h3>
+                        <p className="text-[#78716C] text-xs">One quick question (optional)</p>
                     </div>
                 </div>
 
-                {/* Question */}
-                <label className="block text-sm font-medium text-white mb-2.5">
+                <label className="block text-sm font-medium text-[#1E1E1E] mb-2.5">
                     What almost stopped you from creating a proposal today?
                 </label>
                 <textarea
@@ -75,7 +71,6 @@ export default function LogoutFeedbackModal({ isOpen, onClose, onConfirmLogout, 
                     autoFocus
                 />
 
-                {/* Actions */}
                 <div className="flex gap-3">
                     <button
                         onClick={handleSkipAndLogout}

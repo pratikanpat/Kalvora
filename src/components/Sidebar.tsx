@@ -6,17 +6,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { supabase } from '@/lib/supabase';
 import {
-    Home,
-    LayoutDashboard,
-    FilePlus,
-    FileText,
-    MessageSquare,
-    PanelLeftClose,
-    PanelLeft,
-    LogOut,
-    User,
-    Building,
-    CheckSquare,
+    Home, LayoutDashboard, FilePlus, FileText, MessageSquare,
+    PanelLeftClose, PanelLeft, LogOut, User, Building, CheckSquare,
 } from 'lucide-react';
 import LogoutFeedbackModal from './LogoutFeedbackModal';
 
@@ -77,7 +68,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
             {/* Mobile overlay */}
             {mobileOpen && (
                 <div
-                    className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
                     onClick={() => setMobileOpen(false)}
                 />
             )}
@@ -85,7 +76,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
             {/* Mobile toggle */}
             <button
                 onClick={() => setMobileOpen(true)}
-                className="fixed top-4 left-4 z-30 lg:hidden bg-[#1a1a2e] border border-[#2a2a40] p-2.5 rounded-xl text-[#8888a0] hover:text-[#f0f0f5] transition-colors shadow-lg shadow-black/30"
+                className="fixed top-4 left-4 z-30 lg:hidden bg-[#F0EBE6] border border-[#E8E3DD] p-2.5 rounded-[10px] text-[#78716C] hover:text-[#1E1E1E] transition-colors"
                 aria-label="Open menu"
             >
                 <PanelLeft size={20} />
@@ -95,19 +86,19 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
             <aside
                 className={`
           fixed top-0 left-0 h-screen z-50
-          bg-gradient-to-b from-[#0d0d16] to-[#0a0a12] border-r border-[#1a1a2e]
-          flex flex-col transition-all duration-300 ease-out
+          bg-[#F6F3EF] border-r border-[#E8E3DD]
+          flex flex-col transition-colors duration-200 ease-out
           ${collapsed ? 'w-[72px]' : 'w-[260px]'}
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0
         `}
             >
                 {/* Logo */}
-                <Link href="/" className={`flex items-center h-[72px] px-5 border-b border-[#1a1a2e]/80 hover:bg-[#1a1a2e]/30 transition-colors ${collapsed ? 'justify-center px-3' : ''}`}>
+                <Link href="/" className={`flex items-center h-[72px] px-5 border-b border-[#E8E3DD] hover:bg-[#F0EBE6] transition-colors ${collapsed ? 'justify-center px-3' : ''}`}>
                     {collapsed ? (
                         <span className="brand-wordmark text-lg">K</span>
                     ) : (
-                        <h1 className="brand-wordmark text-[22px] animate-fade-in">Kalvora</h1>
+                        <h1 className="brand-wordmark text-[22px]">Kalvora</h1>
                     )}
                 </Link>
 
@@ -122,29 +113,29 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                                 href={item.href}
                                 onClick={() => setMobileOpen(false)}
                                 className={`
-                  flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
-                  transition-all duration-200 group relative
+                  flex items-center gap-3 px-3 py-2.5 rounded-[10px] text-sm font-medium
+                  transition-all duration-150 group relative
                   ${isActive
-                                        ? 'bg-brand-700/15 text-brand-400 shadow-sm shadow-brand-700/10'
-                                        : 'text-[#6a6a80] hover:text-[#f0f0f5] hover:bg-[#1a1a2e]/60'
+                                        ? 'bg-[#F0EBE6] text-[#3E2F2B]'
+                                        : 'text-[#6F6A66] hover:text-[#1E1E1E] hover:bg-[#F6F3EF]'
                                     }
                   ${collapsed ? 'justify-center' : ''}
                 `}
                             >
                                 {isActive && (
-                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-gradient-to-b from-brand-400 to-brand-600 rounded-r-full" />
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#C47A5A] rounded-r-full" />
                                 )}
                                 <Icon size={20} className="flex-shrink-0 relative" />
                                 {/* Red dot for incomplete profile */}
                                 {item.href === '/profile' && profileIncomplete && (
-                                    <div className="absolute top-1.5 left-7 w-2 h-2 rounded-full bg-red-500 ring-2 ring-[#0d0d16] animate-pulse" />
+                                    <div className="absolute top-1.5 left-7 w-2 h-2 rounded-full bg-[#B85C5C] ring-2 ring-[#F6F3EF]" />
                                 )}
-                                {!collapsed && <span className="animate-fade-in">{item.label}</span>}
+                                {!collapsed && <span>{item.label}</span>}
                                 {collapsed && (
-                                    <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#1a1a2e] border border-[#2a2a40] rounded-lg text-xs text-[#f0f0f5] whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-xl shadow-black/30">
+                                    <div className="absolute left-full ml-3 px-2.5 py-1 bg-white rounded-lg text-xs text-[#1E1E1E] whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50" style={{ boxShadow: '0px 4px 12px rgba(0,0,0,0.08)' }}>
                                         {item.label}
                                         {item.href === '/profile' && profileIncomplete && (
-                                            <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-red-500" />
+                                            <span className="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-[#B85C5C]" />
                                         )}
                                     </div>
                                 )}
@@ -154,15 +145,15 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                 </nav>
 
                 {/* User info & Logout */}
-                <div className="border-t border-[#1a1a2e]/80 p-3 space-y-1">
+                <div className="border-t border-[#E8E3DD] p-3 space-y-1">
                     {/* User email */}
                     {user && (
-                        <div className={`flex items-center gap-2.5 px-3 py-2 rounded-xl ${collapsed ? 'justify-center' : ''}`}>
-                            <div className="w-7 h-7 rounded-lg bg-brand-700/20 border border-brand-700/30 flex items-center justify-center flex-shrink-0">
-                                <User size={14} className="text-brand-400" />
+                        <div className={`flex items-center gap-2.5 px-3 py-2 rounded-[10px] ${collapsed ? 'justify-center' : ''}`}>
+                            <div className="w-7 h-7 rounded-lg bg-[#F0EBE6] border border-[#D9D1C9] flex items-center justify-center flex-shrink-0">
+                                <User size={14} className="text-[#3E2F2B]" />
                             </div>
                             {!collapsed && (
-                                <span className="text-[#8888a0] text-xs font-medium truncate animate-fade-in" title={userEmail}>
+                                <span className="text-[#6F6A66] text-xs font-medium truncate" title={userEmail}>
                                     {truncatedEmail}
                                 </span>
                             )}
@@ -172,12 +163,12 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                     {/* Logout */}
                     <button
                         onClick={() => { setMobileOpen(false); setShowLogoutModal(true); }}
-                        className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#5a5a70] hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 group relative ${collapsed ? 'justify-center' : ''}`}
+                        className={`w-full flex items-center gap-2.5 px-3 py-3 rounded-[10px] text-sm text-[#78716C] hover:text-[#B85C5C] hover:bg-[#FDF2F2] transition-all duration-150 group relative ${collapsed ? 'justify-center' : ''}`}
                     >
                         <LogOut size={18} className="flex-shrink-0" />
-                        {!collapsed && <span className="animate-fade-in">Log out</span>}
+                        {!collapsed && <span>Log out</span>}
                         {collapsed && (
-                            <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#1a1a2e] border border-[#2a2a40] rounded-lg text-xs text-[#f0f0f5] whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-xl shadow-black/30">
+                            <div className="absolute left-full ml-3 px-2.5 py-1 bg-white rounded-lg text-xs text-[#1E1E1E] whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50" style={{ boxShadow: '0px 4px 12px rgba(0,0,0,0.08)' }}>
                                 Log out
                             </div>
                         )}
@@ -187,11 +178,11 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                     <div className="hidden lg:block">
                         <button
                             onClick={onToggleCollapse}
-                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm text-[#5a5a70] hover:text-[#8888a0] hover:bg-[#1a1a2e]/60 transition-all duration-200"
+                            className="w-full flex items-center justify-center gap-2 px-3 py-3 rounded-[10px] text-sm text-[#78716C] hover:text-[#6F6A66] hover:bg-[#F0EBE6] transition-all duration-150"
                         >
                             <PanelLeftClose
                                 size={18}
-                                className={`transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`}
+                                className={`transition-transform duration-200 ${collapsed ? 'rotate-180' : ''}`}
                             />
                             {!collapsed && <span>Collapse</span>}
                         </button>

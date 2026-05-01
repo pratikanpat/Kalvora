@@ -135,7 +135,7 @@ export default function TemplatePreviewModal({
                     {t.badge && (
                         <span
                             className="template-modal-badge"
-                            style={{ background: t.badgeColor || 'rgba(99,102,241,0.15)', color: t.badgeColor ? '#fff' : '#818cf8' }}
+                            style={{ background: t.badgeColor || 'rgba(62,47,43,0.12)', color: t.badgeColor ? '#fff' : '#3E2F2B' }}
                         >
                             {t.badge}
                         </span>

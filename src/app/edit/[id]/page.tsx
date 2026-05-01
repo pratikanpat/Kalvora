@@ -16,6 +16,7 @@ import {
 import toast from 'react-hot-toast';
 import TemplatePreviewModal from '@/components/TemplatePreviewModal';
 import { validateEmail, validatePhone } from '@/lib/validators';
+import CustomSelect from '@/components/CustomSelect';
 
 interface Room {
     id?: string;
@@ -33,21 +34,21 @@ interface LineItem {
 type Template = 'minimal' | 'luxury' | 'modern' | 'blueprint' | 'editorial' | 'highcontrast';
 
 const templateOptions: { key: Template; name: string; desc: string; colors: string[] }[] = [
-    { key: 'minimal', name: 'Minimal', desc: 'Clean white, Inter font, elegant blue accents', colors: ['#ffffff', '#2563EB', '#f8fafc'] },
+    { key: 'minimal', name: 'Minimal', desc: 'Clean white, Inter font, elegant accents', colors: ['#ffffff', '#3E2F2B', '#f8fafc'] },
     { key: 'luxury', name: 'Luxury', desc: 'Dark elegance with gold accents, serif fonts', colors: ['#1C1917', '#B8963E', '#FAF8F4'] },
     { key: 'modern', name: 'Professional', desc: 'Bold geometric, vibrant section dividers', colors: ['#4c6ef5', '#ffffff', '#f9fafb'] },
     { key: 'blueprint', name: 'Blueprint', desc: 'Technical grid, navy palette, engineering feel', colors: ['#1a365d', '#bee3f8', '#f7fafc'] },
     { key: 'editorial', name: 'Editorial', desc: 'Warm serif, magazine-style whitespace', colors: ['#FFFBF5', '#3d2b1f', '#e8dcc8'] },
-    { key: 'highcontrast', name: 'High Contrast', desc: 'Bold contrast, indigo accent, SaaS-style', colors: ['#0f172a', '#6366f1', '#ffffff'] },
+    { key: 'highcontrast', name: 'High Contrast', desc: 'Bold contrast, espresso accent, editorial-style', colors: ['#0f172a', '#3E2F2B', '#ffffff'] },
 ];
 
 const templatePreviewData = [
-    { name: 'Minimal', desc: 'Clean whites, Inter font, elegant simplicity.', colors: ['#ffffff', '#2563EB', '#f8fafc'], icon: '✦', badge: '⭐ Most Popular', previewImage: '/templates/minimal.png', stylePoints: ['Inter typography', 'Blue gradient accent', 'Stripe-inspired layout', 'Rounded card elements'] },
+    { name: 'Minimal', desc: 'Clean whites, Inter font, elegant simplicity.', colors: ['#ffffff', '#3E2F2B', '#f8fafc'], icon: '✦', badge: '⭐ Most Popular', previewImage: '/templates/minimal.png', stylePoints: ['Inter typography', 'Espresso accent', 'Stripe-inspired layout', 'Rounded card elements'] },
     { name: 'Luxury', desc: 'Gold & dark tones, serif typography, opulent feel.', colors: ['#1C1917', '#B8963E', '#FAF8F4'], icon: '✧', badge: 'Best for Luxury', previewImage: '/templates/luxury.png', stylePoints: ['Playfair Display headings', 'Gold accent on dark', 'Diamond ornament divider', 'Ivory background'] },
     { name: 'Professional', desc: 'Bold geometry, sharp type, corporate accents.', colors: ['#4c6ef5', '#ffffff', '#f9fafb'], icon: '◆', badge: 'Best for Corporate', previewImage: '/templates/professional.png', stylePoints: ['Full-width header bar', 'Inter bold headings', 'Bordered card sections', 'Corporate confidence'] },
     { name: 'Blueprint', desc: 'Technical grid, navy palette, engineering precision.', colors: ['#1a365d', '#bee3f8', '#f7fafc'], icon: '⊞', badge: 'Best for Architects', previewImage: '/templates/blueprint.png', stylePoints: ['Space Grotesk headings', 'Grid background', 'Section numbers', 'Engineering totals box'] },
     { name: 'Editorial', desc: 'Warm serif, magazine-style, generous whitespace.', colors: ['#FFFBF5', '#3d2b1f', '#e8dcc8'], icon: '❧', badge: 'Best for Creatives', previewImage: '/templates/editorial.png', stylePoints: ['Playfair Display headings', 'Warm off-white background', 'Italic title', 'Magazine whitespace'] },
-    { name: 'High Contrast', desc: 'Bold contrast, indigo accent, SaaS-inspired.', colors: ['#0f172a', '#6366f1', '#ffffff'], icon: '▣', badge: 'Best for Modern', previewImage: '/templates/highcontrast.png', stylePoints: ['Dark header bar', 'Indigo highlights', 'Tabular numbers', 'Card-style sections'] },
+    { name: 'High Contrast', desc: 'Bold contrast, espresso accent, editorial-inspired.', colors: ['#0f172a', '#3E2F2B', '#ffffff'], icon: '▣', badge: 'Best for Modern', previewImage: '/templates/highcontrast.png', stylePoints: ['Dark header bar', 'Espresso highlights', 'Tabular numbers', 'Card-style sections'] },
 ];
 
 const DEFAULT_SERVICES = [
@@ -208,7 +209,7 @@ export default function EditPage() {
                 designer_email: profile?.email || '',
                 designer_phone: profile?.phone || '',
                 logo_url: profile?.logo_url || '',
-                accent_color: profile?.default_accent_color || '#4263eb',
+                accent_color: profile?.default_accent_color || '#3E2F2B',
                 notes: notes.trim(), payment_terms: paymentTerms.trim(), template,
                 tax_rate: parseFloat(taxRate) || 0, updated_at: new Date().toISOString(),
                 quotation_validity: parseInt(quotationValidity) || 30,
@@ -261,13 +262,13 @@ export default function EditPage() {
     const SectionHeader = ({ number, icon: Icon, title }: { number: number; icon: React.ElementType; title: string }) => (
         <button onClick={() => toggleSection(number)} className="w-full flex items-center justify-between py-5 group">
             <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15 group-hover:border-brand-500/30 transition-colors">
-                    <Icon size={16} className="text-brand-400" />
+                <div className="w-9 h-9 rounded-xl bg-[#F0EBE6] flex items-center justify-center border border-[#3E2F2B]/15 group-hover:border-[#3E2F2B]/30 transition-colors">
+                    <Icon size={16} className="text-[#3E2F2B]" />
                 </div>
-                <h2 className="text-base font-bold text-white tracking-tight">{title}</h2>
+                <h2 className="text-base font-bold text-[#1E1E1E] tracking-tight">{title}</h2>
             </div>
-            <div className="w-7 h-7 rounded-lg bg-[#12121a] flex items-center justify-center group-hover:bg-[#1a1a2e] transition-colors">
-                {expandedSections[number] ? <ChevronUp size={16} className="text-[#5a5a70]" /> : <ChevronDown size={16} className="text-[#5a5a70]" />}
+            <div className="w-7 h-7 rounded-lg bg-[#F0EBE6] flex items-center justify-center group-hover:bg-[#E8E4DF] transition-colors">
+                {expandedSections[number] ? <ChevronUp size={16} className="text-[#78716C]" /> : <ChevronDown size={16} className="text-[#78716C]" />}
             </div>
         </button>
     );
@@ -284,8 +285,8 @@ export default function EditPage() {
         <DashboardLayout>
             <div className="max-w-4xl mx-auto">
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-white">Edit Proposal</h1>
-                    <p className="text-[#5a5a70] text-sm mt-1">Update the project details and regenerate the proposal PDF.</p>
+                    <h1 className="text-2xl font-extrabold text-[#1E1E1E]">Edit Proposal</h1>
+                    <p className="text-[#6F6A66] text-sm mt-1">Update the project details and regenerate the proposal PDF.</p>
                 </div>
 
                 <div className="space-y-4">
@@ -297,14 +298,14 @@ export default function EditPage() {
                                 <div className="md:col-span-2">
                                     <label className="input-label">Client Full Name *</label>
                                     <div className="relative">
-                                        <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                        <input type="text" value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="e.g. Rahul Sharma" className={`input-field pl-10 ${errors.clientName ? 'border-red-500' : ''}`} />
+                                        <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                        <input type="text" value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="e.g. Rahul Sharma" className={`input-field pl-10 ${errors.clientName ? 'border-[#B85C5C]' : ''}`} />
                                     </div>
-                                    {errors.clientName && <p className="text-red-400 text-xs mt-1">{errors.clientName}</p>}
+                                    {errors.clientName && <p className="text-[#B85C5C] text-xs mt-1">{errors.clientName}</p>}
                                 </div>
-                                <div><label className="input-label">Email</label><div className="relative"><Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" /><input type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="client@email.com" className={`input-field pl-10 ${errors.clientEmail ? 'border-red-500' : ''}`} /></div>{errors.clientEmail && <p className="text-red-400 text-xs mt-1">{errors.clientEmail}</p>}</div>
-                                <div><label className="input-label">Phone</label><div className="relative"><Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" /><input type="tel" value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="+91 98765 43210" className={`input-field pl-10 ${errors.clientPhone ? 'border-red-500' : ''}`} /></div>{errors.clientPhone && <p className="text-red-400 text-xs mt-1">{errors.clientPhone}</p>}</div>
-                                <div className="md:col-span-2"><label className="input-label">Project Address</label><div className="relative"><MapPin size={16} className="absolute left-3 top-3 text-[#5a5a70]" /><textarea value={projectAddress} onChange={(e) => setProjectAddress(e.target.value)} placeholder="Full project address" rows={2} className="input-field pl-10" /></div></div>
+                                <div><label className="input-label">Email</label><div className="relative"><Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" /><input type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="client@email.com" className={`input-field pl-10 ${errors.clientEmail ? 'border-[#B85C5C]' : ''}`} /></div>{errors.clientEmail && <p className="text-[#B85C5C] text-xs mt-1">{errors.clientEmail}</p>}</div>
+                                <div><label className="input-label">Phone</label><div className="relative"><Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" /><input type="tel" value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="+91 98765 43210" className={`input-field pl-10 ${errors.clientPhone ? 'border-[#B85C5C]' : ''}`} /></div>{errors.clientPhone && <p className="text-[#B85C5C] text-xs mt-1">{errors.clientPhone}</p>}</div>
+                                <div className="md:col-span-2"><label className="input-label">Project Address</label><div className="relative"><MapPin size={16} className="absolute left-3 top-3 text-[#78716C]" /><textarea value={projectAddress} onChange={(e) => setProjectAddress(e.target.value)} placeholder="Full project address" rows={2} className="input-field pl-10" /></div></div>
                             </div>
                         )}
                     </div>
@@ -317,12 +318,16 @@ export default function EditPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="input-label">Project Type *</label>
-                                        <select value={projectType} onChange={(e) => setProjectType(e.target.value)} className="input-field">
-                                            <option value="Residential">Residential</option>
-                                            <option value="Commercial">Commercial</option>
-                                            <option value="Office">Office</option>
-                                            <option value="Retail">Retail</option>
-                                        </select>
+                                        <CustomSelect
+                                            value={projectType}
+                                            onChange={setProjectType}
+                                            options={[
+                                                { value: 'Residential', label: 'Residential' },
+                                                { value: 'Commercial', label: 'Commercial' },
+                                                { value: 'Office', label: 'Office' },
+                                                { value: 'Retail', label: 'Retail' },
+                                            ]}
+                                        />
                                     </div>
                                     <div>
                                         <label className="input-label">Project Size (sq.ft)</label>
@@ -340,14 +345,14 @@ export default function EditPage() {
                             <div className="pb-6 space-y-4 animate-fade-in">
                                 <div className="flex items-center justify-between">
                                     <label className="input-label mb-0">Rooms</label>
-                                    <button onClick={addRoom} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1"><Plus size={14} /> Add Room</button>
+                                    <button onClick={addRoom} className="text-[#3E2F2B] text-sm hover:text-[#2F2421] flex items-center gap-1"><Plus size={14} /> Add Room</button>
                                 </div>
                                 <div className="space-y-2">
                                     {rooms.map((room, i) => (
                                         <div key={i} className="flex items-center gap-2">
                                             <input type="text" value={room.name} onChange={(e) => updateRoom(i, 'name', e.target.value)} placeholder="Room name" className="input-field flex-1" />
                                             <input type="number" value={room.square_footage} onChange={(e) => updateRoom(i, 'square_footage', e.target.value)} placeholder="Sq.ft" className="input-field w-28" />
-                                            {rooms.length > 1 && <button onClick={() => removeRoom(i)} className="text-[#5a5a70] hover:text-red-400 p-2"><Trash2 size={16} /></button>}
+                                            {rooms.length > 1 && <button onClick={() => removeRoom(i)} className="text-[#78716C] hover:text-[#B85C5C] p-2"><Trash2 size={16} /></button>}
                                         </div>
                                     ))}
                                 </div>
@@ -359,7 +364,7 @@ export default function EditPage() {
                                                 const emptyIdx = rooms.findIndex(r => !r.name.trim());
                                                 if (emptyIdx >= 0) { updateRoom(emptyIdx, 'name', roomName); } else { setRooms([...rooms, { name: roomName, square_footage: '' }]); }
                                             }}
-                                            className="text-xs px-2.5 py-1.5 rounded-lg bg-[#12121a] border border-[#2a2a40] text-[#8888a0] hover:text-brand-400 hover:border-brand-700/30 transition-colors"
+                                            className="text-xs px-2.5 py-1.5 rounded-lg bg-[#F0EBE6] border border-[#E8E3DD] text-[#6F6A66] hover:text-[#3E2F2B] hover:border-[#3E2F2B]/30 transition-colors"
                                         >
                                             + {roomName}
                                         </button>
@@ -374,7 +379,7 @@ export default function EditPage() {
                         <SectionHeader number={4} icon={CheckSquare} title="Services Included" />
                         {expandedSections[4] && (
                             <div className="pb-6 space-y-4 animate-fade-in">
-                                <p className="text-[#5a5a70] text-xs">Select the services included in this project.</p>
+                                <p className="text-[#78716C] text-xs">Select the services included in this project.</p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                     {DEFAULT_SERVICES.map(service => (
                                         <button
@@ -382,12 +387,12 @@ export default function EditPage() {
                                             onClick={() => toggleService(service)}
                                             className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left text-sm transition-all duration-200 ${
                                                 servicesIncluded.includes(service)
-                                                    ? 'border-brand-500/50 bg-brand-700/10 text-brand-300'
-                                                    : 'border-[#2a2a40] bg-[#12121a] text-[#8888a0] hover:border-[#3a3a55] hover:text-white'
+                                                    ? 'border-[#3E2F2B]/50 bg-[#3E2F2B]/10 text-[#2F2421]'
+                                                    : 'border-[#E8E3DD] bg-[#F0EBE6] text-[#6F6A66] hover:border-[#78716C] hover:text-[#1E1E1E]'
                                             }`}
                                         >
                                             <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                                                servicesIncluded.includes(service) ? 'border-brand-500 bg-brand-500' : 'border-[#3a3a55]'
+                                                servicesIncluded.includes(service) ? 'border-[#3E2F2B] bg-[#3E2F2B]' : 'border-[#78716C]'
                                             }`}>
                                                 {servicesIncluded.includes(service) && (
                                                     <svg viewBox="0 0 12 12" className="w-3 h-3 text-white"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -397,8 +402,8 @@ export default function EditPage() {
                                         </button>
                                     ))}
                                     {servicesIncluded.filter(s => !DEFAULT_SERVICES.includes(s)).map(service => (
-                                        <button key={service} onClick={() => toggleService(service)} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-brand-500/50 bg-brand-700/10 text-brand-300 text-left text-sm transition-all duration-200">
-                                            <div className="w-5 h-5 rounded-md border-2 border-brand-500 bg-brand-500 flex items-center justify-center flex-shrink-0">
+                                        <button key={service} onClick={() => toggleService(service)} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-[#3E2F2B]/50 bg-[#3E2F2B]/10 text-[#2F2421] text-left text-sm transition-all duration-200">
+                                            <div className="w-5 h-5 rounded-md border-2 border-[#3E2F2B] bg-[#3E2F2B] flex items-center justify-center flex-shrink-0">
                                                 <svg viewBox="0 0 12 12" className="w-3 h-3 text-white"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
                                             </div>
                                             {service}
@@ -418,24 +423,24 @@ export default function EditPage() {
                         <SectionHeader number={5} icon={IndianRupee} title="Pricing Table" />
                         {expandedSections[5] && (
                             <div className="pb-6 space-y-4 animate-fade-in">
-                                <div className="flex items-center justify-between"><label className="input-label mb-0">Line Items *</label><button onClick={addLineItem} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1"><Plus size={14} /> Add Item</button></div>
-                                {errors.lineItems && <p className="text-red-400 text-xs">{errors.lineItems}</p>}
-                                <div className="hidden md:grid grid-cols-[1fr_100px_120px_120px_40px] gap-2 text-xs font-semibold text-[#5a5a70] uppercase tracking-wider px-1"><span>Item</span><span>Qty</span><span>Unit Price</span><span>Subtotal</span><span></span></div>
+                                <div className="flex items-center justify-between"><label className="input-label mb-0">Line Items *</label><button onClick={addLineItem} className="text-[#3E2F2B] text-sm hover:text-[#2F2421] flex items-center gap-1"><Plus size={14} /> Add Item</button></div>
+                                {errors.lineItems && <p className="text-[#B85C5C] text-xs">{errors.lineItems}</p>}
+                                <div className="hidden md:grid grid-cols-[1fr_100px_120px_120px_40px] gap-2 text-xs font-semibold text-[#78716C] uppercase tracking-wider px-1"><span>Item</span><span>Qty</span><span>Unit Price</span><span>Subtotal</span><span></span></div>
                                 <div className="space-y-2">
                                     {lineItems.map((item, i) => (
                                         <div key={i} className="grid grid-cols-1 md:grid-cols-[1fr_100px_120px_120px_40px] gap-2 items-center">
                                             <input type="text" value={item.item_name} onChange={(e) => updateLineItem(i, 'item_name', e.target.value)} placeholder="Item name" className="input-field" />
                                             <input type="number" value={item.quantity} onChange={(e) => updateLineItem(i, 'quantity', e.target.value)} placeholder="1" className="input-field" />
-                                            <div className="relative"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70] text-sm">₹</span><input type="number" value={item.unit_price} onChange={(e) => updateLineItem(i, 'unit_price', e.target.value)} placeholder="0" className="input-field pl-7" /></div>
-                                            <div className="text-[#8888a0] font-medium text-sm px-2">{formatCurrency(getSubtotal(item))}</div>
-                                            {lineItems.length > 1 && <button onClick={() => removeLineItem(i)} className="text-[#5a5a70] hover:text-red-400 p-2"><Trash2 size={16} /></button>}
+                                            <div className="relative"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] text-sm">₹</span><input type="number" value={item.unit_price} onChange={(e) => updateLineItem(i, 'unit_price', e.target.value)} placeholder="0" className="input-field pl-7" /></div>
+                                            <div className="text-[#6F6A66] font-medium text-sm px-2">{formatCurrency(getSubtotal(item))}</div>
+                                            {lineItems.length > 1 && <button onClick={() => removeLineItem(i)} className="text-[#78716C] hover:text-[#B85C5C] p-2"><Trash2 size={16} /></button>}
                                         </div>
                                     ))}
                                 </div>
-                                <div className="border-t border-[#2a2a40] pt-4 space-y-3">
-                                    <div className="flex justify-between"><span className="text-[#8888a0] text-sm">Subtotal</span><span className="text-white font-medium">{formatCurrency(totalBeforeTax)}</span></div>
-                                    <div className="flex justify-between gap-4"><span className="text-[#8888a0] text-sm flex items-center gap-2">Tax<input type="number" value={taxRate} onChange={(e) => setTaxRate(e.target.value)} className="input-field w-20 text-center py-1" min="0" max="100" />%</span><span className="text-white font-medium">{formatCurrency(taxAmount)}</span></div>
-                                    <div className="flex justify-between pt-3 border-t border-[#2a2a40]"><span className="text-white font-semibold flex items-center gap-2"><Calculator size={16} className="text-brand-400" />Grand Total</span><span className="text-xl font-bold text-brand-400">{formatCurrency(grandTotal)}</span></div>
+                                <div className="border-t border-[#E8E3DD] pt-4 space-y-3">
+                                    <div className="flex justify-between"><span className="text-[#6F6A66] text-sm">Subtotal</span><span className="text-[#1E1E1E] font-medium">{formatCurrency(totalBeforeTax)}</span></div>
+                                    <div className="flex justify-between gap-4"><span className="text-[#6F6A66] text-sm flex items-center gap-2">Tax<input type="number" value={taxRate} onChange={(e) => setTaxRate(e.target.value)} className="input-field w-20 text-center py-1" min="0" max="100" />%</span><span className="text-[#1E1E1E] font-medium">{formatCurrency(taxAmount)}</span></div>
+                                    <div className="flex justify-between pt-3 border-t border-[#E8E3DD]"><span className="text-[#1E1E1E] font-semibold flex items-center gap-2"><Calculator size={16} className="text-[#3E2F2B]" />Grand Total</span><span className="text-xl font-bold text-[#3E2F2B]">{formatCurrency(grandTotal)}</span></div>
                                 </div>
                             </div>
                         )}
@@ -450,7 +455,7 @@ export default function EditPage() {
                                     <div>
                                         <label className="input-label">Estimated Start Date</label>
                                         <div className="relative">
-                                            <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                            <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                             <input type="date" value={estimatedStartDate} onChange={(e) => setEstimatedStartDate(e.target.value)} className="input-field pl-10" />
                                         </div>
                                     </div>
@@ -458,7 +463,7 @@ export default function EditPage() {
                                 <div>
                                     <label className="input-label">Estimated Timeline</label>
                                     <textarea value={estimatedTimeline} onChange={(e) => setEstimatedTimeline(e.target.value)} placeholder={"e.g.\nConcept design: 7 days\nFinal layout: 10 days\nExecution: 20 days"} rows={4} className="input-field" />
-                                    <p className="text-[#5a5a70] text-xs mt-1">Break down the project phases and their estimated durations.</p>
+                                    <p className="text-[#78716C] text-xs mt-1">Break down the project phases and their estimated durations.</p>
                                 </div>
                             </div>
                         )}
@@ -476,7 +481,7 @@ export default function EditPage() {
                                 <div>
                                     <label className="input-label">Quotation Valid For (days)</label>
                                     <input type="number" value={quotationValidity} onChange={(e) => setQuotationValidity(e.target.value)} placeholder="30" min="1" className="input-field w-32" />
-                                    <p className="text-[#5a5a70] text-xs mt-1">Number of days this quotation remains valid.</p>
+                                    <p className="text-[#78716C] text-xs mt-1">Number of days this quotation remains valid.</p>
                                 </div>
                                 <div>
                                     <label className="input-label">Additional Notes / Conditions</label>
@@ -493,11 +498,11 @@ export default function EditPage() {
                             <div className="pb-6 animate-fade-in">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {templateOptions.map((opt, idx) => (
-                                        <button key={opt.key} onClick={() => setTemplate(opt.key)} className={`relative p-4 rounded-xl border-2 text-left transition-all ${template === opt.key ? 'border-brand-500 bg-brand-700/10' : 'border-[#2a2a40] bg-[#12121a] hover:border-[#3a3a55]'}`}>
-                                            {template === opt.key && <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center"><Sparkles size={12} className="text-white" /></div>}
-                                            <div className="flex gap-1.5 mb-3">{opt.colors.map((c, i) => <div key={i} className="w-6 h-6 rounded-md border border-[#2a2a40]" style={{ backgroundColor: c }} />)}</div>
-                                            <h3 className="text-white font-semibold text-sm">{opt.name}</h3>
-                                            <p className="text-[#5a5a70] text-xs mt-1 mb-3">{opt.desc}</p>
+                                        <button key={opt.key} onClick={() => setTemplate(opt.key)} className={`relative p-4 rounded-xl border-2 text-left transition-all ${template === opt.key ? 'border-[#3E2F2B] bg-[#3E2F2B]/10' : 'border-[#E8E3DD] bg-[#F0EBE6] hover:border-[#78716C]'}`}>
+                                            {template === opt.key && <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#3E2F2B] flex items-center justify-center"><Sparkles size={12} className="text-white" /></div>}
+                                            <div className="flex gap-1.5 mb-3">{opt.colors.map((c, i) => <div key={i} className="w-6 h-6 rounded-md border border-[#E8E3DD]" style={{ backgroundColor: c }} />)}</div>
+                                            <h3 className="text-[#1E1E1E] font-semibold text-sm">{opt.name}</h3>
+                                            <p className="text-[#78716C] text-xs mt-1 mb-3">{opt.desc}</p>
                                             <button type="button" className="template-card-view-btn" onClick={(e) => { e.stopPropagation(); setPreviewIndex(idx); setPreviewOpen(true); }}>
                                                 <Eye size={14} /> View Preview
                                             </button>

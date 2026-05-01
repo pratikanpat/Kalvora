@@ -8,6 +8,7 @@ import {
     Sparkles, ArrowRight, IndianRupee, User, Building2, RotateCcw,
     Palette, FileText, Loader2, CheckCircle2, ChevronDown, Eye
 } from 'lucide-react';
+import CustomSelect from '@/components/CustomSelect';
 
 const TEMPLATES = [
     { id: 'minimal', label: 'Modern Minimal', fn: minimalTemplate },
@@ -44,15 +45,15 @@ export default function TryPage() {
     const isValid = clientName.trim().length > 0 && budgetNum >= 10000;
 
     return (
-        <div className="min-h-screen bg-[#0a0a0f] page-bg">
+        <div className="min-h-screen bg-[#F6F3EF] page-bg">
             {/* Navbar */}
-            <nav className="fixed top-0 inset-x-0 z-50 bg-[#08080d]/90 backdrop-blur-xl border-b border-[#1a1a2e]">
+            <nav className="fixed top-0 inset-x-0 z-50 bg-[#F0EBE6]/90  border-b border-[#E8E3DD]">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
                     <Link href="/" className="group">
                         <span className="brand-wordmark text-lg group-hover:opacity-80 transition-opacity">Kalvora</span>
                     </Link>
                     <div className="flex items-center gap-3">
-                        <Link href="/login" className="text-sm text-[#8888a0] hover:text-white transition-colors hidden sm:block">
+                        <Link href="/login" className="text-sm text-[#6F6A66] hover:text-[#1E1E1E] transition-colors hidden sm:block">
                             Sign In
                         </Link>
                         <Link href="/signup" className="btn-primary text-xs sm:text-sm py-2 px-4">
@@ -68,26 +69,26 @@ export default function TryPage() {
                     <div className="max-w-xl mx-auto animate-fade-in">
                         {/* Hero Text */}
                         <div className="text-center mb-10 mt-4">
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-medium mb-5">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#3E2F2B]/10 border border-[#3E2F2B]/20 text-[#3E2F2B] text-xs font-medium mb-5">
                                 <Eye size={14} />
                                 Live Demo - No signup needed
                             </div>
-                            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 tracking-tight">
+                            <h1 className="text-3xl sm:text-4xl font-bold text-[#1E1E1E] mb-3 tracking-tight">
                                 See your proposal
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-brand-600"> in 10 seconds</span>
+                                <span className="text-[#3E2F2B]"> in 10 seconds</span>
                             </h1>
-                            <p className="text-[#5a5a70] text-sm sm:text-base max-w-md mx-auto">
+                            <p className="text-[#78716C] text-sm sm:text-base max-w-md mx-auto">
                                 Enter your client&apos;s details below. We&apos;ll generate a professional, branded proposal instantly.
                             </p>
                         </div>
 
                         {/* Form Card */}
-                        <div className="glass-card p-6 sm:p-8 space-y-5">
+                        <div className="bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl p-6 sm:p-8 space-y-5">
                             {/* Client Name */}
                             <div>
                                 <label className="input-label">Client Name</label>
                                 <div className="relative">
-                                    <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                     <input
                                         type="text"
                                         value={clientName}
@@ -102,26 +103,19 @@ export default function TryPage() {
                             {/* Project Type */}
                             <div>
                                 <label className="input-label">Project Type</label>
-                                <div className="relative">
-                                    <Building2 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <select
-                                        value={projectType}
-                                        onChange={e => setProjectType(e.target.value)}
-                                        className="input-field pl-10 appearance-none cursor-pointer"
-                                    >
-                                        {PROJECT_TYPES.map(type => (
-                                            <option key={type} value={type}>{type}</option>
-                                        ))}
-                                    </select>
-                                    <ChevronDown size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70] pointer-events-none" />
-                                </div>
+                                <CustomSelect
+                                    value={projectType}
+                                    onChange={setProjectType}
+                                    icon={<Building2 size={16} />}
+                                    options={PROJECT_TYPES.map(type => ({ value: type, label: type }))}
+                                />
                             </div>
 
                             {/* Budget */}
                             <div>
                                 <label className="input-label">Estimated Budget</label>
                                 <div className="relative">
-                                    <IndianRupee size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <IndianRupee size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                     <input
                                         type="number"
                                         value={budget}
@@ -132,7 +126,7 @@ export default function TryPage() {
                                     />
                                 </div>
                                 {budgetNum > 0 && (
-                                    <p className="text-xs text-[#5a5a70] mt-1.5">
+                                    <p className="text-xs text-[#78716C] mt-1.5">
                                         {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(budgetNum)}
                                     </p>
                                 )}
@@ -158,17 +152,17 @@ export default function TryPage() {
                             </button>
 
                             {!isValid && clientName.length > 0 && (
-                                <p className="text-xs text-center text-[#5a5a70]">
+                                <p className="text-xs text-center text-[#78716C]">
                                     Enter a budget of at least ₹10,000
                                 </p>
                             )}
                         </div>
 
                         {/* Trust badges */}
-                        <div className="flex flex-wrap items-center justify-center gap-4 mt-8 text-[#3a3a50] text-xs">
-                            <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-emerald-500/50" /> No signup required</span>
-                            <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-emerald-500/50" /> Real template preview</span>
-                            <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-emerald-500/50" /> 100% free</span>
+                        <div className="flex flex-wrap items-center justify-center gap-4 mt-8 text-[#6F6A66] text-xs">
+                            <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-[#6A9C89]/50" /> No signup required</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-[#6A9C89]/50" /> Real template preview</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-[#6A9C89]/50" /> 100% free</span>
                         </div>
                     </div>
                 ) : (
@@ -177,16 +171,16 @@ export default function TryPage() {
                         {/* Top bar */}
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
                             <div>
-                                <h2 className="text-xl font-bold text-white mb-1">
+                                <h2 className="text-xl font-bold text-[#1E1E1E] mb-1">
                                     Proposal for {clientName}
                                 </h2>
-                                <p className="text-[#5a5a70] text-sm">
+                                <p className="text-[#78716C] text-sm">
                                     {projectType} · {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(budgetNum)} budget
                                 </p>
                             </div>
                             <button
                                 onClick={() => { setShowPreview(false); }}
-                                className="flex items-center gap-2 text-sm text-[#8888a0] hover:text-white transition-colors"
+                                className="flex items-center gap-2 text-sm text-[#6F6A66] hover:text-[#1E1E1E] transition-colors"
                             >
                                 <RotateCcw size={14} /> Try different details
                             </button>
@@ -198,9 +192,9 @@ export default function TryPage() {
                                 <button
                                     key={t.id}
                                     onClick={() => setSelectedTemplate(i)}
-                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${selectedTemplate === i
-                                            ? 'bg-brand-500/15 text-brand-400 border border-brand-500/30'
-                                            : 'bg-[#12121a] text-[#5a5a70] border border-[#1a1a2e] hover:text-white hover:border-[#3a3a55]'
+                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${selectedTemplate === i
+                                            ? 'bg-[#3E2F2B]/15 text-[#3E2F2B] border border-[#3E2F2B]/30'
+                                            : 'bg-[#F0EBE6] text-[#78716C] border border-[#E8E3DD] hover:text-[#1E1E1E] hover:border-[#78716C]'
                                         }`}
                                 >
                                     <Palette size={12} />
@@ -211,13 +205,13 @@ export default function TryPage() {
 
                         {/* Preview iframe */}
                         <div className="glass-card overflow-hidden" style={{ padding: 0 }}>
-                            <div className="bg-[#1a1a2e]/50 px-4 py-2.5 border-b border-[#1a1a2e] flex items-center gap-2">
+                            <div className="bg-[#F0EBE6]/50 px-4 py-2.5 border-b border-[#E8E3DD] flex items-center gap-2">
                                 <div className="flex gap-1.5">
-                                    <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-                                    <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
-                                    <div className="w-3 h-3 rounded-full bg-[#28c840]" />
+                                    <div className="w-3 h-3 rounded-full bg-[#E8E3DD]" />
+                                    <div className="w-3 h-3 rounded-full bg-[#E8E3DD]" />
+                                    <div className="w-3 h-3 rounded-full bg-[#E8E3DD]" />
                                 </div>
-                                <span className="text-[10px] text-[#5a5a70] ml-2 font-mono">proposal-preview.pdf</span>
+                                <span className="text-[10px] text-[#78716C] ml-2 font-mono">proposal-preview.pdf</span>
                             </div>
                             <div className="bg-[#e8e8e8] p-4 sm:p-8 flex justify-center overflow-auto" style={{ maxHeight: '75vh' }}>
                                 <iframe
@@ -236,10 +230,10 @@ export default function TryPage() {
                         </div>
 
                         {/* CTA Bar */}
-                        <div className="mt-6 glass-card p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="mt-6 bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div>
-                                <h3 className="text-white font-semibold text-base mb-1">Love how this looks?</h3>
-                                <p className="text-[#5a5a70] text-sm">Sign up free and send this to your client in 60 seconds.</p>
+                                <h3 className="text-[#1E1E1E] font-semibold text-base mb-1">Love how this looks?</h3>
+                                <p className="text-[#78716C] text-sm">Sign up free and send this to your client in 60 seconds.</p>
                             </div>
                             <Link
                                 href="/signup"
@@ -256,13 +250,13 @@ export default function TryPage() {
                                 { icon: CheckCircle2, title: 'Client Approval', desc: 'Clients approve online, no calls' },
                                 { icon: IndianRupee, title: 'Auto Invoice', desc: 'Invoice generated on approval' },
                             ].map((feat, i) => (
-                                <div key={i} className="glass-card p-4 flex items-start gap-3">
-                                    <div className="w-9 h-9 rounded-lg bg-brand-500/10 flex items-center justify-center shrink-0">
-                                        <feat.icon size={16} className="text-brand-400" />
+                                <div key={i} className="bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl p-4 flex items-start gap-3">
+                                    <div className="w-9 h-9 rounded-lg bg-[#3E2F2B]/10 flex items-center justify-center shrink-0">
+                                        <feat.icon size={16} className="text-[#3E2F2B]" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-white">{feat.title}</p>
-                                        <p className="text-xs text-[#5a5a70]">{feat.desc}</p>
+                                        <p className="text-sm font-medium text-[#1E1E1E]">{feat.title}</p>
+                                        <p className="text-xs text-[#78716C]">{feat.desc}</p>
                                     </div>
                                 </div>
                             ))}

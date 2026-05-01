@@ -38,26 +38,30 @@ export default function RootLayout({
             <body className="antialiased">
                 <AuthProvider>
                     <Toaster
-                        position="top-right"
+                        position="bottom-right"
                         toastOptions={{
                             className: 'toast-custom',
+                            duration: 4000,
                             style: {
-                                background: '#1a1a2e',
-                                color: '#f0f0f5',
-                                border: '1px solid #2a2a40',
-                                borderRadius: '12px',
+                                background: '#FFFFFF',
+                                color: '#1E1E1E',
+                                border: 'none',
+                                borderRadius: '10px',
                                 fontSize: '14px',
+                                boxShadow: '0px 8px 24px rgba(0,0,0,0.08)',
+                                maxWidth: '320px',
+                                padding: '14px 16px',
                             },
                             success: {
                                 iconTheme: {
-                                    primary: '#40c057',
-                                    secondary: '#1a1a2e',
+                                    primary: '#6A9C89',
+                                    secondary: '#FFFFFF',
                                 },
                             },
                             error: {
                                 iconTheme: {
-                                    primary: '#fa5252',
-                                    secondary: '#1a1a2e',
+                                    primary: '#B85C5C',
+                                    secondary: '#FFFFFF',
                                 },
                             },
                         }}

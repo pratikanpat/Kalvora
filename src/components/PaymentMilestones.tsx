@@ -173,30 +173,30 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
     if (loading) return null;
 
     return (
-        <div className="glass-card p-6 mb-6 animate-fade-in" style={{ animationDelay: '250ms' }}>
+        <div className="bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl p-6 mb-6 animate-fade-in" style={{ animationDelay: '250ms' }}>
             <div className="flex items-center justify-between mb-5">
-                <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em]">
+                <h3 className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em]">
                     Payment Milestones
                 </h3>
                 {milestones.length > 0 && (
                     <div className="flex items-center gap-3 text-xs">
-                        <span className="text-emerald-400">Paid: {formatCurrency(totalPaid)}</span>
-                        <span className="text-amber-400">Pending: {formatCurrency(totalPending)}</span>
+                        <span className="text-[#6A9C89]">Paid: {formatCurrency(totalPaid)}</span>
+                        <span className="text-[#C47A5A]">Pending: {formatCurrency(totalPending)}</span>
                     </div>
                 )}
             </div>
 
             {/* Mismatch warning */}
             {hasMismatch && (
-                <div className="flex items-center justify-between mb-4 px-4 py-3 rounded-xl bg-amber-500/5 border border-amber-500/20">
-                    <div className="flex items-center gap-2 text-amber-400 text-xs">
+                <div className="flex items-center justify-between mb-4 px-4 py-3 rounded-[10px] bg-[#F0EBE6] border border-[#D9D1C9]">
+                    <div className="flex items-center gap-2 text-[#C47A5A] text-xs">
                         <RefreshCw size={14} />
                         <span>Milestone total ({formatCurrency(milestonesTotal)}) doesn&apos;t match project total ({formatCurrency(grandTotal)})</span>
                     </div>
                     <button
                         onClick={recalculateMilestones}
                         disabled={recalculating}
-                        className="text-xs font-medium text-amber-300 hover:text-amber-200 transition-colors flex items-center gap-1 flex-shrink-0 ml-3"
+                        className="text-xs font-medium text-[#3E2F2B] hover:text-[#2F2421] transition-colors flex items-center gap-1 flex-shrink-0 ml-3"
                     >
                         {recalculating ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
                         Recalculate
@@ -206,7 +206,7 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
 
             {milestones.length === 0 ? (
                 <div className="text-center py-6">
-                    <p className="text-[#5a5a70] text-sm mb-4">No payment milestones yet</p>
+                    <p className="text-[#78716C] text-sm mb-4">No payment milestones yet</p>
                     <button
                         onClick={createDefaults}
                         disabled={adding}
@@ -221,34 +221,34 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
                     {milestones.map((m) => (
                         <div
                             key={m.id}
-                            className={`flex items-center justify-between py-3 px-4 rounded-xl border transition-all ${
+                            className={`flex items-center justify-between py-3 px-4 rounded-[10px] border transition-colors duration-150 ${
                                 m.paid_at
-                                    ? 'bg-emerald-500/5 border-emerald-500/20'
-                                    : 'bg-[#12121a]/50 border-[#1a1a2e]'
+                                    ? 'bg-[#EDF5F1] border-[#D0E5DA]'
+                                    : 'bg-[#F0EBE6] border-[#E8E3DD]'
                             }`}
                         >
                             <div className="flex items-center gap-3 min-w-0">
-                                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${m.paid_at ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${m.paid_at ? 'bg-[#6A9C89]' : 'bg-[#C47A5A]'}`} />
                                 <div className="min-w-0">
-                                    <span className="text-white text-sm font-medium">{m.label}</span>
+                                    <span className="text-[#1E1E1E] text-sm font-medium">{m.label}</span>
                                     {m.due_date && (
-                                        <span className="text-[#5a5a70] text-xs ml-2">
+                                        <span className="text-[#78716C] text-xs ml-2">
                                             Due: {new Date(m.due_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                                         </span>
                                     )}
                                     {m.paid_at && (
-                                        <span className="text-emerald-400/60 text-xs ml-2">
+                                        <span className="text-[#6A9C89] text-xs ml-2">
                                             ✓ Paid {new Date(m.paid_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
                                         </span>
                                     )}
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
-                                <span className="text-white text-sm font-semibold">{formatCurrency(Number(m.amount))}</span>
+                                <span className="text-[#1E1E1E] text-sm font-semibold">{formatCurrency(Number(m.amount))}</span>
                                 {!m.paid_at && (
                                     <button
                                         onClick={() => markPaid(m.id)}
-                                        className="p-1.5 rounded-lg hover:bg-emerald-500/15 text-emerald-400 transition-colors"
+                                        className="p-1.5 rounded-lg hover:bg-[#EDF5F1] text-[#6A9C89] transition-colors"
                                         title="Mark as Paid"
                                     >
                                         <Check size={14} />
@@ -256,7 +256,7 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
                                 )}
                                 <button
                                     onClick={() => deleteMilestone(m.id)}
-                                    className="p-1.5 rounded-lg hover:bg-red-500/15 text-[#5a5a70] hover:text-red-400 transition-colors"
+                                    className="p-1.5 rounded-lg hover:bg-[#FDF2F2] text-[#78716C] hover:text-[#B85C5C] transition-colors"
                                     title="Delete"
                                 >
                                     <Trash2 size={14} />
@@ -272,7 +272,7 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
                 <div className="mt-3 flex items-center gap-3">
                     <button
                         onClick={() => setShowForm(true)}
-                        className="flex items-center gap-1.5 text-xs text-brand-400 hover:text-brand-300 transition-colors"
+                        className="flex items-center gap-1.5 text-xs text-[#3E2F2B] hover:text-[#2F2421] transition-colors"
                     >
                         <Plus size={14} /> Add Milestone
                     </button>
@@ -280,7 +280,7 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
                         <button
                             onClick={recalculateMilestones}
                             disabled={recalculating}
-                            className="flex items-center gap-1.5 text-xs text-[#5a5a70] hover:text-brand-400 transition-colors"
+                            className="flex items-center gap-1.5 text-xs text-[#78716C] hover:text-[#3E2F2B] transition-colors"
                         >
                             {recalculating ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
                             Recalculate from Total
@@ -290,7 +290,7 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
             )}
 
             {showForm && (
-                <div className="mt-4 p-4 rounded-xl bg-[#12121a]/50 border border-[#1a1a2e] space-y-3">
+                <div className="mt-4 p-4 rounded-[10px] bg-[#F0EBE6] border border-[#E8E3DD] space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <input
                             type="text"
@@ -300,7 +300,7 @@ export default function PaymentMilestones({ projectId, grandTotal }: Props) {
                             className="input-field text-sm"
                         />
                         <div className="relative">
-                            <IndianRupee size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                            <IndianRupee size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                             <input
                                 type="number"
                                 placeholder="Amount"

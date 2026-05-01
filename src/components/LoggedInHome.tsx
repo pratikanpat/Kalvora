@@ -11,7 +11,8 @@ import {
     Plus, FileText, Send, Eye, CheckCircle2, Clock,
     ArrowRight, Share2, Receipt, ChevronRight,
     Sparkles, Trophy, Building, AlertCircle,
-    PartyPopper, IndianRupee, Rocket, Edit3
+    PartyPopper, IndianRupee, Rocket, Edit3,
+    Check, BarChart3, PenTool
 } from 'lucide-react';
 
 // ─────────────────────────────────────────
@@ -198,34 +199,34 @@ export default function LoggedInHome() {
                     // Count views (we only have viewed_at, so we say "viewed")
                     const viewedAgo = getTimeAgo(p.client_viewed_at);
                     icon = Eye;
-                    iconBg = 'bg-brand-500/15';
-                    iconColor = 'text-brand-400';
+                    iconBg = 'bg-[#3E2F2B]/15';
+                    iconColor = 'text-[#3E2F2B]';
                     label = `${p.client_name}'s proposal was viewed ${viewedAgo}`;
                 } else if (p.status === 'Sent' && !p.client_viewed_at) {
                     icon = Clock;
-                    iconBg = 'bg-amber-500/15';
-                    iconColor = 'text-amber-400';
+                    iconBg = 'bg-[#F0EBE6]';
+                    iconColor = 'text-[#C47A5A]';
                     const days = getDaysAgo(p.created_at);
                     label = `${p.client_name} hasn't opened your proposal yet${days > 0 ? ` (${days} day${days > 1 ? 's' : ''})` : ''}`;
                 } else if (p.status === 'Draft') {
                     icon = Edit3;
-                    iconBg = 'bg-gray-500/15';
-                    iconColor = 'text-gray-400';
+                    iconBg = 'bg-[#F0EBE6]';
+                    iconColor = 'text-[#78716C]';
                     label = `${p.client_name}'s proposal is in draft`;
                 } else if (p.status === 'Approved') {
                     icon = CheckCircle2;
-                    iconBg = 'bg-emerald-500/15';
-                    iconColor = 'text-emerald-400';
+                    iconBg = 'bg-[#EDF5F1]';
+                    iconColor = 'text-[#6A9C89]';
                     label = `${p.client_name} approved — invoice pending payment`;
                 } else if (p.status === 'Paid') {
                     icon = IndianRupee;
-                    iconBg = 'bg-brand-500/15';
-                    iconColor = 'text-brand-400';
+                    iconBg = 'bg-[#3E2F2B]/15';
+                    iconColor = 'text-[#3E2F2B]';
                     label = `${p.client_name} — payment received, project in progress`;
                 } else {
                     icon = FileText;
-                    iconBg = 'bg-gray-500/15';
-                    iconColor = 'text-gray-400';
+                    iconBg = 'bg-[#F0EBE6]';
+                    iconColor = 'text-[#78716C]';
                     label = `${p.client_name}'s proposal — ${p.status}`;
                 }
 
@@ -275,37 +276,41 @@ export default function LoggedInHome() {
 
             {/* ── Greeting ── */}
             <div className="mb-6 animate-fade-in">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                    {getGreeting()}{displayName ? `, ${displayName}` : ''} 👋
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1E1E1E] tracking-tight">
+                    {projects.length === 0
+                        ? <>Welcome to Kalvora{displayName ? `, ${displayName}` : ''} 👋</>
+                        : <>{getGreeting()}{displayName ? `, ${displayName}` : ''} 👋</>}
                 </h1>
-                <p className="text-[#5a5a70] text-sm mt-1">
-                    {totalActive > 0
-                        ? `You have ${totalActive} active project${totalActive > 1 ? 's' : ''}`
-                        : 'Ready to create something great?'}
+                <p className="text-[#6F6A66] text-sm mt-1">
+                    {projects.length === 0
+                        ? "Let's get your studio set up and send your first proposal."
+                        : totalActive > 0
+                            ? `You have ${totalActive} active project${totalActive > 1 ? 's' : ''}`
+                            : 'Ready to create something great?'}
                 </p>
             </div>
 
             {/* ═══════════════════════════════════════
                 PIPELINE STRIP — At the top per user request
                 ═══════════════════════════════════════ */}
-            {projects.length > 0 && (
+            {projects.length > 0 ? (<>
                 <div className="mb-8 animate-fade-in" style={{ animationDelay: '50ms' }}>
                     <div className="pipeline-strip">
                         {[
-                            { label: 'Draft', count: pipeline.draft, color: 'text-gray-400', bg: 'bg-gray-500/15' },
-                            { label: 'Sent', count: pipeline.sent, color: 'text-[#FF9933]', bg: 'bg-[#FF9933]/15' },
-                            { label: 'Viewed', count: pipeline.viewed, color: 'text-brand-400', bg: 'bg-brand-500/15' },
-                            { label: 'Approved', count: pipeline.approved, color: 'text-emerald-400', bg: 'bg-emerald-500/15' },
-                            { label: 'Paid', count: pipeline.paid, color: 'text-blue-400', bg: 'bg-blue-500/15' },
-                            { label: 'Completed', count: pipeline.completed, color: 'text-purple-400', bg: 'bg-purple-500/15' },
+                            { label: 'Draft', count: pipeline.draft, color: 'text-[#3E2F2B]', bg: 'bg-[#D9D1C9]' },
+                            { label: 'Sent', count: pipeline.sent, color: 'text-[#3E2F2B]', bg: 'bg-[#D9D1C9]' },
+                            { label: 'Viewed', count: pipeline.viewed, color: 'text-[#3E2F2B]', bg: 'bg-[#D9D1C9]' },
+                            { label: 'Approved', count: pipeline.approved, color: 'text-[#3E2F2B]', bg: 'bg-[#D9D1C9]' },
+                            { label: 'Paid', count: pipeline.paid, color: 'text-[#3E2F2B]', bg: 'bg-[#D9D1C9]' },
+                            { label: 'Completed', count: pipeline.completed, color: 'text-[#3E2F2B]', bg: 'bg-[#D9D1C9]' },
                         ].map((step, i, arr) => (
                             <div key={step.label} className="flex items-center gap-1">
                                 <Link
                                     href={`/dashboard`}
-                                    className={`pipeline-step ${step.count > 0 ? `border-[#2a2a40] ${step.color}` : ''}`}
+                                    className={`pipeline-step ${step.count > 0 ? step.color : ''}`}
                                 >
-                                    <span className={step.label}>{step.label}</span>
-                                    <span className={`pipeline-step-count ${step.count > 0 ? step.bg : 'bg-[#1a1a2e]'} ${step.count > 0 ? step.color : 'text-[#3a3a50]'}`}>
+                                    <span>{step.label}</span>
+                                    <span className={`pipeline-step-count ${step.count > 0 ? step.bg : 'bg-[#D9D1C9]'} ${step.count > 0 ? step.color : 'text-[#6F6A66]'}`}>
                                         {step.count}
                                     </span>
                                 </Link>
@@ -316,7 +321,6 @@ export default function LoggedInHome() {
                         ))}
                     </div>
                 </div>
-            )}
 
             {/* ═══════════════════════════════════════
                 PRIMARY ACTION STRIP
@@ -326,14 +330,14 @@ export default function LoggedInHome() {
                 {primaryAction.type === 'no-profile' && (
                     <Link href="/profile" className="action-strip-card block group">
                         <div className="relative flex items-center gap-5">
-                            <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
-                                <Building size={24} className="text-amber-400" />
+                            <div className="w-14 h-14 rounded-2xl bg-[#F0EBE6] border border-[#E8E3DD] flex items-center justify-center flex-shrink-0">
+                                <Building size={24} className="text-[#C47A5A]" />
                             </div>
                             <div className="flex-1">
-                                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Complete your studio profile</h2>
-                                <p className="text-[#8888a0] text-sm">Add your branding, logo, and payment details to send professional proposals.</p>
+                                <h2 className="text-lg sm:text-xl font-bold text-[#1E1E1E] mb-1">Complete your studio profile</h2>
+                                <p className="text-[#57534E] text-sm">Add your branding, logo, and payment details to send professional proposals.</p>
                             </div>
-                            <ArrowRight size={20} className="text-[#5a5a70] group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                            <ArrowRight size={20} className="text-[#78716C] group-hover:text-[#3E2F2B] group-hover:translate-x-1 transition-colors flex-shrink-0" />
                         </div>
                     </Link>
                 )}
@@ -341,14 +345,14 @@ export default function LoggedInHome() {
                 {primaryAction.type === 'first-proposal' && (
                     <Link href="/create" className="action-strip-card block group">
                         <div className="relative flex items-center gap-5">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center flex-shrink-0 animate-float">
+                            <div className="w-14 h-14 rounded-2xl bg-[#3E2F2B] flex items-center justify-center flex-shrink-0 ">
                                 <Rocket size={24} className="text-white" />
                             </div>
                             <div className="flex-1">
-                                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Create your first proposal</h2>
-                                <p className="text-[#8888a0] text-sm">It takes 60 seconds. Pick a template, fill client details, and send a professional link.</p>
+                                <h2 className="text-lg sm:text-xl font-bold text-[#1E1E1E] mb-1">Create your first proposal</h2>
+                                <p className="text-[#57534E] text-sm">It takes 60 seconds. Pick a template, fill client details, and send a professional link.</p>
                             </div>
-                            <ArrowRight size={20} className="text-[#5a5a70] group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                            <ArrowRight size={20} className="text-[#78716C] group-hover:text-[#3E2F2B] group-hover:translate-x-1 transition-colors flex-shrink-0" />
                         </div>
                     </Link>
                 )}
@@ -356,16 +360,16 @@ export default function LoggedInHome() {
                 {primaryAction.type === 'nudge-approval' && primaryAction.project && (
                     <Link href={`/proposals/${primaryAction.project.id}`} className="action-strip-card block group">
                         <div className="relative flex items-center gap-5">
-                            <div className="w-14 h-14 rounded-2xl bg-brand-500/15 border border-brand-500/20 flex items-center justify-center flex-shrink-0">
-                                <Eye size={24} className="text-brand-400" />
+                            <div className="w-14 h-14 rounded-2xl bg-[#3E2F2B]/15 border border-[#3E2F2B]/20 flex items-center justify-center flex-shrink-0">
+                                <Eye size={24} className="text-[#3E2F2B]" />
                             </div>
                             <div className="flex-1">
-                                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">
+                                <h2 className="text-lg sm:text-xl font-bold text-[#1E1E1E] mb-1">
                                     {primaryAction.project.client_name} viewed your proposal
                                 </h2>
-                                <p className="text-[#8888a0] text-sm">They've seen it — now's the perfect time to follow up and close.</p>
+                                <p className="text-[#57534E] text-sm">They've seen it — now's the perfect time to follow up and close.</p>
                             </div>
-                            <ArrowRight size={20} className="text-[#5a5a70] group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                            <ArrowRight size={20} className="text-[#78716C] group-hover:text-[#3E2F2B] group-hover:translate-x-1 transition-colors flex-shrink-0" />
                         </div>
                     </Link>
                 )}
@@ -373,16 +377,16 @@ export default function LoggedInHome() {
                 {primaryAction.type === 'resume-draft' && primaryAction.project && (
                     <Link href={`/edit/${primaryAction.project.id}`} className="action-strip-card block group">
                         <div className="relative flex items-center gap-5">
-                            <div className="w-14 h-14 rounded-2xl bg-gray-500/15 border border-gray-500/20 flex items-center justify-center flex-shrink-0">
-                                <Edit3 size={24} className="text-gray-400" />
+                            <div className="w-14 h-14 rounded-2xl bg-[#F0EBE6] border border-[#E8E3DD] flex items-center justify-center flex-shrink-0">
+                                <Edit3 size={24} className="text-[#78716C]" />
                             </div>
                             <div className="flex-1">
-                                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">
+                                <h2 className="text-lg sm:text-xl font-bold text-[#1E1E1E] mb-1">
                                     Finish your draft for {primaryAction.project.client_name}
                                 </h2>
-                                <p className="text-[#8888a0] text-sm">Your proposal is almost ready - complete and send it to close faster.</p>
+                                <p className="text-[#57534E] text-sm">Your proposal is almost ready - complete and send it to close faster.</p>
                             </div>
-                            <ArrowRight size={20} className="text-[#5a5a70] group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                            <ArrowRight size={20} className="text-[#78716C] group-hover:text-[#3E2F2B] group-hover:translate-x-1 transition-colors flex-shrink-0" />
                         </div>
                     </Link>
                 )}
@@ -390,20 +394,20 @@ export default function LoggedInHome() {
                 {primaryAction.type === 'follow-up' && primaryAction.project && (
                     <div className="action-strip-card">
                         <div className="relative flex items-center gap-5">
-                            <div className="w-14 h-14 rounded-2xl bg-[#FF9933]/15 border border-[#FF9933]/20 flex items-center justify-center flex-shrink-0">
-                                <Send size={24} className="text-[#FF9933]" />
+                            <div className="w-14 h-14 rounded-2xl bg-[#C08A5D]/15 border border-[#C08A5D]/20 flex items-center justify-center flex-shrink-0">
+                                <Send size={24} className="text-[#C08A5D]" />
                             </div>
                             <div className="flex-1">
-                                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">
+                                <h2 className="text-lg sm:text-xl font-bold text-[#1E1E1E] mb-1">
                                     Follow up with {primaryAction.project.client_name}
                                 </h2>
-                                <p className="text-[#8888a0] text-sm">
+                                <p className="text-[#6F6A66] text-sm">
                                     Sent {getDaysAgo(primaryAction.project.created_at)} day{getDaysAgo(primaryAction.project.created_at) !== 1 ? 's' : ''} ago — no response yet.
                                 </p>
                             </div>
                             <button
                                 onClick={() => openWhatsAppReminder(primaryAction.project!.client_name, primaryAction.project!.id)}
-                                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] text-sm font-semibold hover:bg-[#25D366]/20 transition-all flex-shrink-0"
+                                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#3E2F2B]/10 border border-[#3E2F2B]/20 text-[#3E2F2B] text-sm font-semibold hover:bg-[#3E2F2B]/20 transition-colors flex-shrink-0"
                             >
                                 <Share2 size={16} />
                                 <span className="hidden sm:inline">Remind on WhatsApp</span>
@@ -416,16 +420,16 @@ export default function LoggedInHome() {
                 {primaryAction.type === 'invoice-reminder' && primaryAction.project && (
                     <Link href={`/proposals/${primaryAction.project.id}`} className="action-strip-card block group">
                         <div className="relative flex items-center gap-5">
-                            <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                                <Receipt size={24} className="text-emerald-400" />
+                            <div className="w-14 h-14 rounded-2xl bg-[#EDF5F1] border border-[#D0E5DA] flex items-center justify-center flex-shrink-0">
+                                <Receipt size={24} className="text-[#6A9C89]" />
                             </div>
                             <div className="flex-1">
-                                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">
+                                <h2 className="text-lg sm:text-xl font-bold text-[#1E1E1E] mb-1">
                                     {primaryAction.project.client_name} approved — send invoice reminder
                                 </h2>
-                                <p className="text-[#8888a0] text-sm">Invoice is ready. Send a payment reminder to keep the project moving.</p>
+                                <p className="text-[#57534E] text-sm">Invoice is ready. Send a payment reminder to keep the project moving.</p>
                             </div>
-                            <ArrowRight size={20} className="text-[#5a5a70] group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                            <ArrowRight size={20} className="text-[#78716C] group-hover:text-[#3E2F2B] group-hover:translate-x-1 transition-colors flex-shrink-0" />
                         </div>
                     </Link>
                 )}
@@ -433,14 +437,14 @@ export default function LoggedInHome() {
                 {primaryAction.type === 'create-new' && (
                     <Link href="/create" className="action-strip-card block group">
                         <div className="relative flex items-center gap-5">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center flex-shrink-0">
+                            <div className="w-14 h-14 rounded-2xl bg-[#3E2F2B] flex items-center justify-center flex-shrink-0">
                                 <Plus size={24} className="text-white" />
                             </div>
                             <div className="flex-1">
-                                <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Create a new proposal</h2>
-                                <p className="text-[#8888a0] text-sm">All projects are on track. Start your next one.</p>
+                                <h2 className="text-lg sm:text-xl font-bold text-[#1E1E1E] mb-1">Create a new proposal</h2>
+                                <p className="text-[#57534E] text-sm">All projects are on track. Start your next one.</p>
                             </div>
-                            <ArrowRight size={20} className="text-[#5a5a70] group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                            <ArrowRight size={20} className="text-[#78716C] group-hover:text-[#3E2F2B] group-hover:translate-x-1 transition-colors flex-shrink-0" />
                         </div>
                     </Link>
                 )}
@@ -450,7 +454,7 @@ export default function LoggedInHome() {
                     <div className="mt-3 flex justify-end">
                         <Link
                             href="/create"
-                            className="flex items-center gap-2 text-sm text-[#5a5a70] hover:text-brand-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-brand-700/10"
+                            className="flex items-center gap-2 text-sm text-[#78716C] hover:text-[#3E2F2B] transition-colors px-3 py-1.5 rounded-lg hover:bg-[#3E2F2B]/10"
                         >
                             <Plus size={14} />
                             New Proposal
@@ -471,31 +475,31 @@ export default function LoggedInHome() {
 
                 {attentionItems.length === 0 ? (
                     <div className="all-caught-up">
-                        <CheckCircle2 size={28} className="text-emerald-400/60 mx-auto mb-2" />
-                        <p className="text-emerald-400/80 text-sm font-medium">All caught up</p>
-                        <p className="text-[#5a5a70] text-xs mt-1">No stuck projects right now</p>
+                        <CheckCircle2 size={28} className="text-[#6A9C89]/60 mx-auto mb-2" />
+                        <p className="text-[#6A9C89]/80 text-sm font-medium">All caught up</p>
+                        <p className="text-[#78716C] text-xs mt-1">No stuck projects right now</p>
                     </div>
                 ) : (
                     <div className="space-y-3">
                         {attentionItems.map((item, i) => (
                             <div
                                 key={item.project.id}
-                                className={`attention-card ${item.type === 'stale' ? 'attention-card-amber' : item.type === 'viewed' ? 'attention-card-blue' : 'attention-card-emerald'}`}
+                                className={`attention-card ${item.type === 'stale' ? 'attention-card-amber' : item.type === 'viewed' ? 'attention-card-brand' : 'attention-card-emerald'}`}
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${item.type === 'stale' ? 'bg-[#FF9933]/15' : item.type === 'viewed' ? 'bg-brand-500/15' : 'bg-emerald-500/15'
+                                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${item.type === 'stale' ? 'bg-[#C08A5D]/15' : item.type === 'viewed' ? 'bg-[#3E2F2B]/15' : 'bg-[#EDF5F1]'
                                         }`}>
-                                        {item.type === 'stale' && <Clock size={16} className="text-[#FF9933]" />}
-                                        {item.type === 'viewed' && <Eye size={16} className="text-brand-400" />}
-                                        {item.type === 'approved' && <CheckCircle2 size={16} className="text-emerald-400" />}
+                                        {item.type === 'stale' && <Clock size={16} className="text-[#C08A5D]" />}
+                                        {item.type === 'viewed' && <Eye size={16} className="text-[#3E2F2B]" />}
+                                        {item.type === 'approved' && <CheckCircle2 size={16} className="text-[#6A9C89]" />}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-white text-sm font-medium truncate">
+                                        <p className="text-[#1E1E1E] text-sm font-medium truncate">
                                             {item.type === 'stale' && `${item.project.client_name} hasn't opened your proposal`}
                                             {item.type === 'viewed' && `${item.project.client_name} viewed your proposal — follow up now`}
                                             {item.type === 'approved' && `${item.project.client_name} approved — invoice pending payment`}
                                         </p>
-                                        <p className="text-[#5a5a70] text-xs mt-0.5">
+                                        <p className="text-[#78716C] text-xs mt-0.5">
                                             {item.type === 'stale' && `Sent ${item.daysAgo} day${item.daysAgo > 1 ? 's' : ''} ago`}
                                             {item.type === 'viewed' && `Viewed ${getTimeAgo(item.project.client_viewed_at || item.project.created_at)}`}
                                             {item.type === 'approved' && `Approved ${getTimeAgo(item.project.created_at)}`}
@@ -505,7 +509,7 @@ export default function LoggedInHome() {
                                         {item.type === 'stale' && (
                                             <button
                                                 onClick={() => openWhatsAppReminder(item.project.client_name, item.project.id)}
-                                                className="flex items-center gap-1.5 text-xs font-semibold text-[#25D366] hover:text-[#2aea7a] bg-[#25D366]/10 hover:bg-[#25D366]/15 px-3 py-2 rounded-lg transition-all"
+                                                className="flex items-center gap-1.5 text-xs font-semibold text-[#3E2F2B] hover:text-[#2F2421] bg-[#3E2F2B]/10 hover:bg-[#3E2F2B]/15 px-3 py-2 rounded-lg transition-colors"
                                             >
                                                 <Share2 size={12} /> Remind
                                             </button>
@@ -513,7 +517,7 @@ export default function LoggedInHome() {
                                         {item.type === 'viewed' && (
                                             <Link
                                                 href={`/proposals/${item.project.id}`}
-                                                className="flex items-center gap-1.5 text-xs font-semibold text-brand-400 hover:text-brand-300 bg-brand-500/10 hover:bg-brand-500/15 px-3 py-2 rounded-lg transition-all"
+                                                className="flex items-center gap-1.5 text-xs font-semibold text-[#3E2F2B] hover:text-[#2F2421] bg-[#3E2F2B]/10 hover:bg-[#2F2421]/15 px-3 py-2 rounded-lg transition-colors"
                                             >
                                                 View <ArrowRight size={12} />
                                             </Link>
@@ -521,7 +525,7 @@ export default function LoggedInHome() {
                                         {item.type === 'approved' && (
                                             <Link
                                                 href={`/proposals/${item.project.id}`}
-                                                className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/15 px-3 py-2 rounded-lg transition-all"
+                                                className="flex items-center gap-1.5 text-xs font-semibold text-[#6A9C89] hover:text-[#6A9C89] bg-[#EDF5F1] hover:bg-[#D0E5DA] px-3 py-2 rounded-lg transition-colors"
                                             >
                                                 Invoice <ArrowRight size={12} />
                                             </Link>
@@ -558,14 +562,14 @@ export default function LoggedInHome() {
                                         <IconComponent size={16} className={item.iconColor} />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-[#c0c0d0] text-sm truncate group-hover:text-white transition-colors">
+                                        <p className="text-[#6F6A66] text-sm truncate group-hover:text-[#1E1E1E] transition-colors">
                                             {item.label}
                                         </p>
                                     </div>
-                                    <span className="text-[#3a3a50] text-xs flex-shrink-0">
+                                    <span className="text-[#6F6A66] text-xs flex-shrink-0">
                                         {getTimeAgo(item.project.client_viewed_at || item.project.created_at)}
                                     </span>
-                                    <ArrowRight size={14} className="text-[#2a2a40] group-hover:text-brand-400 transition-colors flex-shrink-0" />
+                                    <ArrowRight size={14} className="text-[#78716C] group-hover:text-[#3E2F2B] transition-colors flex-shrink-0" />
                                 </Link>
                             );
                         })}
@@ -585,12 +589,12 @@ export default function LoggedInHome() {
 
                 {wins.length === 0 ? (
                     <div className="text-center py-8 px-4">
-                        <p className="text-[#5a5a70] text-sm">
+                        <p className="text-[#78716C] text-sm">
                             Your first win is one proposal away 🚀
                         </p>
                         <Link
                             href="/create"
-                            className="inline-flex items-center gap-2 text-brand-400 text-sm font-medium mt-2 hover:text-brand-300 transition-colors"
+                            className="inline-flex items-center gap-2 text-[#3E2F2B] text-sm font-medium mt-2 hover:text-[#2F2421] transition-colors"
                         >
                             Create Proposal <ArrowRight size={14} />
                         </Link>
@@ -605,14 +609,14 @@ export default function LoggedInHome() {
                             >
                                 <span className="text-xl flex-shrink-0">{win.emoji}</span>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-white text-sm font-medium truncate group-hover:text-brand-300 transition-colors">
+                                    <p className="text-[#1E1E1E] text-sm font-medium truncate group-hover:text-[#2F2421] transition-colors">
                                         {win.label}
                                     </p>
-                                    <p className="text-[#5a5a70] text-xs mt-0.5">
+                                    <p className="text-[#78716C] text-xs mt-0.5">
                                         {getTimeAgo(win.project.created_at)}
                                     </p>
                                 </div>
-                                <ArrowRight size={14} className="text-[#2a2a40] group-hover:text-brand-400 transition-colors flex-shrink-0" />
+                                <ArrowRight size={14} className="text-[#78716C] group-hover:text-[#3E2F2B] transition-colors flex-shrink-0" />
                             </Link>
                         ))}
                     </div>
@@ -623,12 +627,105 @@ export default function LoggedInHome() {
             <div className="text-center animate-fade-in" style={{ animationDelay: '300ms' }}>
                 <Link
                     href="/dashboard"
-                    className="inline-flex items-center gap-2 text-[#5a5a70] hover:text-brand-400 text-sm font-medium transition-colors px-4 py-2 rounded-xl hover:bg-brand-700/10"
+                    className="inline-flex items-center gap-2 text-[#78716C] hover:text-[#3E2F2B] text-sm font-medium transition-colors px-4 py-2 rounded-xl hover:bg-[#3E2F2B]/10"
                 >
                     View all projects in Dashboard
                     <ArrowRight size={14} />
                 </Link>
             </div>
+            </>) : (
+            /* ═══════════════════════════════════════
+               ONBOARDING FLOW — New users (0 projects)
+               ═══════════════════════════════════════ */
+            <div className="animate-fade-in" style={{ animationDelay: '50ms' }}>
+                {/* Progress */}
+                <div className="mb-6">
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#78716C] mb-2">
+                        Your Setup Checklist · {hasProfile ? '1' : '0'} of 3 complete
+                    </p>
+                    <div className="onboarding-progress-bar">
+                        <div className="onboarding-progress-fill" style={{ width: hasProfile ? '33%' : '0%' }} />
+                    </div>
+                </div>
+
+                {/* Steps */}
+                <div className="space-y-3 mb-8">
+                    {/* Step 1 */}
+                    <Link href="/profile" className={`onboarding-step ${hasProfile ? 'onboarding-step-completed' : 'onboarding-step-active'}`}>
+                        <div className={`onboarding-step-number ${hasProfile ? 'onboarding-step-number-completed' : 'onboarding-step-number-active'}`}>
+                            {hasProfile ? <Check size={14} /> : '1'}
+                        </div>
+                        <div className="flex-1">
+                            <p className="text-sm font-bold text-[#1E1E1E]">Complete your studio profile</p>
+                            <p className="text-xs text-[#78716C] mt-0.5">Add logo, branding, payment terms</p>
+                            {!hasProfile && <span className="text-[10px] text-[#C47A5A] font-semibold mt-1 inline-block">Takes 2 minutes</span>}
+                        </div>
+                        {!hasProfile && <ArrowRight size={16} className="text-[#78716C] flex-shrink-0 mt-1" />}
+                    </Link>
+
+                    {/* Step 2 */}
+                    {hasProfile ? (
+                        <Link href="/create" className="onboarding-step onboarding-step-active">
+                            <div className="onboarding-step-number onboarding-step-number-active">2</div>
+                            <div className="flex-1">
+                                <p className="text-sm font-bold text-[#1E1E1E]">Create your first proposal</p>
+                                <p className="text-xs text-[#78716C] mt-0.5">Pick a template, fill details, generate a professional link</p>
+                            </div>
+                            <ArrowRight size={16} className="text-[#78716C] flex-shrink-0 mt-1" />
+                        </Link>
+                    ) : (
+                        <div className="onboarding-step onboarding-step-dimmed">
+                            <div className="onboarding-step-number onboarding-step-number-dimmed">2</div>
+                            <div className="flex-1">
+                                <p className="text-sm font-bold text-[#1E1E1E]">Create your first proposal</p>
+                                <p className="text-xs text-[#78716C] mt-0.5">Pick a template, fill details, generate a professional link</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Step 3 */}
+                    <div className="onboarding-step onboarding-step-dimmed">
+                        <div className="onboarding-step-number onboarding-step-number-dimmed">3</div>
+                        <div className="flex-1">
+                            <p className="text-sm font-bold text-[#1E1E1E]">Send & track</p>
+                            <p className="text-xs text-[#78716C] mt-0.5">Share via WhatsApp, track views, get approvals</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Hero CTA */}
+                <div className="text-center mb-10">
+                    <Link href={hasProfile ? '/create' : '/profile'} className="btn-primary inline-flex text-base px-8 py-4">
+                        {hasProfile ? <><PenTool size={18} /> Create Your First Proposal</> : <><Building size={18} /> Set Up Your Studio</>}
+                    </Link>
+                    <p className="text-xs text-[#78716C] mt-3">Takes less than 2 minutes</p>
+                </div>
+
+                {/* How Kalvora Works strip */}
+                <div>
+                    <h3 className="engine-section-header justify-center mb-4">
+                        <Sparkles size={14} />
+                        How Kalvora Works
+                    </h3>
+                    <div className="onboarding-flow-strip">
+                        {[
+                            { icon: PenTool, label: 'Create', desc: 'Build a stunning proposal', bg: 'bg-[#F0EBE6]', color: 'text-[#3E2F2B]' },
+                            { icon: Send, label: 'Send', desc: 'Share link with client', bg: 'bg-[#F0EBE6]', color: 'text-[#C47A5A]' },
+                            { icon: BarChart3, label: 'Track', desc: 'See when they view it', bg: 'bg-[#F0EBE6]', color: 'text-[#3E2F2B]' },
+                            { icon: IndianRupee, label: 'Get Paid', desc: 'Approve & invoice', bg: 'bg-[#EDF5F1]', color: 'text-[#6A9C89]' },
+                        ].map((step, i) => (
+                            <div key={step.label} className="onboarding-flow-item">
+                                <div className={`onboarding-flow-icon ${step.bg}`}>
+                                    <step.icon size={18} className={step.color} />
+                                </div>
+                                <p className="text-sm font-bold text-[#1E1E1E]">{step.label}</p>
+                                <p className="text-xs text-[#78716C] mt-0.5">{step.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+            )}
         </div>
     );
 }

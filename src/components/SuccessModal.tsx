@@ -54,24 +54,24 @@ export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downl
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative glass-card p-8 max-w-md w-full mx-4 animate-fade-in">
+            <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+            <div className="relative bg-white rounded-xl p-8 max-w-md w-full mx-4 animate-fade-in" style={{ boxShadow: '0px 8px 24px rgba(0,0,0,0.08)' }}>
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-[#5a5a70] hover:text-[#f0f0f5] transition-colors"
+                    className="absolute top-4 right-4 text-[#78716C] hover:text-[#1E1E1E] transition-colors"
                 >
                     <X size={20} />
                 </button>
 
                 {/* Success Icon */}
                 <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center animate-pulse-glow">
-                        <Check size={32} className="text-green-400" />
+                    <div className="w-16 h-16 rounded-full bg-[#EDF5F1] border border-[#D0E5DA] flex items-center justify-center">
+                        <Check size={32} className="text-[#6A9C89]" />
                     </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-center mb-2">Proposal Generated!</h3>
-                <p className="text-[#8888a0] text-center text-sm mb-8">
+                <h3 className="text-xl font-bold text-center mb-2 text-[#1E1E1E]">Proposal Generated!</h3>
+                <p className="text-[#6F6A66] text-center text-sm mb-8">
                     Your PDF proposal is ready. Download, share, or send it to your client.
                 </p>
 
@@ -88,11 +88,10 @@ export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downl
                         Download PDF
                     </a>
 
-                    {/* WhatsApp Share — authentic green */}
                     <button
                         onClick={handleWhatsAppShare}
-                        className="w-full flex items-center justify-center gap-2.5 py-3 px-5 rounded-xl font-semibold text-sm transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
-                        style={{ background: '#25D366', color: '#ffffff' }}
+                        className="w-full flex items-center justify-center gap-2.5 py-3 px-5 rounded-[10px] font-semibold text-sm transition-colors duration-150 hover:opacity-90"
+                        style={{ background: '#3E2F2B', color: '#ffffff' }}
                     >
                         <Share2 size={18} />
                         Share on WhatsApp
@@ -104,7 +103,7 @@ export default function SuccessModal({ isOpen, onClose, pdfUrl, projectId, downl
                     >
                         {copied ? (
                             <>
-                                <Check size={18} className="text-green-400" />
+                                <Check size={18} className="text-[#6A9C89]" />
                                 Link Copied!
                             </>
                         ) : (

@@ -63,7 +63,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
     if (loading || redirecting) {
         return (
-            <div className="min-h-screen bg-[#0a0a0f] page-bg flex items-center justify-center">
+            <div className="min-h-screen bg-[#F6F3EF] flex items-center justify-center">
                 <LoadingSpinner text="Checking authentication..." />
             </div>
         );
@@ -73,7 +73,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         // If we had a session before, show a loading state while the grace period runs.
         // If we never had a session, this will briefly flash before the redirect kicks in.
         return (
-            <div className="min-h-screen bg-[#0a0a0f] page-bg flex items-center justify-center">
+            <div className="min-h-screen bg-[#F6F3EF] flex items-center justify-center">
                 <LoadingSpinner text={hadSession.current ? "Reconnecting session..." : "Redirecting to login..."} />
             </div>
         );

@@ -15,6 +15,7 @@ import {
 import toast from 'react-hot-toast';
 import TemplatePreviewModal from '@/components/TemplatePreviewModal';
 import { validateEmail, validatePhone } from '@/lib/validators';
+import CustomSelect from '@/components/CustomSelect';
 
 interface Room {
     name: string;
@@ -34,7 +35,7 @@ const templateOptions: { key: Template; name: string; desc: string; colors: stri
         key: 'minimal',
         name: 'Minimal',
         desc: 'Clean whites, Inter font, elegant simplicity',
-        colors: ['#ffffff', '#2563EB', '#f8fafc'],
+        colors: ['#ffffff', '#3E2F2B', '#f8fafc'],
     },
     {
         key: 'luxury',
@@ -63,8 +64,8 @@ const templateOptions: { key: Template; name: string; desc: string; colors: stri
     {
         key: 'highcontrast',
         name: 'High Contrast',
-        desc: 'Bold contrast, indigo accent, SaaS-inspired',
-        colors: ['#0f172a', '#6366f1', '#ffffff'],
+        desc: 'Bold contrast, espresso accent, editorial-inspired',
+        colors: ['#0f172a', '#3E2F2B', '#ffffff'],
     },
 ];
 
@@ -72,9 +73,9 @@ const templateOptions: { key: Template; name: string; desc: string; colors: stri
 const templatePreviewData = [
     {
         name: 'Minimal', desc: 'Clean whites, Inter font, elegant simplicity. Perfect for modern studios that prefer understated sophistication.',
-        colors: ['#ffffff', '#2563EB', '#f8fafc'], icon: '✦', badge: '⭐ Most Popular',
+        colors: ['#ffffff', '#3E2F2B', '#f8fafc'], icon: '✦', badge: '⭐ Most Popular',
         previewImage: '/templates/minimal.png',
-        stylePoints: ['Inter typography throughout', 'Blue gradient accent', 'Stripe-inspired clean layout', 'Rounded card elements'],
+        stylePoints: ['Inter typography throughout', 'Espresso accent', 'Stripe-inspired clean layout', 'Rounded card elements'],
     },
     {
         name: 'Luxury', desc: 'Gold & dark tones, serif typography, opulent feel. Ideal for high-end residential and boutique projects.',
@@ -101,10 +102,10 @@ const templatePreviewData = [
         stylePoints: ['Playfair Display headings', 'Warm off-white background', 'Italic document title', 'Magazine-style whitespace'],
     },
     {
-        name: 'High Contrast', desc: 'Bold contrast blocks, indigo accent, SaaS-inspired. Ideal for modern design firms.',
-        colors: ['#0f172a', '#6366f1', '#ffffff'], icon: '▣', badge: 'Best for Modern',
+        name: 'High Contrast', desc: 'Bold contrast blocks, espresso accent, editorial-inspired. Ideal for modern design firms.',
+        colors: ['#0f172a', '#3E2F2B', '#ffffff'], icon: '▣', badge: 'Best for Modern',
         previewImage: '/templates/highcontrast.png',
-        stylePoints: ['Dark header bar', 'Indigo accent highlights', 'Tabular number styling', 'Card-style sections'],
+        stylePoints: ['Dark header bar', 'Espresso accent highlights', 'Tabular number styling', 'Card-style sections'],
     },
 ];
 
@@ -314,7 +315,7 @@ export default function CreatePage() {
                     designer_email: profile?.email || '',
                     designer_phone: profile?.phone || '',
                     logo_url: profile?.logo_url || '',
-                    accent_color: profile?.default_accent_color || '#4263eb',
+                    accent_color: profile?.default_accent_color || '#3E2F2B',
                     notes: notes.trim(),
                     payment_terms: paymentTerms.trim(),
                     template,
@@ -415,16 +416,16 @@ export default function CreatePage() {
             className="w-full flex items-center justify-between py-5 group"
         >
             <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15 group-hover:border-brand-500/30 transition-colors">
-                    <Icon size={16} className="text-brand-400" />
+                <div className="w-9 h-9 rounded-xl bg-[#F0EBE6] flex items-center justify-center border border-[#3E2F2B]/15 group-hover:border-[#3E2F2B]/30 transition-colors">
+                    <Icon size={16} className="text-[#3E2F2B]" />
                 </div>
-                <h2 className="text-base font-bold text-white tracking-tight">{title}</h2>
+                <h2 className="text-base font-bold text-[#1E1E1E] tracking-tight">{title}</h2>
             </div>
-            <div className="w-7 h-7 rounded-lg bg-[#12121a] flex items-center justify-center group-hover:bg-[#1a1a2e] transition-colors">
+            <div className="w-7 h-7 rounded-lg bg-[#F0EBE6] flex items-center justify-center group-hover:bg-[#F0EBE6] transition-colors">
                 {expandedSections[number] ? (
-                    <ChevronUp size={16} className="text-[#5a5a70]" />
+                    <ChevronUp size={16} className="text-[#78716C]" />
                 ) : (
-                    <ChevronDown size={16} className="text-[#5a5a70]" />
+                    <ChevronDown size={16} className="text-[#78716C]" />
                 )}
             </div>
         </button>
@@ -435,8 +436,8 @@ export default function CreatePage() {
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-8 animate-fade-in">
-                    <h1 className="text-2xl font-bold text-white tracking-tight">Create New Proposal</h1>
-                    <p className="text-[#5a5a70] text-sm mt-1.5">
+                    <h1 className="text-2xl font-extrabold text-[#1E1E1E] tracking-tight">Create New Proposal</h1>
+                    <p className="text-[#6F6A66] text-sm mt-1.5">
                         Fill in the details below to generate a professional proposal for your client.
                     </p>
                 </div>
@@ -450,51 +451,51 @@ export default function CreatePage() {
                                 <div className="md:col-span-2">
                                     <label className="input-label">Client Full Name *</label>
                                     <div className="relative">
-                                        <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                        <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                         <input
                                             type="text"
                                             value={clientName}
                                             onChange={(e) => setClientName(e.target.value)}
                                             placeholder="e.g. Rahul Sharma"
-                                            className={`input-field pl-10 ${errors.clientName ? 'border-red-500' : ''}`}
+                                            className={`input-field pl-10 ${errors.clientName ? 'border-[#B85C5C]' : ''}`}
                                         />
                                     </div>
                                     {errors.clientName && (
-                                        <p className="text-red-400 text-xs mt-1">{errors.clientName}</p>
+                                        <p className="text-[#B85C5C] text-xs mt-1">{errors.clientName}</p>
                                     )}
                                 </div>
                                 <div>
                                     <label className="input-label">Email</label>
                                     <div className="relative">
-                                        <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                        <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                         <input
                                             type="email"
                                             value={clientEmail}
                                             onChange={(e) => setClientEmail(e.target.value)}
                                             placeholder="client@email.com"
-                                            className={`input-field pl-10 ${errors.clientEmail ? 'border-red-500' : ''}`}
+                                            className={`input-field pl-10 ${errors.clientEmail ? 'border-[#B85C5C]' : ''}`}
                                         />
                                     </div>
-                                    {errors.clientEmail && <p className="text-red-400 text-xs mt-1">{errors.clientEmail}</p>}
+                                    {errors.clientEmail && <p className="text-[#B85C5C] text-xs mt-1">{errors.clientEmail}</p>}
                                 </div>
                                 <div>
                                     <label className="input-label">Phone</label>
                                     <div className="relative">
-                                        <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                        <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                         <input
                                             type="tel"
                                             value={clientPhone}
                                             onChange={(e) => setClientPhone(e.target.value)}
                                             placeholder="+91 98765 43210"
-                                            className={`input-field pl-10 ${errors.clientPhone ? 'border-red-500' : ''}`}
+                                            className={`input-field pl-10 ${errors.clientPhone ? 'border-[#B85C5C]' : ''}`}
                                         />
                                     </div>
-                                    {errors.clientPhone && <p className="text-red-400 text-xs mt-1">{errors.clientPhone}</p>}
+                                    {errors.clientPhone && <p className="text-[#B85C5C] text-xs mt-1">{errors.clientPhone}</p>}
                                 </div>
                                 <div className="md:col-span-2">
                                     <label className="input-label">Project Address</label>
                                     <div className="relative">
-                                        <MapPin size={16} className="absolute left-3 top-3 text-[#5a5a70]" />
+                                        <MapPin size={16} className="absolute left-3 top-3 text-[#78716C]" />
                                         <textarea
                                             value={projectAddress}
                                             onChange={(e) => setProjectAddress(e.target.value)}
@@ -516,16 +517,16 @@ export default function CreatePage() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="input-label">Project Type *</label>
-                                        <select
+                                        <CustomSelect
                                             value={projectType}
-                                            onChange={(e) => setProjectType(e.target.value)}
-                                            className={`input-field ${errors.projectType ? 'border-red-500' : ''}`}
-                                        >
-                                            <option value="Residential">Residential</option>
-                                            <option value="Commercial">Commercial</option>
-                                            <option value="Office">Office</option>
-                                            <option value="Retail">Retail</option>
-                                        </select>
+                                            onChange={setProjectType}
+                                            options={[
+                                                { value: 'Residential', label: 'Residential' },
+                                                { value: 'Commercial', label: 'Commercial' },
+                                                { value: 'Office', label: 'Office' },
+                                                { value: 'Retail', label: 'Retail' },
+                                            ]}
+                                        />
                                     </div>
                                     <div>
                                         <label className="input-label">Project Size (sq.ft)</label>
@@ -549,7 +550,7 @@ export default function CreatePage() {
                             <div className="pb-6 space-y-4 animate-fade-in">
                                 <div className="flex items-center justify-between">
                                     <label className="input-label mb-0">Rooms</label>
-                                    <button onClick={addRoom} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1 transition-colors">
+                                    <button onClick={addRoom} className="text-[#3E2F2B] text-sm hover:text-[#2F2421] flex items-center gap-1 transition-colors">
                                         <Plus size={14} /> Add Room
                                     </button>
                                 </div>
@@ -573,7 +574,7 @@ export default function CreatePage() {
                                             {rooms.length > 1 && (
                                                 <button
                                                     onClick={() => removeRoom(i)}
-                                                    className="text-[#5a5a70] hover:text-red-400 p-2 transition-colors"
+                                                    className="text-[#78716C] hover:text-[#B85C5C] p-2 transition-colors"
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
@@ -594,7 +595,7 @@ export default function CreatePage() {
                                                     setRooms([...rooms, { name: roomName, square_footage: '' }]);
                                                 }
                                             }}
-                                            className="text-xs px-2.5 py-1.5 rounded-lg bg-[#12121a] border border-[#2a2a40] text-[#8888a0] hover:text-brand-400 hover:border-brand-700/30 transition-colors"
+                                            className="text-xs px-2.5 py-1.5 rounded-lg bg-[#F0EBE6] border border-[#E8E3DD] text-[#6F6A66] hover:text-[#3E2F2B] hover:border-[#3E2F2B]/30 transition-colors"
                                         >
                                             + {roomName}
                                         </button>
@@ -609,7 +610,7 @@ export default function CreatePage() {
                         <SectionHeader number={4} icon={CheckSquare} title="Services Included" />
                         {expandedSections[4] && (
                             <div className="pb-6 space-y-4 animate-fade-in">
-                                <p className="text-[#5a5a70] text-xs">
+                                <p className="text-[#78716C] text-xs">
                                     Select the services included in this project. This tells the client what they are paying for.
                                 </p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -617,14 +618,14 @@ export default function CreatePage() {
                                         <button
                                             key={service}
                                             onClick={() => toggleService(service)}
-                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left text-sm transition-all duration-200 ${servicesIncluded.includes(service)
-                                                    ? 'border-brand-500/50 bg-brand-700/10 text-brand-300'
-                                                    : 'border-[#2a2a40] bg-[#12121a] text-[#8888a0] hover:border-[#3a3a55] hover:text-white'
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left text-sm transition-colors duration-200 ${servicesIncluded.includes(service)
+                                                    ? 'border-[#3E2F2B]/50 bg-[#3E2F2B]/10 text-[#2F2421]'
+                                                    : 'border-[#E8E3DD] bg-[#F0EBE6] text-[#6F6A66] hover:border-[#78716C] hover:text-[#1E1E1E]'
                                                 }`}
                                         >
                                             <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${servicesIncluded.includes(service)
-                                                    ? 'border-brand-500 bg-brand-500'
-                                                    : 'border-[#3a3a55]'
+                                                    ? 'border-[#3E2F2B] bg-[#3E2F2B]'
+                                                    : 'border-[#78716C]'
                                                 }`}>
                                                 {servicesIncluded.includes(service) && (
                                                     <svg viewBox="0 0 12 12" className="w-3 h-3 text-white"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -638,9 +639,9 @@ export default function CreatePage() {
                                         <button
                                             key={service}
                                             onClick={() => toggleService(service)}
-                                            className="flex items-center gap-3 px-4 py-3 rounded-xl border border-brand-500/50 bg-brand-700/10 text-brand-300 text-left text-sm transition-all duration-200"
+                                            className="flex items-center gap-3 px-4 py-3 rounded-xl border border-[#3E2F2B]/50 bg-[#3E2F2B]/10 text-[#2F2421] text-left text-sm transition-colors duration-200"
                                         >
-                                            <div className="w-5 h-5 rounded-md border-2 border-brand-500 bg-brand-500 flex items-center justify-center flex-shrink-0">
+                                            <div className="w-5 h-5 rounded-md border-2 border-[#3E2F2B] bg-[#3E2F2B] flex items-center justify-center flex-shrink-0">
                                                 <svg viewBox="0 0 12 12" className="w-3 h-3 text-white"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
                                             </div>
                                             {service}
@@ -672,16 +673,16 @@ export default function CreatePage() {
                             <div className="pb-6 space-y-4 animate-fade-in">
                                 <div className="flex items-center justify-between">
                                     <label className="input-label mb-0">Line Items *</label>
-                                    <button onClick={addLineItem} className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1 transition-colors">
+                                    <button onClick={addLineItem} className="text-[#3E2F2B] text-sm hover:text-[#2F2421] flex items-center gap-1 transition-colors">
                                         <Plus size={14} /> Add Item
                                     </button>
                                 </div>
                                 {errors.lineItems && (
-                                    <p className="text-red-400 text-xs">{errors.lineItems}</p>
+                                    <p className="text-[#B85C5C] text-xs">{errors.lineItems}</p>
                                 )}
 
                                 {/* Table header */}
-                                <div className="hidden md:grid grid-cols-[1fr_100px_120px_120px_40px] gap-2 text-xs font-semibold text-[#5a5a70] uppercase tracking-wider px-1">
+                                <div className="hidden md:grid grid-cols-[1fr_100px_120px_120px_40px] gap-2 text-xs font-semibold text-[#78716C] uppercase tracking-wider px-1">
                                     <span>Item</span>
                                     <span>Qty</span>
                                     <span>Unit Price</span>
@@ -708,7 +709,7 @@ export default function CreatePage() {
                                                 className="input-field"
                                             />
                                             <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70] text-sm">₹</span>
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] text-sm">₹</span>
                                                 <input
                                                     type="number"
                                                     value={item.unit_price}
@@ -717,13 +718,13 @@ export default function CreatePage() {
                                                     className="input-field pl-7"
                                                 />
                                             </div>
-                                            <div className="flex items-center text-[#8888a0] font-medium text-sm px-2">
+                                            <div className="flex items-center text-[#6F6A66] font-medium text-sm px-2">
                                                 {formatCurrency(getSubtotal(item))}
                                             </div>
                                             {lineItems.length > 1 && (
                                                 <button
                                                     onClick={() => removeLineItem(i)}
-                                                    className="text-[#5a5a70] hover:text-red-400 p-2 transition-colors justify-self-center"
+                                                    className="text-[#78716C] hover:text-[#B85C5C] p-2 transition-colors justify-self-center"
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
@@ -745,7 +746,7 @@ export default function CreatePage() {
                                                     setLineItems([...lineItems, { item_name: itemName, quantity: '1', unit_price: '' }]);
                                                 }
                                             }}
-                                            className="text-xs px-2.5 py-1.5 rounded-lg bg-[#12121a] border border-[#2a2a40] text-[#8888a0] hover:text-brand-400 hover:border-brand-700/30 transition-colors"
+                                            className="text-xs px-2.5 py-1.5 rounded-lg bg-[#F0EBE6] border border-[#E8E3DD] text-[#6F6A66] hover:text-[#3E2F2B] hover:border-[#3E2F2B]/30 transition-colors"
                                         >
                                             + {itemName}
                                         </button>
@@ -753,13 +754,13 @@ export default function CreatePage() {
                                 </div>
 
                                 {/* Totals */}
-                                <div className="border-t border-[#2a2a40] pt-4 space-y-3">
+                                <div className="border-t border-[#E8E3DD] pt-4 space-y-3">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[#8888a0] text-sm">Subtotal</span>
-                                        <span className="text-white font-medium">{formatCurrency(totalBeforeTax)}</span>
+                                        <span className="text-[#6F6A66] text-sm">Subtotal</span>
+                                        <span className="text-[#1E1E1E] font-medium">{formatCurrency(totalBeforeTax)}</span>
                                     </div>
                                     <div className="flex items-center justify-between gap-4">
-                                        <span className="text-[#8888a0] text-sm flex items-center gap-2">
+                                        <span className="text-[#6F6A66] text-sm flex items-center gap-2">
                                             Tax
                                             <input
                                                 type="number"
@@ -771,14 +772,14 @@ export default function CreatePage() {
                                             />
                                             %
                                         </span>
-                                        <span className="text-white font-medium">{formatCurrency(taxAmount)}</span>
+                                        <span className="text-[#1E1E1E] font-medium">{formatCurrency(taxAmount)}</span>
                                     </div>
-                                    <div className="flex items-center justify-between pt-3 border-t border-[#2a2a40]">
-                                        <span className="text-white font-semibold flex items-center gap-2">
-                                            <Calculator size={16} className="text-brand-400" />
+                                    <div className="flex items-center justify-between pt-3 border-t border-[#E8E3DD]">
+                                        <span className="text-[#1E1E1E] font-semibold flex items-center gap-2">
+                                            <Calculator size={16} className="text-[#3E2F2B]" />
                                             Grand Total
                                         </span>
-                                        <span className="text-xl font-bold text-brand-400">{formatCurrency(grandTotal)}</span>
+                                        <span className="text-xl font-bold text-[#3E2F2B]">{formatCurrency(grandTotal)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -794,7 +795,7 @@ export default function CreatePage() {
                                     <div>
                                         <label className="input-label">Estimated Start Date</label>
                                         <div className="relative">
-                                            <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                            <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                             <input
                                                 type="date"
                                                 value={estimatedStartDate}
@@ -813,7 +814,7 @@ export default function CreatePage() {
                                         rows={4}
                                         className="input-field"
                                     />
-                                    <p className="text-[#5a5a70] text-xs mt-1">Break down the project phases and their estimated durations.</p>
+                                    <p className="text-[#78716C] text-xs mt-1">Break down the project phases and their estimated durations.</p>
                                 </div>
                             </div>
                         )}
@@ -846,7 +847,7 @@ export default function CreatePage() {
                                         min="1"
                                         className="input-field w-32"
                                     />
-                                    <p className="text-[#5a5a70] text-xs mt-1">Number of days this quotation remains valid.</p>
+                                    <p className="text-[#78716C] text-xs mt-1">Number of days this quotation remains valid.</p>
                                 </div>
                                 <div>
                                     <label className="input-label">Additional Notes / Conditions</label>
@@ -873,15 +874,15 @@ export default function CreatePage() {
                                             key={opt.key}
                                             onClick={() => setTemplate(opt.key)}
                                             className={`
-                        relative p-4 rounded-xl border-2 text-left transition-all duration-200
+                        relative p-4 rounded-xl border-2 text-left transition-colors duration-200
                         ${template === opt.key
-                                                    ? 'border-brand-500 bg-brand-700/10'
-                                                    : 'border-[#2a2a40] bg-[#12121a] hover:border-[#3a3a55]'
+                                                    ? 'border-[#3E2F2B] bg-[#3E2F2B]/10'
+                                                    : 'border-[#E8E3DD] bg-[#F0EBE6] hover:border-[#78716C]'
                                                 }
                       `}
                                         >
                                             {template === opt.key && (
-                                                <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-brand-500 flex items-center justify-center">
+                                                <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#3E2F2B] flex items-center justify-center">
                                                     <Sparkles size={12} className="text-white" />
                                                 </div>
                                             )}
@@ -889,13 +890,13 @@ export default function CreatePage() {
                                                 {opt.colors.map((c, i) => (
                                                     <div
                                                         key={i}
-                                                        className="w-6 h-6 rounded-md border border-[#2a2a40]"
+                                                        className="w-6 h-6 rounded-md border border-[#E8E3DD]"
                                                         style={{ backgroundColor: c }}
                                                     />
                                                 ))}
                                             </div>
-                                            <h3 className="text-white font-semibold text-sm">{opt.name}</h3>
-                                            <p className="text-[#5a5a70] text-xs mt-1 mb-3">{opt.desc}</p>
+                                            <h3 className="text-[#1E1E1E] font-semibold text-sm">{opt.name}</h3>
+                                            <p className="text-[#78716C] text-xs mt-1 mb-3">{opt.desc}</p>
                                             <button
                                                 type="button"
                                                 className="template-card-view-btn"

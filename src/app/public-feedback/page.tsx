@@ -67,12 +67,12 @@ export default function PublicFeedbackPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0a0f] flex flex-col">
+        <div className="min-h-screen bg-[#F6F3EF] flex flex-col">
             <Toaster position="top-center" />
 
             {/* Minimal nav */}
             <nav className="px-4 sm:px-6 lg:px-8 py-4">
-                <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#8888a0] hover:text-white transition-colors">
+                <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#6F6A66] hover:text-[#1E1E1E] transition-colors">
                     <ArrowLeft size={16} />
                     Back to Kalvora
                 </Link>
@@ -84,12 +84,12 @@ export default function PublicFeedbackPage() {
 
                     {submitted ? (
                         /* ══════ SUCCESS ══════ */
-                        <div className="glass-card p-8 text-center">
-                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-500/15 border border-green-500/30 mb-6">
-                                <CheckCircle2 size={40} className="text-green-400" />
+                        <div className="bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl p-8 text-center">
+                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#EDF5F1] border border-[#D0E5DA] mb-6">
+                                <CheckCircle2 size={40} className="text-[#6A9C89]" />
                             </div>
-                            <h2 className="text-xl font-bold text-white mb-2">Thank You!</h2>
-                            <p className="text-[#8888a0] text-sm mb-6 max-w-sm mx-auto">
+                            <h2 className="text-xl font-bold text-[#1E1E1E] mb-2">Thank You!</h2>
+                            <p className="text-[#6F6A66] text-sm mb-6 max-w-sm mx-auto">
                                 Your feedback is incredibly valuable. Every response is read personally by our team.
                             </p>
                             <Link href="/" className="btn-primary text-sm px-6 py-2.5 rounded-xl">
@@ -101,37 +101,37 @@ export default function PublicFeedbackPage() {
                         <>
                             {/* Header */}
                             <div className="text-center mb-8">
-                                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-700/15 border border-brand-700/25 mb-5">
-                                    <Sparkles size={24} className="text-brand-400" />
+                                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#3E2F2B]/15 border border-[#3E2F2B]/25 mb-5">
+                                    <Sparkles size={24} className="text-[#3E2F2B]" />
                                 </div>
-                                <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-[#1E1E1E] mb-2">
                                     Help Us Build Better
                                 </h1>
-                                <p className="text-[#8888a0] text-sm max-w-md mx-auto">
+                                <p className="text-[#6F6A66] text-sm max-w-md mx-auto">
                                     What almost stopped you from trying Kalvora today? Your honest answer helps us improve.
                                 </p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-5">
                                 {/* Quick select blockers */}
-                                <div className="glass-card p-6">
-                                    <h3 className="text-sm font-semibold text-white mb-1 flex items-center gap-2">
-                                        <MessageSquare size={14} className="text-brand-400" />
+                                <div className="bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl p-6">
+                                    <h3 className="text-sm font-semibold text-[#1E1E1E] mb-1 flex items-center gap-2">
+                                        <MessageSquare size={14} className="text-[#3E2F2B]" />
                                         What held you back? *
                                     </h3>
-                                    <p className="text-[#5a5a70] text-xs mb-4">Select all that apply</p>
+                                    <p className="text-[#78716C] text-xs mb-4">Select all that apply</p>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         {BLOCKER_OPTIONS.map(opt => (
                                             <button
                                                 type="button"
                                                 key={opt}
                                                 onClick={() => toggleBlocker(opt)}
-                                                className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-sm transition-all duration-200 ${blockers.includes(opt)
-                                                    ? 'border-brand-500/50 bg-brand-700/10 text-brand-300'
-                                                    : 'border-[#2a2a40] bg-[#12121a] text-[#8888a0] hover:border-[#3a3a55] hover:text-white'
+                                                className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-left text-sm transition-colors duration-200 ${blockers.includes(opt)
+                                                    ? 'border-[#3E2F2B]/50 bg-[#3E2F2B]/10 text-[#2F2421]'
+                                                    : 'border-[#E8E3DD] bg-[#F0EBE6] text-[#6F6A66] hover:border-[#78716C] hover:text-[#1E1E1E]'
                                                     }`}
                                             >
-                                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${blockers.includes(opt) ? 'border-brand-500 bg-brand-500' : 'border-[#3a3a55]'}`}>
+                                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${blockers.includes(opt) ? 'border-[#3E2F2B] bg-[#3E2F2B]' : 'border-[#78716C]'}`}>
                                                     {blockers.includes(opt) && (
                                                         <svg viewBox="0 0 12 12" className="w-2.5 h-2.5 text-white"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
                                                     )}
@@ -143,9 +143,9 @@ export default function PublicFeedbackPage() {
                                 </div>
 
                                 {/* Open message */}
-                                <div className="glass-card p-6">
-                                    <h3 className="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
-                                        <MessageSquare size={14} className="text-[#5a5a70]" />
+                                <div className="bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl p-6">
+                                    <h3 className="text-sm font-semibold text-[#1E1E1E] mb-1.5 flex items-center gap-2">
+                                        <MessageSquare size={14} className="text-[#78716C]" />
                                         Anything else you want to tell us?
                                     </h3>
                                     <textarea
@@ -158,12 +158,12 @@ export default function PublicFeedbackPage() {
                                 </div>
 
                                 {/* Optional identity */}
-                                <div className="glass-card p-6">
+                                <div className="bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl p-6">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="input-label">Name <span className="text-[#5a5a70]">(optional)</span></label>
+                                            <label className="input-label">Name <span className="text-[#78716C]">(optional)</span></label>
                                             <div className="relative">
-                                                <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                                <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                                 <input
                                                     type="text"
                                                     value={name}
@@ -174,9 +174,9 @@ export default function PublicFeedbackPage() {
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="input-label">Email <span className="text-[#5a5a70]">(optional)</span></label>
+                                            <label className="input-label">Email <span className="text-[#78716C]">(optional)</span></label>
                                             <div className="relative">
-                                                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                                 <input
                                                     type="email"
                                                     value={email}
@@ -203,7 +203,7 @@ export default function PublicFeedbackPage() {
                                     {loading ? 'Submitting...' : 'Submit Feedback'}
                                 </button>
 
-                                <p className="text-center text-[#5a5a70] text-xs">
+                                <p className="text-center text-[#78716C] text-xs">
                                     Your input directly shapes our roadmap
                                 </p>
                             </form>

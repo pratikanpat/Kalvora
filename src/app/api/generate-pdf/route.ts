@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
             designer_email: project.designer_email || '',
             designer_phone: project.designer_phone || '',
             logo_url: project.logo_url || '',
-            accent_color: project.accent_color || '#4263eb',
+            accent_color: project.accent_color || '#3E2F2B',
             notes: project.notes || '',
             payment_terms: project.payment_terms || '',
             tax_rate: project.tax_rate || 0,

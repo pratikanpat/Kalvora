@@ -219,7 +219,7 @@ function buildBody(data: TemplateData, cfg: {
 // Clean, white, Inter font. Inspired by Stripe/Notion/Apple.
 // ============================================================
 export function minimalTemplate(data: TemplateData): string {
-  const accent = data.accent_color || '#2563EB';
+  const accent = data.accent_color || '#3E2F2B';
 
   const body = buildBody(data, {
     accent,
@@ -353,7 +353,7 @@ export function minimalTemplate(data: TemplateData): string {
   .footer-designer { color: #64748b; font-weight: 500; }
   .footer-sep { color: #cbd5e1; font-weight: 300; }
   .footer-brand { color: #475569; font-weight: 600; letter-spacing: 0.5px; font-size: 10px; }
-  .footer-brand strong { color: #2563EB; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
+  .footer-brand strong { color: #3E2F2B; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
   .footer-tagline { color: #94a3b8; font-size: 8.5px; font-weight: 400; }
 </style>
 </head>
@@ -386,7 +386,7 @@ export function luxuryTemplate(data: TemplateData): string {
     evenRowBg: '#F5F0E8',
     totalHighlightBg: dark,
     totalHighlightColor: gold,
-    totalHighlightLabelColor: '#a8a29e',
+    totalHighlightLabelColor: '#78716C',
     sigLineBorder: `${gold}50`,
     sigLabelColor: gold,
     footerText: `${data.designer_name || 'Design Studio'} · Generated with Kalvora`,
@@ -483,13 +483,13 @@ export function luxuryTemplate(data: TemplateData): string {
   .totals-wrap { display: flex; justify-content: flex-end; margin: 2px 0 16px; }
   .totals { width: 250px; }
   .total-row { display: flex; justify-content: space-between; padding: 6px 14px; font-size: 10.5px; }
-  .total-label { color: #a8a29e; font-weight: 500; }
+  .total-label { color: #78716C; font-weight: 500; }
   .total-value { font-weight: 600; color: ${dark}; }
   .total-row.highlight {
     background: ${dark}; color: ${gold}; font-weight: 700;
     font-size: 13px; margin-top: 4px; padding: 9px 14px;
   }
-  .total-row.highlight .total-label { color: #a8a29e; }
+  .total-row.highlight .total-label { color: #78716C; }
   .total-row.highlight .total-value {
     color: ${gold}; font-family: 'Playfair Display', Georgia, serif;
     font-size: 14px;
@@ -517,7 +517,7 @@ export function luxuryTemplate(data: TemplateData): string {
   /* Footer */
   .footer {
     position: absolute; bottom: 14px; left: 44px; right: 44px;
-    text-align: center; font-size: 10px; color: #a8a29e;
+    text-align: center; font-size: 10px; color: #78716C;
     border-top: 1.5px solid #E8DCC8; padding-top: 12px; margin-top: 20px;
     display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
   }
@@ -525,7 +525,7 @@ export function luxuryTemplate(data: TemplateData): string {
   .footer-sep { color: #d6d3d1; font-weight: 300; }
   .footer-brand { color: #57534e; font-weight: 600; letter-spacing: 0.5px; font-size: 10px; }
   .footer-brand strong { color: #B8963E; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
-  .footer-tagline { color: #a8a29e; font-size: 8.5px; font-weight: 400; }
+  .footer-tagline { color: #78716C; font-size: 8.5px; font-weight: 400; }
 </style>
 </head>
 <body>
@@ -1152,10 +1152,10 @@ ${body}
 // ============================================================
 // TEMPLATE 6 — HIGH CONTRAST MODERN
 // White + strong contrast blocks, black section headers,
-// indigo accent, card-style sections. SaaS/Stripe inspired.
+// espresso accent, card-style sections. Modern editorial inspired.
 // ============================================================
 export function highContrastTemplate(data: TemplateData): string {
-  const accent = '#6366f1';
+  const accent = '#3E2F2B';
   const dark = '#0f172a';
   const cardBg = '#f8fafc';
   const cardBorder = '#e2e8f0';
@@ -1301,7 +1301,7 @@ export function highContrastTemplate(data: TemplateData): string {
   .footer-designer { color: #64748b; font-weight: 500; }
   .footer-sep { color: #cbd5e1; font-weight: 300; }
   .footer-brand { color: #475569; font-weight: 600; letter-spacing: 0.5px; font-size: 10px; }
-  .footer-brand strong { color: #2563EB; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
+  .footer-brand strong { color: #3E2F2B; font-weight: 800; letter-spacing: 1.5px; font-size: 10.5px; }
   .footer-tagline { color: #94a3b8; font-size: 8.5px; font-weight: 400; }
 </style>
 </head>

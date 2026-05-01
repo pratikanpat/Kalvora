@@ -145,7 +145,7 @@ export async function POST(request: Request) {
                                 </p>
                                 <div style="text-align:center;">
                                     <a href="${APP_URL}/proposals/${projectId}" 
-                                       style="display:inline-block;background:#4f46e5;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
+                                       style="display:inline-block;background:#3E2F2B;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
                                        View in Dashboard →
                                     </a>
                                 </div>
@@ -189,7 +189,7 @@ export async function POST(request: Request) {
                                 </p>
                                 <div style="text-align:center;">
                                     <a href="${invoiceLink}" 
-                                       style="display:inline-block;background:#059669;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
+                                       style="display:inline-block;background:#3E2F2B;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
                                        View Invoice →
                                     </a>
                                 </div>
@@ -245,12 +245,12 @@ export async function POST(request: Request) {
                                     <strong>${clientName}</strong> has feedback on your proposal for <strong>${projectName}</strong>.
                                 </p>
                                 ${comment ? `
-                                <div style="background:#fff;border:1px solid #e5e7eb;border-left:4px solid #f59e0b;padding:16px 20px;border-radius:8px;margin:0 0 24px;">
+                                <div style="background:#fff;border:1px solid #e5e7eb;border-left:4px solid #C47A5A;padding:16px 20px;border-radius:8px;margin:0 0 24px;">
                                     <p style="color:#333;font-size:14px;margin:0;white-space:pre-wrap;">${comment}</p>
                                 </div>` : ''}
                                 <div style="text-align:center;">
                                     <a href="${APP_URL}/proposals/${projectId}" 
-                                       style="display:inline-block;background:#4f46e5;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
+                                       style="display:inline-block;background:#3E2F2B;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
                                        View in Dashboard →
                                     </a>
                                 </div>

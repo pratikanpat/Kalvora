@@ -100,10 +100,10 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0a0f] page-bg flex items-center justify-center px-4">
+        <div className="min-h-screen bg-[#F6F3EF] flex items-center justify-center px-4">
             <div className="w-full max-w-md animate-fade-in">
                 {/* Home link */}
-                <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#5a5a70] hover:text-brand-400 transition-colors mb-8">
+                <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#78716C] hover:text-[#3E2F2B] transition-colors mb-8">
                     <ArrowLeft size={16} />
                     Back to Home
                 </Link>
@@ -111,16 +111,18 @@ export default function SignupPage() {
                 {/* Logo */}
                 <div className="text-center mb-12">
                     <h1 className="brand-wordmark text-4xl mb-3">Kalvora</h1>
-                    <p className="text-[#5a5a70] text-sm">Create your account</p>
+                    <p className="text-[#6F6A66] text-sm">Create your account</p>
                 </div>
 
                 {/* Form */}
-                <div className="glass-card p-8">
+                <div className="bg-white border border-[#E8E3DD] rounded-xl overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(30,30,30,0.06)' }}>
+                    <div className="h-1 bg-gradient-to-r from-[#C47A5A] to-[#3E2F2B]" />
+                    <div className="p-8">
                     {/* Google Button */}
                     <button
                         onClick={handleGoogleSignup}
                         disabled={googleLoading}
-                        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-[#2a2a40] bg-[#12121a] hover:bg-[#1a1a2e] text-white text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+                        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-[10px] border border-[#E8E3DD] bg-white hover:bg-[#F0EBE6] text-[#1E1E1E] text-sm font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed mb-6"
                     >
                         {googleLoading ? (
                             <Loader2 size={18} className="animate-spin" />
@@ -138,16 +140,16 @@ export default function SignupPage() {
                     {/* Divider */}
                     <div className="relative mb-6">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-[#2a2a40]"></div>
+                            <div className="w-full border-t border-[#E8E3DD]"></div>
                         </div>
                         <div className="relative flex justify-center text-xs">
-                            <span className="px-3 bg-[#12121a] text-[#5a5a70]">or sign up with email</span>
+                            <span className="px-3 bg-white text-[#6F6A66]">or sign up with email</span>
                         </div>
                     </div>
 
                     <form onSubmit={handleSignup} className="space-y-5">
                         {error && (
-                            <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-sm animate-fade-in">
+                            <div className="bg-[#FDF2F2] border border-[#F5D0D0] rounded-[10px] px-4 py-3 text-[#B85C5C] text-sm animate-fade-in">
                                 {error}
                             </div>
                         )}
@@ -155,7 +157,7 @@ export default function SignupPage() {
                         <div>
                             <label className="input-label">Email Address</label>
                             <div className="relative">
-                                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                 <input
                                     type="email"
                                     value={email}
@@ -171,7 +173,7 @@ export default function SignupPage() {
                         <div>
                             <label className="input-label">Password</label>
                             <div className="relative">
-                                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
@@ -183,7 +185,7 @@ export default function SignupPage() {
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70] hover:text-[#8888a0] transition-colors"
+                                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#78716C] hover:text-[#6F6A66] transition-colors"
                                 >
                                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
@@ -193,7 +195,7 @@ export default function SignupPage() {
                         <div>
                             <label className="input-label">Confirm Password</label>
                             <div className="relative">
-                                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     value={confirmPassword}
@@ -218,12 +220,13 @@ export default function SignupPage() {
                             {loading ? 'Creating account...' : 'Create Account'}
                         </button>
                     </form>
+                    </div>
                 </div>
 
                 {/* Footer */}
-                <p className="text-center text-[#5a5a70] text-sm mt-6">
+                <p className="text-center text-[#78716C] text-sm mt-6">
                     Already have an account?{' '}
-                    <Link href="/login" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
+                    <Link href="/login" className="text-[#3E2F2B] hover:text-[#2F2421] font-medium transition-colors">
                         Sign in
                     </Link>
                 </p>

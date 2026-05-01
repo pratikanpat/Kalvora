@@ -40,10 +40,10 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0a0f] page-bg flex items-center justify-center px-4">
+        <div className="min-h-screen bg-[#F6F3EF] flex items-center justify-center px-4">
             <div className="w-full max-w-md animate-fade-in">
                 {/* Back link */}
-                <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#5a5a70] hover:text-brand-400 transition-colors mb-8">
+                <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#78716C] hover:text-[#3E2F2B] transition-colors mb-8">
                     <ArrowLeft size={16} />
                     Back to Sign In
                 </Link>
@@ -51,29 +51,29 @@ export default function ForgotPasswordPage() {
                 {/* Logo */}
                 <div className="text-center mb-12">
                     <h1 className="brand-wordmark text-4xl mb-3">Kalvora</h1>
-                    <h2 className="text-lg font-semibold text-white mb-1">Reset Password</h2>
-                    <p className="text-[#5a5a70] text-sm">
+                    <h2 className="text-lg font-semibold text-[#1E1E1E] mb-1">Reset Password</h2>
+                    <p className="text-[#78716C] text-sm">
                         {sent ? 'Check your email for the reset link' : 'Enter your email to receive a reset link'}
                     </p>
                 </div>
 
-                <div className="glass-card p-8">
+                <div className="bg-[#F6F3EF] border border-[#E8E3DD] rounded-xl p-8">
                     {sent ? (
                         /* Success State */
                         <div className="text-center py-4 animate-fade-in">
-                            <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto mb-5">
-                                <CheckCircle2 size={32} className="text-emerald-400" />
+                            <div className="w-16 h-16 rounded-full bg-[#EDF5F1] border border-[#D0E5DA] flex items-center justify-center mx-auto mb-5">
+                                <CheckCircle2 size={32} className="text-[#6A9C89]" />
                             </div>
-                            <h3 className="text-white font-semibold text-lg mb-2">Email Sent!</h3>
-                            <p className="text-[#8888a0] text-sm mb-1">
+                            <h3 className="text-[#1E1E1E] font-semibold text-lg mb-2">Email Sent!</h3>
+                            <p className="text-[#6F6A66] text-sm mb-1">
                                 We&apos;ve sent a password reset link to:
                             </p>
-                            <p className="text-brand-400 font-medium text-sm mb-6">{email}</p>
-                            <p className="text-[#5a5a70] text-xs leading-relaxed">
+                            <p className="text-[#3E2F2B] font-medium text-sm mb-6">{email}</p>
+                            <p className="text-[#78716C] text-xs leading-relaxed">
                                 Didn&apos;t receive it? Check your spam folder, or{' '}
                                 <button
                                     onClick={() => { setSent(false); setEmail(''); }}
-                                    className="text-brand-400 hover:text-brand-300 font-medium transition-colors"
+                                    className="text-[#3E2F2B] hover:text-[#2F2421] font-medium transition-colors"
                                 >
                                     try again
                                 </button>.
@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
                         /* Email Form */
                         <form onSubmit={handleSubmit} className="space-y-5">
                             {error && (
-                                <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-sm animate-fade-in">
+                                <div className="bg-[#FDF2F2] border border-[#F5D0D0] rounded-xl px-4 py-3 text-[#B85C5C] text-sm animate-fade-in">
                                     {error}
                                 </div>
                             )}
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
                             <div>
                                 <label className="input-label">Email Address</label>
                                 <div className="relative">
-                                    <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                     <input
                                         type="email"
                                         value={email}
@@ -121,9 +121,9 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 {/* Footer */}
-                <p className="text-center text-[#5a5a70] text-sm mt-6">
+                <p className="text-center text-[#78716C] text-sm mt-6">
                     Remember your password?{' '}
-                    <Link href="/login" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
+                    <Link href="/login" className="text-[#3E2F2B] hover:text-[#2F2421] font-medium transition-colors">
                         Sign in
                     </Link>
                 </p>

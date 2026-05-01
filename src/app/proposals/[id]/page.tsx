@@ -16,6 +16,7 @@ import Link from 'next/link';
 import ProjectPipeline from '@/components/ProjectPipeline';
 import PaymentMilestones from '@/components/PaymentMilestones';
 import { getOrCreateShortCode, buildShortUrl } from '@/lib/shortcode';
+import CustomSelect from '@/components/CustomSelect';
 
 interface ProjectData {
     id: string;
@@ -224,7 +225,7 @@ export default function ProposalViewPage() {
         new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
     if (loading) return <DashboardLayout><LoadingSpinner text="Loading proposal..." /></DashboardLayout>;
-    if (!project) return <DashboardLayout><div className="text-center py-20 text-[#5a5a70]">Project not found</div></DashboardLayout>;
+    if (!project) return <DashboardLayout><div className="text-center py-20 text-[#78716C]">Project not found</div></DashboardLayout>;
 
     const subtotal = project.line_items.reduce((s, i) => s + i.quantity * i.unit_price, 0);
     const taxAmount = subtotal * (project.tax_rate / 100);
@@ -235,34 +236,37 @@ export default function ProposalViewPage() {
         <DashboardLayout>
             <div className="max-w-4xl mx-auto">
                 {/* Back button */}
-                <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#5a5a70] hover:text-white text-sm mb-6 transition-colors group">
+                <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#78716C] hover:text-[#1E1E1E] text-sm mb-6 transition-colors group">
                     <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
                     Back to Dashboard
                 </Link>
 
                 {/* Header Card */}
-                <div className="glass-card p-6 mb-6 animate-fade-in">
+                <div className="glass-card overflow-hidden mb-6 animate-fade-in">
+                    <div className="h-1 bg-gradient-to-r from-[#C47A5A] to-[#3E2F2B]" />
+                    <div className="p-6">
                     {/* Title Row + Status */}
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
                         <div>
-                            <h1 className="text-2xl font-bold text-white tracking-tight">{project.client_name}</h1>
-                            <p className="text-[#5a5a70] text-sm mt-1">
+                            <h1 className="text-3xl font-extrabold text-[#1E1E1E] tracking-tight">{project.client_name}</h1>
+                            <p className="text-[#6F6A66] text-sm mt-1">
                                 {project.project_type} · {project.project_address || 'No address'}
                             </p>
-                            <p className="text-[#3a3a50] text-xs mt-1">Created {formatDate(project.created_at)}</p>
+                            <p className="text-[#6F6A66] text-xs mt-1">Created {formatDate(project.created_at)}</p>
                         </div>
-                        <select
+                        <CustomSelect
                             value={project.status}
-                            onChange={(e) => updateStatus(e.target.value)}
+                            onChange={(val) => updateStatus(val)}
                             disabled={statusUpdating}
-                            className="input-field w-auto text-sm py-2 px-3 flex-shrink-0"
-                        >
-                            <option value="Draft">Draft</option>
-                            <option value="Sent">Sent</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Paid">Paid</option>
-                            <option value="Completed">Completed</option>
-                        </select>
+                            className="w-auto min-w-[140px] flex-shrink-0"
+                            options={[
+                                { value: 'Draft', label: 'Draft' },
+                                { value: 'Sent', label: 'Sent' },
+                                { value: 'Approved', label: 'Approved' },
+                                { value: 'Paid', label: 'Paid' },
+                                { value: 'Completed', label: 'Completed' },
+                            ]}
+                        />
                     </div>
 
                     {/* Pipeline Stepper */}
@@ -271,22 +275,22 @@ export default function ProposalViewPage() {
                     </div>
 
                     {/* Action Buttons - Two groups */}
-                    <div className="flex flex-col gap-3 pt-4 border-t border-[#2a2a40]">
+                    <div className="flex flex-col gap-3 pt-4 border-t border-[#E8E3DD]">
                         {/* Sharing Actions */}
                         <div>
-                            <p className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-2">Share</p>
+                            <p className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-2">Share</p>
                             <div className="flex flex-wrap gap-2">
                                 <button onClick={copyShareLink} className="btn-secondary text-sm py-2">
-                                    {copied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
+                                    {copied ? <Check size={15} className="text-[#6A9C89]" /> : <Copy size={15} />}
                                     {copied ? 'Copied!' : 'Copy Shareable Link'}
                                 </button>
-                                <button onClick={shareOnWhatsApp} className="btn-secondary text-sm py-2 !text-emerald-400 hover:!bg-emerald-500/10">
+                                <button onClick={shareOnWhatsApp} className="btn-secondary text-sm py-2 !text-[#6A9C89] hover:!bg-[#EDF5F1]">
                                     <Share2 size={15} /> Share on WhatsApp
                                 </button>
                                 <button
                                     onClick={emailToClient}
                                     disabled={sendingEmail}
-                                    className="btn-secondary text-sm py-2 !text-blue-400 hover:!bg-blue-500/10 disabled:opacity-50"
+                                    className="btn-secondary text-sm py-2 !text-[#C47A5A] hover:!bg-[#C47A5A]/10 disabled:opacity-50"
                                 >
                                     {sendingEmail ? <Loader2 size={15} className="animate-spin" /> : <Mail size={15} />}
                                     {sendingEmail ? 'Sending...' : 'Email to Client'}
@@ -295,7 +299,7 @@ export default function ProposalViewPage() {
                         </div>
                         {/* Project Actions */}
                         <div>
-                            <p className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-2">Manage</p>
+                            <p className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-2">Manage</p>
                             <div className="flex flex-wrap gap-2">
                                 <Link href={`/edit/${projectId}`} className="btn-secondary text-sm py-2">
                                     <Edit size={15} /> Edit Project
@@ -318,12 +322,12 @@ export default function ProposalViewPage() {
                         {/* Invoice Section — shown after approval */}
                         {['Approved', 'Paid', 'Completed'].includes(project.status) && (
                             <div>
-                                <p className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-2">Invoice</p>
+                                <p className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-2">Invoice</p>
                                 <div className="flex flex-wrap gap-2">
                                     <Link
                                         href={`/invoice/${projectId}`}
                                         target="_blank"
-                                        className="btn-secondary text-sm py-2 !text-emerald-400 hover:!bg-emerald-500/10"
+                                        className="btn-secondary text-sm py-2 !text-[#6A9C89] hover:!bg-[#EDF5F1]"
                                     >
                                         <FileText size={15} /> View Invoice
                                     </Link>
@@ -341,12 +345,13 @@ export default function ProposalViewPage() {
                                         }}
                                         className="btn-secondary text-sm py-2"
                                     >
-                                        {invoiceLinkCopied ? <Check size={15} className="text-emerald-400" /> : <ExternalLink size={15} />}
+                                        {invoiceLinkCopied ? <Check size={15} className="text-[#6A9C89]" /> : <ExternalLink size={15} />}
                                         {invoiceLinkCopied ? 'Copied!' : 'Copy Invoice Link'}
                                     </button>
                                 </div>
                             </div>
                         )}
+                    </div>
                     </div>
                 </div>
 
@@ -354,36 +359,36 @@ export default function ProposalViewPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     {/* Client Info */}
                     <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
-                        <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-5">Client Details</h3>
+                        <h3 className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-5">Client Details</h3>
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-brand-700/10 flex items-center justify-center">
-                                    <User size={14} className="text-brand-400" />
+                                <div className="w-8 h-8 rounded-lg bg-[#3E2F2B]/10 flex items-center justify-center">
+                                    <User size={14} className="text-[#3E2F2B]" />
                                 </div>
-                                <span className="text-white font-medium">{project.client_name}</span>
+                                <span className="text-[#1E1E1E] font-medium">{project.client_name}</span>
                             </div>
                             {project.client_email && (
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-[#12121a] flex items-center justify-center">
-                                        <Mail size={14} className="text-[#5a5a70]" />
+                                    <div className="w-8 h-8 rounded-lg bg-[#F0EBE6] flex items-center justify-center">
+                                        <Mail size={14} className="text-[#78716C]" />
                                     </div>
-                                    <span className="text-[#8888a0] text-sm">{project.client_email}</span>
+                                    <span className="text-[#6F6A66] text-sm">{project.client_email}</span>
                                 </div>
                             )}
                             {project.client_phone && (
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-[#12121a] flex items-center justify-center">
-                                        <Phone size={14} className="text-[#5a5a70]" />
+                                    <div className="w-8 h-8 rounded-lg bg-[#F0EBE6] flex items-center justify-center">
+                                        <Phone size={14} className="text-[#78716C]" />
                                     </div>
-                                    <span className="text-[#8888a0] text-sm">{project.client_phone}</span>
+                                    <span className="text-[#6F6A66] text-sm">{project.client_phone}</span>
                                 </div>
                             )}
                             {project.project_address && (
                                 <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-[#12121a] flex items-center justify-center flex-shrink-0">
-                                        <MapPin size={14} className="text-[#5a5a70]" />
+                                    <div className="w-8 h-8 rounded-lg bg-[#F0EBE6] flex items-center justify-center flex-shrink-0">
+                                        <MapPin size={14} className="text-[#78716C]" />
                                     </div>
-                                    <span className="text-[#8888a0] text-sm">{project.project_address}</span>
+                                    <span className="text-[#6F6A66] text-sm">{project.project_address}</span>
                                 </div>
                             )}
                         </div>
@@ -391,45 +396,45 @@ export default function ProposalViewPage() {
 
                     {/* Rooms */}
                     <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '150ms' }}>
-                        <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-5">Rooms</h3>
+                        <h3 className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-5">Rooms</h3>
                         {project.rooms.length > 0 ? (
                             <div className="space-y-2">
                                 {project.rooms.map((r, i) => (
-                                    <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-[#12121a]/50 border border-[#1a1a2e]">
-                                        <span className="text-white text-sm flex items-center gap-2.5">
-                                            <Building size={14} className="text-[#5a5a70]" />
+                                    <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-[#F0EBE6] border border-[#E8E3DD]">
+                                        <span className="text-[#1E1E1E] text-sm flex items-center gap-2.5">
+                                            <Building size={14} className="text-[#78716C]" />
                                             {r.name}
                                         </span>
-                                        <span className="text-[#6a6a80] text-xs font-medium bg-[#1a1a2e] px-2.5 py-1 rounded-lg">{r.square_footage} sq.ft</span>
+                                        <span className="text-[#6F6A66] text-xs font-medium bg-[#F0EBE6] px-2.5 py-1 rounded-lg">{r.square_footage} sq.ft</span>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-[#5a5a70] text-sm">No rooms added</p>
+                            <p className="text-[#78716C] text-sm">No rooms added</p>
                         )}
                     </div>
                 </div>
 
                 {/* Pricing */}
                 <div className="glass-card p-6 mb-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
-                    <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-5">Pricing Breakdown</h3>
+                    <h3 className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-5">Pricing Breakdown</h3>
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-[#2a2a40]">
-                                    <th className="text-left text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] py-3">Item</th>
-                                    <th className="text-center text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] py-3 w-20">Qty</th>
-                                    <th className="text-right text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] py-3">Unit Price</th>
-                                    <th className="text-right text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] py-3">Subtotal</th>
+                                <tr className="border-b border-[#E8E3DD]">
+                                    <th className="text-left text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] py-3">Item</th>
+                                    <th className="text-center text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] py-3 w-20">Qty</th>
+                                    <th className="text-right text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] py-3">Unit Price</th>
+                                    <th className="text-right text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] py-3">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {project.line_items.map((item, i) => (
-                                    <tr key={i} className="border-b border-[#1a1a2e]/60 table-row-hover">
-                                        <td className="py-3.5 text-white text-sm font-medium">{item.item_name}</td>
-                                        <td className="py-3.5 text-center text-[#8888a0] text-sm">{item.quantity}</td>
-                                        <td className="py-3.5 text-right text-[#8888a0] text-sm">{formatCurrency(item.unit_price)}</td>
-                                        <td className="py-3.5 text-right text-white text-sm font-semibold">{formatCurrency(item.quantity * item.unit_price)}</td>
+                                    <tr key={i} className="border-b border-[#F2F0ED] table-row-hover">
+                                        <td className="py-3.5 text-[#1E1E1E] text-sm font-medium">{item.item_name}</td>
+                                        <td className="py-3.5 text-center text-[#6F6A66] text-sm">{item.quantity}</td>
+                                        <td className="py-3.5 text-right text-[#6F6A66] text-sm">{formatCurrency(item.unit_price)}</td>
+                                        <td className="py-3.5 text-right text-[#1E1E1E] text-sm font-semibold">{formatCurrency(item.quantity * item.unit_price)}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -437,23 +442,23 @@ export default function ProposalViewPage() {
                     </div>
 
                     {/* Totals */}
-                    <div className="border-t border-[#2a2a40] pt-4 mt-2 space-y-2.5">
+                    <div className="border-t border-[#E8E3DD] pt-4 mt-2 space-y-2.5">
                         <div className="flex justify-between text-sm">
-                            <span className="text-[#6a6a80]">Subtotal</span>
-                            <span className="text-[#c0c0d0] font-medium">{formatCurrency(subtotal)}</span>
+                            <span className="text-[#78716C]">Subtotal</span>
+                            <span className="text-[#6F6A66] font-medium">{formatCurrency(subtotal)}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                            <span className="text-[#6a6a80]">Tax ({project.tax_rate}%)</span>
-                            <span className="text-[#c0c0d0] font-medium">{formatCurrency(taxAmount)}</span>
+                            <span className="text-[#78716C]">Tax ({project.tax_rate}%)</span>
+                            <span className="text-[#6F6A66] font-medium">{formatCurrency(taxAmount)}</span>
                         </div>
-                        <div className="flex justify-between items-center pt-3 border-t border-[#2a2a40]">
-                            <span className="text-white font-bold flex items-center gap-2">
-                                <div className="w-7 h-7 rounded-lg bg-brand-700/15 flex items-center justify-center">
-                                    <IndianRupee size={14} className="text-brand-400" />
+                        <div className="flex justify-between items-center pt-3 border-t border-[#E8E3DD]">
+                            <span className="text-[#1E1E1E] font-bold flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-lg bg-[#3E2F2B]/15 flex items-center justify-center">
+                                    <IndianRupee size={14} className="text-[#3E2F2B]" />
                                 </div>
                                 Grand Total
                             </span>
-                            <span className="text-2xl font-bold bg-gradient-to-r from-brand-400 to-brand-300 bg-clip-text text-transparent">
+                            <span className="text-2xl font-extrabold text-[#C47A5A]">
                                 {formatCurrency(grandTotal)}
                             </span>
                         </div>
@@ -468,14 +473,14 @@ export default function ProposalViewPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         {project.notes && (
                             <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '250ms' }}>
-                                <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-3">Project Notes</h3>
-                                <p className="text-[#8888a0] text-sm whitespace-pre-wrap leading-relaxed">{project.notes}</p>
+                                <h3 className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-3">Project Notes</h3>
+                                <p className="text-[#57534E] text-sm whitespace-pre-wrap leading-relaxed">{project.notes}</p>
                             </div>
                         )}
                         {project.payment_terms && (
                             <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '300ms' }}>
-                                <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-3">Payment Terms</h3>
-                                <p className="text-[#8888a0] text-sm whitespace-pre-wrap leading-relaxed">{project.payment_terms}</p>
+                                <h3 className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-3">Payment Terms</h3>
+                                <p className="text-[#57534E] text-sm whitespace-pre-wrap leading-relaxed">{project.payment_terms}</p>
                             </div>
                         )}
                     </div>
@@ -484,17 +489,17 @@ export default function ProposalViewPage() {
                 {/* Generated PDFs History */}
                 {project.proposals.length > 0 && (
                     <div className="glass-card p-6 mb-8 animate-fade-in" style={{ animationDelay: '350ms' }}>
-                        <h3 className="text-[10px] font-bold text-[#5a5a70] uppercase tracking-[0.15em] mb-4">Generated PDFs</h3>
+                        <h3 className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-4">Generated PDFs</h3>
                         <div className="space-y-2">
                             {project.proposals.map((p) => (
-                                <div key={p.id} className="flex items-center justify-between py-3 px-3 rounded-xl bg-[#12121a]/50 border border-[#1a1a2e]">
+                                <div key={p.id} className="flex items-center justify-between py-3 px-3 rounded-xl bg-[#F0EBE6] border border-[#E8E3DD]">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-brand-700/10 flex items-center justify-center">
-                                            <FileText size={14} className="text-brand-400" />
+                                        <div className="w-8 h-8 rounded-lg bg-[#3E2F2B]/10 flex items-center justify-center">
+                                            <FileText size={14} className="text-[#3E2F2B]" />
                                         </div>
-                                        <span className="text-[#8888a0] text-sm">{formatDate(p.created_at)}</span>
+                                        <span className="text-[#6F6A66] text-sm">{formatDate(p.created_at)}</span>
                                     </div>
-                                    <a href={p.pdf_url} target="_blank" rel="noopener noreferrer" className="text-brand-400 hover:text-brand-300 text-sm font-medium flex items-center gap-1.5 transition-colors">
+                                    <a href={p.pdf_url} target="_blank" rel="noopener noreferrer" className="text-[#3E2F2B] hover:text-[#2F2421] text-sm font-medium flex items-center gap-1.5 transition-colors">
                                         <ExternalLink size={14} /> View PDF
                                     </a>
                                 </div>

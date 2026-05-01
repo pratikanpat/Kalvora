@@ -68,7 +68,7 @@ export async function POST(request: Request) {
                     </p>
                     <div style="text-align:center;">
                         <a href="${proposalLink}" 
-                           style="display:inline-block;background:#4f46e5;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
+                           style="display:inline-block;background:#3E2F2B;color:white;padding:14px 32px;text-decoration:none;border-radius:8px;font-weight:600;">
                            View Proposal →
                         </a>
                     </div>

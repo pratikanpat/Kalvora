@@ -8,44 +8,48 @@ interface ProjectPipelineProps {
 }
 
 export default function ProjectPipeline({ status, clientViewedAt }: ProjectPipelineProps) {
-    // Determine the effective step index
-    // "Viewed" is a virtual status — the actual status stays "Sent" but client_viewed_at is set
     let effectiveStatus = status;
     if (status === 'Sent' && clientViewedAt) {
         effectiveStatus = 'Viewed';
     }
-    
+
     const currentIndex = STEPS.indexOf(effectiveStatus as typeof STEPS[number]);
 
     return (
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center w-full">
             {STEPS.map((step, i) => {
                 const isCompleted = i < currentIndex;
                 const isCurrent = i === currentIndex;
 
                 return (
-                    <div key={step} className="flex items-center">
-                        {/* Step dot + label */}
+                    <div key={step} className="flex items-center flex-1 last:flex-none">
+                        {/* Step */}
                         <div className="flex flex-col items-center">
+                            {/* Circle */}
                             <div
                                 className={`
-                                    w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300
+                                    rounded-full transition-all duration-300 ease-out
                                     ${isCompleted
-                                        ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.4)]'
+                                        ? 'w-[10px] h-[10px] bg-[#3E2F2B] opacity-80'
                                         : isCurrent
-                                            ? 'bg-brand-400 shadow-[0_0_8px_rgba(99,102,241,0.5)] ring-2 ring-brand-400/30'
-                                            : 'bg-[#2a2a40]'
+                                            ? 'w-[10px] h-[10px] border-2 border-[#3E2F2B] bg-[#3E2F2B] scale-[1.15]'
+                                            : 'w-[10px] h-[10px] bg-[#E8E3DD]'
                                     }
                                 `}
-                            />
+                            >
+                                {isCurrent && (
+                                    <div className="w-full h-full rounded-full ring-[3px] ring-[#3E2F2B]/20" />
+                                )}
+                            </div>
+                            {/* Label */}
                             <span
                                 className={`
-                                    text-[7px] sm:text-[9px] mt-0.5 sm:mt-1 font-medium tracking-wide whitespace-nowrap
+                                    text-[9px] sm:text-[10px] mt-1.5 tracking-wide whitespace-nowrap transition-all duration-300
                                     ${isCompleted
-                                        ? 'text-emerald-400/80'
+                                        ? 'text-[#3E2F2B] opacity-80 font-normal'
                                         : isCurrent
-                                            ? 'text-brand-400'
-                                            : 'text-[#3a3a50]'
+                                            ? 'text-[#3E2F2B] font-semibold'
+                                            : 'text-[#78716C] font-normal'
                                     }
                                 `}
                             >
@@ -53,14 +57,14 @@ export default function ProjectPipeline({ status, clientViewedAt }: ProjectPipel
                             </span>
                         </div>
 
-                        {/* Connector line between dots */}
+                        {/* Connecting line */}
                         {i < STEPS.length - 1 && (
                             <div
                                 className={`
-                                    w-1.5 sm:w-4 h-[1.5px] sm:h-[2px] mx-0 sm:mx-0.5 mt-[-8px] sm:mt-[-10px] rounded-full transition-all duration-300
+                                    flex-1 h-[2px] mx-1 sm:mx-1.5 mt-[-12px] sm:mt-[-14px] rounded-full transition-all duration-300
                                     ${i < currentIndex
-                                        ? 'bg-emerald-400/50'
-                                        : 'bg-[#2a2a40]'
+                                        ? 'bg-[#3E2F2B] opacity-80'
+                                        : 'bg-[#E8E3DD]'
                                     }
                                 `}
                             />

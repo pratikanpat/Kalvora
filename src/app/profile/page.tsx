@@ -58,7 +58,7 @@ export default function ProfilePage() {
     const [website, setWebsite] = useState('');
     const [instagram, setInstagram] = useState('');
     const [studioAddress, setStudioAddress] = useState('');
-    const [defaultAccentColor, setDefaultAccentColor] = useState('#4263eb');
+    const [defaultAccentColor, setDefaultAccentColor] = useState('#3E2F2B');
     const [defaultPaymentTerms, setDefaultPaymentTerms] = useState('');
 
     // Profile fields — new business/tax
@@ -132,7 +132,7 @@ export default function ProfilePage() {
                     website: data.website || '',
                     instagram: data.instagram || '',
                     studioAddress: data.studio_address || '',
-                    defaultAccentColor: data.default_accent_color || '#4263eb',
+                    defaultAccentColor: data.default_accent_color || '#3E2F2B',
                     defaultPaymentTerms: data.default_payment_terms || '',
                     gstin: data.gstin || '',
                     panNumber: data.pan_number || '',
@@ -295,7 +295,7 @@ export default function ProfilePage() {
     const isProfileComplete = !!(studioName.trim() || designerName.trim()) && !!(email.trim());
 
     // Common readonly styling
-    const inputReadonlyClass = !isEditing ? 'opacity-70 cursor-default bg-[#0d0d16]' : '';
+    const inputReadonlyClass = !isEditing ? 'opacity-70 cursor-default bg-[#F5F3F0]' : '';
 
     return (
         <DashboardLayout>
@@ -303,8 +303,8 @@ export default function ProfilePage() {
                 {/* Header */}
                 <div className="mb-8 animate-fade-in flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-2xl font-bold text-white tracking-tight">Studio Profile</h1>
-                        <p className="text-[#5a5a70] text-sm mt-1.5">
+                        <h1 className="text-2xl font-extrabold text-[#1E1E1E] tracking-tight">Studio Profile</h1>
+                        <p className="text-[#6F6A66] text-sm mt-1.5">
                             Set up your studio identity. This information will be used automatically in every proposal and invoice you create.
                         </p>
                     </div>
@@ -312,9 +312,9 @@ export default function ProfilePage() {
                     {!isNew && (
                         <button
                             onClick={() => isEditing ? handleCancel() : setIsEditing(true)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex-shrink-0 ${isEditing
-                                    ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
-                                    : 'bg-brand-700/15 text-brand-400 border border-brand-700/25 hover:bg-brand-700/25'
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 flex-shrink-0 ${isEditing
+                                    ? 'bg-[#FDF2F2] text-[#B85C5C] border border-[#F5D0D0] hover:bg-[#B85C5C]/20'
+                                    : 'bg-[#3E2F2B]/15 text-[#3E2F2B] border border-[#3E2F2B]/25 hover:bg-[#3E2F2B]/25'
                                 }`}
                         >
                             {isEditing ? <X size={16} /> : <Pencil size={16} />}
@@ -325,12 +325,12 @@ export default function ProfilePage() {
 
                 {/* Status Banner */}
                 {!isProfileComplete && (
-                    <div className="glass-card border-amber-500/20 p-4 mb-6 animate-fade-in">
+                    <div className="glass-card border-[#D9D1C9] p-4 mb-6 animate-fade-in">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center flex-shrink-0">
-                                <FileText size={16} className="text-amber-400" />
+                            <div className="w-8 h-8 rounded-lg bg-[#F0EBE6] flex items-center justify-center flex-shrink-0">
+                                <FileText size={16} className="text-[#C47A5A]" />
                             </div>
-                            <p className="text-amber-300/90 text-sm">
+                            <p className="text-[#C47A5A] text-sm">
                                 Complete your profile so it appears on every proposal you generate.
                             </p>
                         </div>
@@ -338,12 +338,12 @@ export default function ProfilePage() {
                 )}
 
                 {isProfileComplete && !isNew && !isEditing && (
-                    <div className="glass-card border-emerald-500/20 p-4 mb-6 animate-fade-in">
+                    <div className="glass-card border-[#D0E5DA] p-4 mb-6 animate-fade-in">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
-                                <CheckCircle size={16} className="text-emerald-400" />
+                            <div className="w-8 h-8 rounded-lg bg-[#EDF5F1] flex items-center justify-center flex-shrink-0">
+                                <CheckCircle size={16} className="text-[#6A9C89]" />
                             </div>
-                            <p className="text-emerald-300/90 text-sm">
+                            <p className="text-[#6A9C89]/90 text-sm">
                                 Your profile is set up. This info will be used in all your proposals and invoices.
                             </p>
                         </div>
@@ -356,10 +356,10 @@ export default function ProfilePage() {
                        ═══════════════════════════════════════════ */}
                     <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">
-                                <Building size={16} className="text-brand-400" />
+                            <div className="w-9 h-9 rounded-xl bg-[#C47A5A]/12 flex items-center justify-center border border-[#C47A5A]/20">
+                                <Building size={16} className="text-[#C47A5A]" />
                             </div>
-                            <h2 className="text-base font-bold text-white tracking-tight">Studio Identity</h2>
+                            <h2 className="text-base font-bold text-[#1E1E1E] tracking-tight">Studio Identity</h2>
                         </div>
 
                         {/* Logo upload */}
@@ -367,12 +367,12 @@ export default function ProfilePage() {
                             <label className="input-label">Logo</label>
                             <div className="flex items-center gap-4">
                                 {logoUrl ? (
-                                    <div className="w-16 h-16 rounded-xl border border-[#2a2a40] overflow-hidden bg-white flex items-center justify-center">
+                                    <div className="w-16 h-16 rounded-xl border border-[#E8E3DD] overflow-hidden bg-white flex items-center justify-center">
                                         <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
                                     </div>
                                 ) : (
-                                    <div className="w-16 h-16 rounded-xl border border-dashed border-[#2a2a40] flex items-center justify-center bg-[#12121a]">
-                                        <Upload size={20} className="text-[#5a5a70]" />
+                                    <div className="w-16 h-16 rounded-xl border border-dashed border-[#E8E3DD] flex items-center justify-center bg-[#F0EBE6]">
+                                        <Upload size={20} className="text-[#78716C]" />
                                     </div>
                                 )}
                                 {isEditing && (
@@ -383,7 +383,7 @@ export default function ProfilePage() {
                                             <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" disabled={uploading} />
                                         </label>
                                         {logoUrl && (
-                                            <button onClick={() => setLogoUrl('')} className="text-[#5a5a70] hover:text-red-400 text-xs transition-colors">
+                                            <button onClick={() => setLogoUrl('')} className="text-[#78716C] hover:text-[#B85C5C] text-xs transition-colors">
                                                 Remove
                                             </button>
                                         )}
@@ -396,14 +396,14 @@ export default function ProfilePage() {
                             <div>
                                 <label className="input-label">Studio Name</label>
                                 <div className="relative">
-                                    <Building size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <Building size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                     <input type="text" value={studioName} onChange={(e) => setStudioName(e.target.value)} placeholder="e.g. Luxe Interiors Studio" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
                                 </div>
                             </div>
                             <div>
                                 <label className="input-label">Designer Name</label>
                                 <div className="relative">
-                                    <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                     <input type="text" value={designerName} onChange={(e) => setDesignerName(e.target.value)} placeholder="Your full name" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
                                 </div>
                             </div>
@@ -413,18 +413,18 @@ export default function ProfilePage() {
                             <div>
                                 <label className="input-label">Email</label>
                                 <div className="relative">
-                                    <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@studio.com" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.email ? 'border-red-500' : ''}`} readOnly={!isEditing} />
+                                    <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@studio.com" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.email ? 'border-[#B85C5C]' : ''}`} readOnly={!isEditing} />
                                 </div>
-                                {validationErrors.email && <p className="text-red-400 text-xs mt-1">{validationErrors.email}</p>}
+                                {validationErrors.email && <p className="text-[#B85C5C] text-xs mt-1">{validationErrors.email}</p>}
                             </div>
                             <div>
                                 <label className="input-label">Phone</label>
                                 <div className="relative">
-                                    <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.phone ? 'border-red-500' : ''}`} readOnly={!isEditing} />
+                                    <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.phone ? 'border-[#B85C5C]' : ''}`} readOnly={!isEditing} />
                                 </div>
-                                {validationErrors.phone && <p className="text-red-400 text-xs mt-1">{validationErrors.phone}</p>}
+                                {validationErrors.phone && <p className="text-[#B85C5C] text-xs mt-1">{validationErrors.phone}</p>}
                             </div>
                         </div>
                     </div>
@@ -434,33 +434,33 @@ export default function ProfilePage() {
                        ═══════════════════════════════════════════ */}
                     <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">
-                                <Globe size={16} className="text-brand-400" />
+                            <div className="w-9 h-9 rounded-xl bg-[#F0EBE6] flex items-center justify-center border border-[#D9D1C9]">
+                                <Globe size={16} className="text-[#3E2F2B]" />
                             </div>
-                            <h2 className="text-base font-bold text-white tracking-tight">Online Presence <span className="text-[#5a5a70] font-normal text-sm">(Optional)</span></h2>
+                            <h2 className="text-base font-bold text-[#1E1E1E] tracking-tight">Online Presence <span className="text-[#78716C] font-normal text-sm">(Optional)</span></h2>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="input-label">Website</label>
                                 <div className="relative">
-                                    <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                     <input type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://yourstudio.com" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
                                 </div>
                             </div>
                             <div>
                                 <label className="input-label">Instagram</label>
                                 <div className="relative">
-                                    <Instagram size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <Instagram size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                     <input type="text" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@yourstudio" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <label className="input-label">Studio Address <span className="text-[#5a5a70] font-normal">(Optional)</span></label>
+                            <label className="input-label">Studio Address <span className="text-[#78716C] font-normal">(Optional)</span></label>
                             <div className="relative">
-                                <MapPin size={16} className="absolute left-3 top-3 text-[#5a5a70]" />
+                                <MapPin size={16} className="absolute left-3 top-3 text-[#78716C]" />
                                 <textarea value={studioAddress} onChange={(e) => setStudioAddress(e.target.value)} placeholder="Full studio address" rows={2} className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
                             </div>
                         </div>
@@ -471,50 +471,50 @@ export default function ProfilePage() {
                        ═══════════════════════════════════════════ */}
                     <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">
-                                <Receipt size={16} className="text-brand-400" />
+                            <div className="w-9 h-9 rounded-xl bg-[#F0EBE6] flex items-center justify-center border border-[#D9D1C9]">
+                                <Receipt size={16} className="text-[#3E2F2B]" />
                             </div>
                             <div>
-                                <h2 className="text-base font-bold text-white tracking-tight">Business & Tax Details</h2>
-                                <p className="text-[#5a5a70] text-xs mt-0.5">Shown on invoices. Fill in if your studio is GST registered.</p>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="input-label">GSTIN <span className="text-[#5a5a70] font-normal">(GST Number)</span></label>
-                                <div className="relative">
-                                    <Hash size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={gstin} onChange={(e) => setGstin(e.target.value.toUpperCase())} placeholder="e.g. 22AAAAA0000A1Z5" maxLength={15} className={`input-field pl-10 uppercase ${inputReadonlyClass} ${validationErrors.gstin ? 'border-red-500' : ''}`} readOnly={!isEditing} />
-                                </div>
-                                {validationErrors.gstin && <p className="text-red-400 text-xs mt-1">{validationErrors.gstin}</p>}
-                            </div>
-                            <div>
-                                <label className="input-label">PAN Number <span className="text-[#5a5a70] font-normal">(Optional)</span></label>
-                                <div className="relative">
-                                    <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={panNumber} onChange={(e) => setPanNumber(e.target.value.toUpperCase())} placeholder="e.g. ABCDE1234F" maxLength={10} className={`input-field pl-10 uppercase ${inputReadonlyClass} ${validationErrors.panNumber ? 'border-red-500' : ''}`} readOnly={!isEditing} />
-                                </div>
-                                {validationErrors.panNumber && <p className="text-red-400 text-xs mt-1">{validationErrors.panNumber}</p>}
+                                <h2 className="text-base font-bold text-[#1E1E1E] tracking-tight">Business & Tax Details</h2>
+                                <p className="text-[#78716C] text-xs mt-0.5">Shown on invoices. Fill in if your studio is GST registered.</p>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="input-label">HSN/SAC Code <span className="text-[#5a5a70] font-normal">(Default)</span></label>
+                                <label className="input-label">GSTIN <span className="text-[#78716C] font-normal">(GST Number)</span></label>
                                 <div className="relative">
-                                    <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={hsnSacCode} onChange={(e) => setHsnSacCode(e.target.value)} placeholder="9971" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.hsnSacCode ? 'border-red-500' : ''}`} readOnly={!isEditing} />
+                                    <Hash size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                    <input type="text" value={gstin} onChange={(e) => setGstin(e.target.value.toUpperCase())} placeholder="e.g. 22AAAAA0000A1Z5" maxLength={15} className={`input-field pl-10 uppercase ${inputReadonlyClass} ${validationErrors.gstin ? 'border-[#B85C5C]' : ''}`} readOnly={!isEditing} />
                                 </div>
-                                {validationErrors.hsnSacCode ? <p className="text-red-400 text-xs mt-1">{validationErrors.hsnSacCode}</p> : <p className="text-[#5a5a70] text-xs mt-1">Interior design services are typically SAC 9971</p>}
+                                {validationErrors.gstin && <p className="text-[#B85C5C] text-xs mt-1">{validationErrors.gstin}</p>}
                             </div>
                             <div>
-                                <label className="input-label">Invoice Due Days <span className="text-[#5a5a70] font-normal">(Default)</span></label>
+                                <label className="input-label">PAN Number <span className="text-[#78716C] font-normal">(Optional)</span></label>
                                 <div className="relative">
-                                    <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="number" value={invoiceDueDays} onChange={(e) => setInvoiceDueDays(parseInt(e.target.value) || 7)} placeholder="7" min={1} max={365} className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.invoiceDueDays ? 'border-red-500' : ''}`} readOnly={!isEditing} />
+                                    <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                    <input type="text" value={panNumber} onChange={(e) => setPanNumber(e.target.value.toUpperCase())} placeholder="e.g. ABCDE1234F" maxLength={10} className={`input-field pl-10 uppercase ${inputReadonlyClass} ${validationErrors.panNumber ? 'border-[#B85C5C]' : ''}`} readOnly={!isEditing} />
                                 </div>
-                                {validationErrors.invoiceDueDays ? <p className="text-red-400 text-xs mt-1">{validationErrors.invoiceDueDays}</p> : <p className="text-[#5a5a70] text-xs mt-1">Number of days after invoice creation until payment is due</p>}
+                                {validationErrors.panNumber && <p className="text-[#B85C5C] text-xs mt-1">{validationErrors.panNumber}</p>}
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="input-label">HSN/SAC Code <span className="text-[#78716C] font-normal">(Default)</span></label>
+                                <div className="relative">
+                                    <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                    <input type="text" value={hsnSacCode} onChange={(e) => setHsnSacCode(e.target.value)} placeholder="9971" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.hsnSacCode ? 'border-[#B85C5C]' : ''}`} readOnly={!isEditing} />
+                                </div>
+                                {validationErrors.hsnSacCode ? <p className="text-[#B85C5C] text-xs mt-1">{validationErrors.hsnSacCode}</p> : <p className="text-[#78716C] text-xs mt-1">Interior design services are typically SAC 9971</p>}
+                            </div>
+                            <div>
+                                <label className="input-label">Invoice Due Days <span className="text-[#78716C] font-normal">(Default)</span></label>
+                                <div className="relative">
+                                    <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                    <input type="number" value={invoiceDueDays} onChange={(e) => setInvoiceDueDays(parseInt(e.target.value) || 7)} placeholder="7" min={1} max={365} className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.invoiceDueDays ? 'border-[#B85C5C]' : ''}`} readOnly={!isEditing} />
+                                </div>
+                                {validationErrors.invoiceDueDays ? <p className="text-[#B85C5C] text-xs mt-1">{validationErrors.invoiceDueDays}</p> : <p className="text-[#78716C] text-xs mt-1">Number of days after invoice creation until payment is due</p>}
                             </div>
                         </div>
                     </div>
@@ -524,12 +524,12 @@ export default function ProfilePage() {
                        ═══════════════════════════════════════════ */}
                     <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">
-                                <Landmark size={16} className="text-brand-400" />
+                            <div className="w-9 h-9 rounded-xl bg-[#F0EBE6] flex items-center justify-center border border-[#D9D1C9]">
+                                <Landmark size={16} className="text-[#3E2F2B]" />
                             </div>
                             <div>
-                                <h2 className="text-base font-bold text-white tracking-tight">Payment / Bank Details</h2>
-                                <p className="text-[#5a5a70] text-xs mt-0.5">Shown on invoices so clients know where to pay.</p>
+                                <h2 className="text-base font-bold text-[#1E1E1E] tracking-tight">Payment / Bank Details</h2>
+                                <p className="text-[#78716C] text-xs mt-0.5">Shown on invoices so clients know where to pay.</p>
                             </div>
                         </div>
 
@@ -537,17 +537,17 @@ export default function ProfilePage() {
                             <div>
                                 <label className="input-label">Bank Name</label>
                                 <div className="relative">
-                                    <Landmark size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
+                                    <Landmark size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
                                     <input type="text" value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder="e.g. HDFC Bank" className={`input-field pl-10 ${inputReadonlyClass}`} readOnly={!isEditing} />
                                 </div>
                             </div>
                             <div>
                                 <label className="input-label">Account Number</label>
                                 <div className="relative">
-                                    <Hash size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={bankAccountNumber} onChange={(e) => setBankAccountNumber(e.target.value)} placeholder="e.g. 1234567890123" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.bankAccountNumber ? 'border-red-500' : ''}`} readOnly={!isEditing} />
+                                    <Hash size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                    <input type="text" value={bankAccountNumber} onChange={(e) => setBankAccountNumber(e.target.value)} placeholder="e.g. 1234567890123" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.bankAccountNumber ? 'border-[#B85C5C]' : ''}`} readOnly={!isEditing} />
                                 </div>
-                                {validationErrors.bankAccountNumber && <p className="text-red-400 text-xs mt-1">{validationErrors.bankAccountNumber}</p>}
+                                {validationErrors.bankAccountNumber && <p className="text-[#B85C5C] text-xs mt-1">{validationErrors.bankAccountNumber}</p>}
                             </div>
                         </div>
 
@@ -555,18 +555,18 @@ export default function ProfilePage() {
                             <div>
                                 <label className="input-label">IFSC Code</label>
                                 <div className="relative">
-                                    <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={bankIfsc} onChange={(e) => setBankIfsc(e.target.value.toUpperCase())} placeholder="e.g. HDFC0001234" maxLength={11} className={`input-field pl-10 uppercase ${inputReadonlyClass} ${validationErrors.bankIfsc ? 'border-red-500' : ''}`} readOnly={!isEditing} />
+                                    <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                    <input type="text" value={bankIfsc} onChange={(e) => setBankIfsc(e.target.value.toUpperCase())} placeholder="e.g. HDFC0001234" maxLength={11} className={`input-field pl-10 uppercase ${inputReadonlyClass} ${validationErrors.bankIfsc ? 'border-[#B85C5C]' : ''}`} readOnly={!isEditing} />
                                 </div>
-                                {validationErrors.bankIfsc && <p className="text-red-400 text-xs mt-1">{validationErrors.bankIfsc}</p>}
+                                {validationErrors.bankIfsc && <p className="text-[#B85C5C] text-xs mt-1">{validationErrors.bankIfsc}</p>}
                             </div>
                             <div>
                                 <label className="input-label">UPI ID</label>
                                 <div className="relative">
-                                    <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5a5a70]" />
-                                    <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="e.g. studio@upi" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.upiId ? 'border-red-500' : ''}`} readOnly={!isEditing} />
+                                    <CreditCard size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                                    <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="e.g. studio@upi" className={`input-field pl-10 ${inputReadonlyClass} ${validationErrors.upiId ? 'border-[#B85C5C]' : ''}`} readOnly={!isEditing} />
                                 </div>
-                                {validationErrors.upiId && <p className="text-red-400 text-xs mt-1">{validationErrors.upiId}</p>}
+                                {validationErrors.upiId && <p className="text-[#B85C5C] text-xs mt-1">{validationErrors.upiId}</p>}
                             </div>
                         </div>
                     </div>
@@ -576,25 +576,25 @@ export default function ProfilePage() {
                        ═══════════════════════════════════════════ */}
                     <div className="glass-card px-6 py-6 space-y-4 animate-fade-in">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-700/20 to-brand-500/10 flex items-center justify-center border border-brand-700/15">
-                                <Palette size={16} className="text-brand-400" />
+                            <div className="w-9 h-9 rounded-xl bg-[#F0EBE6] flex items-center justify-center border border-[#D9D1C9]">
+                                <Palette size={16} className="text-[#3E2F2B]" />
                             </div>
-                            <h2 className="text-base font-bold text-white tracking-tight">Defaults</h2>
+                            <h2 className="text-base font-bold text-[#1E1E1E] tracking-tight">Defaults</h2>
                         </div>
 
                         <div>
                             <label className="input-label">Default Accent Color</label>
                             <div className="flex items-center gap-3">
-                                <input type="color" value={defaultAccentColor} onChange={(e) => setDefaultAccentColor(e.target.value)} className="w-10 h-10 rounded-lg border border-[#2a2a40] cursor-pointer bg-transparent" disabled={!isEditing} />
-                                <input type="text" value={defaultAccentColor} onChange={(e) => setDefaultAccentColor(e.target.value)} placeholder="#4263eb" className={`input-field w-32 ${inputReadonlyClass}`} readOnly={!isEditing} />
-                                <span className="text-[#5a5a70] text-xs">Used as accent in all templates</span>
+                                <input type="color" value={defaultAccentColor} onChange={(e) => setDefaultAccentColor(e.target.value)} className="w-10 h-10 rounded-lg border border-[#E8E3DD] cursor-pointer bg-transparent" disabled={!isEditing} />
+                                <input type="text" value={defaultAccentColor} onChange={(e) => setDefaultAccentColor(e.target.value)} placeholder="#3E2F2B" className={`input-field w-32 ${inputReadonlyClass}`} readOnly={!isEditing} />
+                                <span className="text-[#78716C] text-xs">Used as accent in all templates</span>
                             </div>
                         </div>
 
                         <div>
                             <label className="input-label">Default Payment Terms</label>
                             <textarea value={defaultPaymentTerms} onChange={(e) => setDefaultPaymentTerms(e.target.value)} placeholder="e.g. 50% advance, 25% on material delivery, 25% on completion" rows={3} className={`input-field ${inputReadonlyClass}`} readOnly={!isEditing} />
-                            <p className="text-[#5a5a70] text-xs mt-1">Pre-filled in new proposals. You can always override per project.</p>
+                            <p className="text-[#78716C] text-xs mt-1">Pre-filled in new proposals. You can always override per project.</p>
                         </div>
                     </div>
                 </div>
