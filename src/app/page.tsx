@@ -35,9 +35,26 @@ export default function LandingPage() {
     // ── State B: Logged-in users see the Closing Engine ──
     if (session) {
         return (
-            <div className="min-h-screen bg-[#F6F3EF]">
+            <div className="min-h-screen bg-[#F6F3EF] flex flex-col">
                 <LandingNavbar />
-                <LoggedInHome />
+                <div className="flex-1">
+                    <LoggedInHome />
+                </div>
+                <footer className="border-t border-[#E4E1DB] bg-[#F1EFEA]">
+                    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#9A9A9A]">
+                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> — Kalipr Labs</p>
+                            <div className="flex items-center gap-3">
+                                <span>Privacy</span>
+                                <span className="text-[#E4E1DB]">·</span>
+                                <span>Terms</span>
+                                <span className="text-[#E4E1DB]">·</span>
+                                <a href="mailto:hello@kaliprlabs.in" className="hover:text-[#6B6B6B] transition-colors">Contact</a>
+                            </div>
+                            <p className="text-[#9A9A9A]/60">v1.0.0</p>
+                        </div>
+                    </div>
+                </footer>
             </div>
         );
     }
@@ -452,29 +469,70 @@ export default function LandingPage() {
             </section>
 
             {/* ═══════════════════════════════════════
-                FOOTER
+                FOOTER — Premium Marketing Footer
                 ═══════════════════════════════════════ */}
-            <footer className="border-t border-[#E8E3DD] bg-[#F0EBE6]">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
-                    <div className="flex flex-col items-center gap-6">
-                        {/* Logo + tagline */}
-                        <div className="text-center">
-                            <Link href="/" className="group">
+            <footer className="border-t border-[#E4E1DB] bg-[#F1EFEA]">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
+
+                    {/* Section 1 + 2: Brand + Link Columns */}
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-10">
+
+                        {/* Brand Strip */}
+                        <div className="md:col-span-5">
+                            <Link href="/" className="group inline-block">
                                 <span className="brand-wordmark text-lg group-hover:opacity-80 transition-opacity">Kalvora</span>
                             </Link>
-                            <p className="text-[#78716C] text-xs mt-2">Professional proposals for interior designers</p>
+                            <p className="text-[#6B6B6B] text-sm mt-2.5 leading-relaxed max-w-xs">
+                                Professional proposals for interior designers. Create, send, track, get paid.
+                            </p>
                         </div>
 
-                        {/* Links */}
-                        <div className="flex items-center gap-6 text-sm text-[#78716C]">
-                            <Link href="/login" className="hover:text-[#3E2F2B] transition-colors">Login</Link>
-                            <Link href="/public-feedback" className="hover:text-[#3E2F2B] transition-colors">Feedback</Link>
-                        </div>
+                        {/* Link Columns */}
+                        <div className="md:col-span-7 grid grid-cols-3 gap-6">
+                            {/* Product */}
+                            <div>
+                                <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#1E1E1E] mb-4">Product</h4>
+                                <ul className="space-y-2.5">
+                                    <li><Link href="/#pricing" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Features</Link></li>
+                                    <li><Link href="/#pricing" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Pricing</Link></li>
+                                    {/* <li><Link href="/try" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Try Demo</Link></li> */}
+                                </ul>
+                            </div>
 
-                        {/* Copyright */}
-                        <p className="text-[#6F6A66] text-xs">
-                            © 2026 <span className="brand-wordmark-inline text-[#78716C] text-xs">Kalvora</span> · Kalipr Labs
-                        </p>
+                            {/* Company */}
+                            <div>
+                                <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#1E1E1E] mb-4">Company</h4>
+                                <ul className="space-y-2.5">
+                                    <li><span className="text-[#6B6B6B] text-sm">About</span></li>
+                                    <li><Link href="/public-feedback" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Feedback</Link></li>
+                                    <li><a href="mailto:hello@kaliprlabs.in" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Contact</a></li>
+                                </ul>
+                            </div>
+
+                            {/* Legal */}
+                            <div>
+                                <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#1E1E1E] mb-4">Legal</h4>
+                                <ul className="space-y-2.5">
+                                    <li><span className="text-[#6B6B6B] text-sm cursor-default">Privacy Policy</span></li>
+                                    <li><span className="text-[#6B6B6B] text-sm cursor-default">Terms of Service</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Section 3: Bottom Trust Strip */}
+                    <div className="border-t border-[#E4E1DB] pt-6">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#9A9A9A]">
+                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> — Kalipr Labs</p>
+                            <div className="flex items-center gap-3">
+                                <span>Privacy</span>
+                                <span className="text-[#E4E1DB]">·</span>
+                                <span>Terms</span>
+                                <span className="text-[#E4E1DB]">·</span>
+                                <a href="mailto:hello@kaliprlabs.in" className="hover:text-[#6B6B6B] transition-colors">Contact</a>
+                            </div>
+                            <p className="text-[#9A9A9A]/60">v1.0.0</p>
+                        </div>
                     </div>
                 </div>
             </footer>

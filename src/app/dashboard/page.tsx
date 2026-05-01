@@ -179,15 +179,15 @@ export default function DashboardPage() {
     return (
         <DashboardLayout>
             {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 animate-fade-in">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10 pt-2 animate-fade-in">
                 <div>
-                    <h1 className="text-2xl font-extrabold text-[#1E1E1E] tracking-tight">Projects</h1>
-                    <p className="text-[#6F6A66] text-sm mt-1">
+                    <h1 className="text-[26px] sm:text-[28px] font-extrabold text-[#1E1E1E] tracking-tight">Projects</h1>
+                    <p className="text-[#78716C] text-xs mt-1">
                         Manage your interior design proposals
                     </p>
                 </div>
-                <Link href="/create" className="btn-primary">
-                    <Plus size={18} />
+                <Link href="/create" className="btn-primary text-sm px-5 py-2.5">
+                    <Plus size={16} />
                     New Project
                 </Link>
             </div>
@@ -243,15 +243,15 @@ export default function DashboardPage() {
             ) : (
                 <>
                     {/* Search and Filter */}
-                    <div className="relative z-10 flex flex-col sm:flex-row gap-4 mb-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
+                    <div className="relative z-10 flex flex-col sm:flex-row gap-3 mb-6 animate-fade-in" style={{ animationDelay: '100ms' }}>
                         <div className="relative flex-1 max-w-sm">
-                            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9A9A9A]" />
                             <input
                                 type="text"
                                 placeholder="Search projects..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="input-field pl-11"
+                                className="input-field pl-10 py-2.5 text-sm"
                             />
                         </div>
                         <CustomSelect
@@ -271,60 +271,55 @@ export default function DashboardPage() {
 
                     {/* ── Needs Attention (CRM) ── */}
                     {(awaitingResponse > 0 || viewedAwaitingApproval > 0 || invoicesPending > 0 || staleProposals.length > 0) && (
-                        <div className="mb-4 sm:mb-6 animate-fade-in">
-                            <h3 className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-2 sm:mb-3">Needs Attention</h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+                        <div className="mb-8 animate-fade-in">
+                            <h3 className="text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] mb-3">Needs Attention</h3>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                                 {awaitingResponse > 0 && (
-                                    <button onClick={() => setStatusFilter('Sent')} className="bg-[#F0EBE6] border border-[#E8E3DD] border-l-3 border-l-[#C47A5A] rounded-xl p-2.5 sm:p-4 text-left hover:border-[#D9D1C9] transition-colors">
-                                        <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                                            <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#F0EBE6] flex items-center justify-center">
-                                                <Send size={10} className="text-[#C47A5A] sm:hidden" />
-                                                <Send size={14} className="text-[#C47A5A] hidden sm:block" />
+                                    <button onClick={() => setStatusFilter('Sent')} className="bg-[#FEF8F4] border border-[#F0EBE6] rounded-xl p-4 sm:p-5 text-left hover:border-[#D9D1C9] transition-colors">
+                                        <div className="flex items-center gap-2.5 mb-1.5">
+                                            <div className="w-7 h-7 rounded-lg bg-[#F5EDE6] flex items-center justify-center">
+                                                <Send size={13} className="text-[#C47A5A]/70" />
                                             </div>
-                                            <span className="text-[#3E2F2B] text-lg sm:text-2xl font-extrabold">{awaitingResponse}</span>
+                                            <span className="text-[#1E1E1E] text-xl sm:text-3xl font-extrabold">{awaitingResponse}</span>
                                         </div>
-                                        <p className="text-[#57534E] text-[10px] sm:text-xs leading-tight">Awaiting response</p>
+                                        <p className="text-[#78716C] text-[10px] sm:text-xs leading-tight">Awaiting response</p>
                                     </button>
                                 )}
                                 {viewedAwaitingApproval > 0 && (
-                                    <button onClick={() => setStatusFilter('Sent')} className="bg-[#F0EBE6] border border-[#E8E3DD] border-l-3 border-l-[#3E2F2B] rounded-xl p-2.5 sm:p-4 text-left hover:border-[#D9D1C9] transition-colors">
-                                        <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                                            <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#F0EBE6] flex items-center justify-center">
-                                                <Eye size={10} className="text-[#3E2F2B] sm:hidden" />
-                                                <Eye size={14} className="text-[#3E2F2B] hidden sm:block" />
+                                    <button onClick={() => setStatusFilter('Sent')} className="bg-[#F8F6F3] border border-[#F0EBE6] rounded-xl p-4 sm:p-5 text-left hover:border-[#D9D1C9] transition-colors">
+                                        <div className="flex items-center gap-2.5 mb-1.5">
+                                            <div className="w-7 h-7 rounded-lg bg-[#F0EBE6] flex items-center justify-center">
+                                                <Eye size={13} className="text-[#3E2F2B]/50" />
                                             </div>
-                                            <span className="text-[#3E2F2B] text-lg sm:text-2xl font-extrabold">{viewedAwaitingApproval}</span>
+                                            <span className="text-[#1E1E1E] text-xl sm:text-3xl font-extrabold">{viewedAwaitingApproval}</span>
                                         </div>
-                                        <p className="text-[#57534E] text-[10px] sm:text-xs leading-tight">Viewed - awaiting approval</p>
+                                        <p className="text-[#78716C] text-[10px] sm:text-xs leading-tight">Viewed — awaiting approval</p>
                                     </button>
                                 )}
                                 {invoicesPending > 0 && (
-                                    <button onClick={() => setStatusFilter('Approved')} className="bg-[#F0EBE6] border border-[#E8E3DD] border-l-3 border-l-[#6A9C89] rounded-xl p-2.5 sm:p-4 text-left hover:border-[#D9D1C9] transition-colors">
-                                        <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                                            <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#EDF5F1] flex items-center justify-center">
-                                                <CheckCircle2 size={10} className="text-[#6A9C89] sm:hidden" />
-                                                <CheckCircle2 size={14} className="text-[#6A9C89] hidden sm:block" />
+                                    <button onClick={() => setStatusFilter('Approved')} className="bg-[#F6FAF8] border border-[#E8F0EC] rounded-xl p-4 sm:p-5 text-left hover:border-[#D0E5DA] transition-colors">
+                                        <div className="flex items-center gap-2.5 mb-1.5">
+                                            <div className="w-7 h-7 rounded-lg bg-[#EDF5F1] flex items-center justify-center">
+                                                <CheckCircle2 size={13} className="text-[#6A9C89]/60" />
                                             </div>
-                                            <span className="text-[#6A9C89] text-lg sm:text-2xl font-extrabold">{invoicesPending}</span>
+                                            <span className="text-[#1E1E1E] text-xl sm:text-3xl font-extrabold">{invoicesPending}</span>
                                         </div>
-                                        <p className="text-[#57534E] text-[10px] sm:text-xs leading-tight">Invoices pending</p>
+                                        <p className="text-[#78716C] text-[10px] sm:text-xs leading-tight">Invoices pending</p>
                                     </button>
                                 )}
                                 {staleProposals.length > 0 && (
-                                    <div className="bg-[#F0EBE6] border border-[#E8E3DD] border-l-3 border-l-[#C08A5D] rounded-xl p-2.5 sm:p-4 flex flex-col justify-between">
+                                    <div className="bg-[#FDFAF6] border border-[#F0EBE6] rounded-xl p-4 sm:p-5 flex flex-col justify-between">
                                         <div>
-                                            <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
-                                                <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#FEF3E2] flex items-center justify-center">
-                                                    <Clock size={10} className="text-[#C08A5D] sm:hidden" />
-                                                    <Clock size={14} className="text-[#C08A5D] hidden sm:block" />
+                                            <div className="flex items-center gap-2.5 mb-1.5">
+                                                <div className="w-7 h-7 rounded-lg bg-[#FEF3E2] flex items-center justify-center">
+                                                    <Clock size={13} className="text-[#C08A5D]/60" />
                                                 </div>
-                                                <span className="text-[#C08A5D] text-lg sm:text-2xl font-extrabold">{staleProposals.length}</span>
+                                                <span className="text-[#1E1E1E] text-xl sm:text-3xl font-extrabold">{staleProposals.length}</span>
                                             </div>
-                                            <p className="text-[#57534E] text-[10px] sm:text-xs leading-tight mb-1.5 sm:mb-3">Needs follow-up</p>
+                                            <p className="text-[#78716C] text-[10px] sm:text-xs leading-tight mb-3">Needs follow-up</p>
                                         </div>
-                                        <button onClick={() => openWhatsAppReminder(staleProposals[0].client_name, staleProposals[0].id)} className="flex items-center justify-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-medium text-[#3E2F2B] bg-[#F0EBE6] hover:bg-[#E8E3DD] py-1 sm:py-1.5 rounded-md sm:rounded-lg transition-colors w-full">
-                                            <Share2 size={10} className="sm:hidden" />
-                                            <Share2 size={12} className="hidden sm:block" />
+                                        <button onClick={() => openWhatsAppReminder(staleProposals[0].client_name, staleProposals[0].id)} className="flex items-center justify-center gap-1.5 text-[11px] font-medium text-[#3E2F2B] bg-[#F0EBE6] hover:bg-[#E8E3DD] py-1.5 rounded-lg transition-colors w-full">
+                                            <Share2 size={11} />
                                             Remind {staleProposals[0].client_name.split(' ')[0]}
                                         </button>
                                     </div>
@@ -337,20 +332,20 @@ export default function DashboardPage() {
                     <div className="hidden md:block glass-card overflow-hidden animate-fade-in" style={{ animationDelay: '150ms' }}>
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-[#E8E3DD]">
-                                    <th className="text-left text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] px-6 py-4">
+                                <tr className="border-b border-[#F0EBE6]">
+                                    <th className="text-left text-[10px] font-bold text-[#9A9A9A] uppercase tracking-[0.15em] px-6 py-3.5">
                                         Client
                                     </th>
-                                    <th className="text-left text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] px-6 py-4">
+                                    <th className="text-left text-[10px] font-bold text-[#9A9A9A] uppercase tracking-[0.15em] px-6 py-3.5">
                                         Type
                                     </th>
-                                    <th className="text-left text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] px-6 py-4">
+                                    <th className="text-left text-[10px] font-bold text-[#9A9A9A] uppercase tracking-[0.15em] px-6 py-3.5">
                                         Date
                                     </th>
-                                    <th className="text-left text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] px-6 py-4">
+                                    <th className="text-left text-[10px] font-bold text-[#9A9A9A] uppercase tracking-[0.15em] px-6 py-3.5">
                                         Status
                                     </th>
-                                    <th className="text-right text-[10px] font-bold text-[#78716C] uppercase tracking-[0.15em] px-6 py-4">
+                                    <th className="text-right text-[10px] font-bold text-[#9A9A9A] uppercase tracking-[0.15em] px-6 py-3.5">
                                         Actions
                                     </th>
                                 </tr>
@@ -359,49 +354,49 @@ export default function DashboardPage() {
                                 {filteredProjects.map((project, index) => (
                                     <tr
                                         key={project.id}
-                                        className="border-b border-[#E8E3DD] table-row-hover animate-fade-in"
+                                        className="border-b border-[#F5F2EE] hover:bg-[#FAFAF8] transition-colors animate-fade-in"
                                         style={{ animationDelay: `${index * 60}ms` }}
                                     >
-                                        <td className="px-6 py-4">
-                                            <Link href={`/proposals/${project.id}`} className="text-[#1E1E1E] font-semibold hover:text-[#3E2F2B] transition-colors">
+                                        <td className="px-6 py-5">
+                                            <Link href={`/proposals/${project.id}`} className="text-[#1E1E1E] font-bold hover:text-[#3E2F2B] transition-colors">
                                                 {project.client_name}
                                             </Link>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-[#6F6A66] text-sm bg-[#F0EBE6] px-2.5 py-1 rounded-lg">{project.project_type}</span>
+                                        <td className="px-6 py-5">
+                                            <span className="text-[#78716C] text-sm">{project.project_type}</span>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-5">
                                             <div className="flex flex-col gap-1">
-                                                <div className="flex items-center gap-1.5 text-[#6F6A66] text-sm">
-                                                    <Calendar size={14} className="text-[#78716C]" />
+                                                <div className="flex items-center gap-1.5 text-[#78716C] text-sm">
+                                                    <Calendar size={13} className="text-[#9A9A9A]" />
                                                     {formatDate(project.created_at)}
                                                 </div>
                                                 {project.client_viewed_at && (
                                                     <div className="flex items-center gap-1 text-[#6A9C89] text-xs font-medium" title={`Viewed on ${formatDate(project.client_viewed_at)}`}>
-                                                        <Eye size={12} /> Viewed
+                                                        <Eye size={11} /> Viewed
                                                     </div>
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-5">
                                             <ProjectPipeline status={project.status} clientViewedAt={project.client_viewed_at} />
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-5">
                                             <div className="flex items-center justify-end gap-1">
                                                 <Link
                                                     href={`/proposals/${project.id}`}
-                                                    className="text-[#78716C] hover:text-[#3E2F2B] transition-colors duration-150 p-2 rounded-[10px] hover:bg-[#F0EBE6]"
+                                                    className="text-[#9A9A9A] hover:text-[#3E2F2B] transition-colors duration-150 p-2 rounded-[10px] hover:bg-[#F0EBE6]"
                                                     title="View"
                                                 >
-                                                    <ArrowRight size={16} />
+                                                    <ArrowRight size={15} />
                                                 </Link>
                                                 <button
                                                     onClick={() => deleteProject(project.id)}
                                                     disabled={deleting === project.id}
-                                                    className="text-[#78716C] hover:text-[#B85C5C] transition-colors duration-150 p-2 rounded-[10px] hover:bg-[#FDF2F2] disabled:opacity-50"
+                                                    className="text-[#9A9A9A] hover:text-[#B85C5C] transition-colors duration-150 p-2 rounded-[10px] hover:bg-[#FDF2F2] disabled:opacity-50"
                                                     title="Delete"
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Trash2 size={15} />
                                                 </button>
                                             </div>
                                         </td>

@@ -30,10 +30,10 @@ export default function ProjectPipeline({ status, clientViewedAt }: ProjectPipel
                                 className={`
                                     rounded-full transition-all duration-300 ease-out
                                     ${isCompleted
-                                        ? 'w-[10px] h-[10px] bg-[#3E2F2B] opacity-80'
+                                        ? 'w-[8px] h-[8px] bg-[#3E2F2B] opacity-60'
                                         : isCurrent
-                                            ? 'w-[10px] h-[10px] border-2 border-[#3E2F2B] bg-[#3E2F2B] scale-[1.15]'
-                                            : 'w-[10px] h-[10px] bg-[#E8E3DD]'
+                                            ? 'w-[9px] h-[9px] border-2 border-[#3E2F2B] bg-[#3E2F2B] scale-[1.15]'
+                                            : 'w-[8px] h-[8px] bg-[#E8E3DD]/70'
                                     }
                                 `}
                             >
@@ -61,10 +61,10 @@ export default function ProjectPipeline({ status, clientViewedAt }: ProjectPipel
                         {i < STEPS.length - 1 && (
                             <div
                                 className={`
-                                    flex-1 h-[2px] mx-1 sm:mx-1.5 mt-[-12px] sm:mt-[-14px] rounded-full transition-all duration-300
+                                    flex-1 h-[1.5px] mx-1 sm:mx-1.5 mt-[-12px] sm:mt-[-14px] rounded-full transition-all duration-300
                                     ${i < currentIndex
-                                        ? 'bg-[#3E2F2B] opacity-80'
-                                        : 'bg-[#E8E3DD]'
+                                        ? 'bg-[#3E2F2B] opacity-50'
+                                        : 'bg-[#E8E3DD]/60'
                                     }
                                 `}
                             />

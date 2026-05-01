@@ -103,7 +103,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                 </Link>
 
                 {/* Navigation */}
-                <nav className="flex-1 py-5 px-3 space-y-1">
+                <nav className="flex-1 py-5 px-3 space-y-1.5">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
                         const Icon = item.icon;
@@ -117,7 +117,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                   transition-all duration-150 group relative
                   ${isActive
                                         ? 'bg-[#F0EBE6] text-[#3E2F2B]'
-                                        : 'text-[#6F6A66] hover:text-[#1E1E1E] hover:bg-[#F6F3EF]'
+                                        : 'text-[#9A9A9A] hover:text-[#1E1E1E] hover:bg-[#F6F3EF]'
                                     }
                   ${collapsed ? 'justify-center' : ''}
                 `}
