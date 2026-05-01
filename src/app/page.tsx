@@ -112,33 +112,53 @@ export default function LandingPage() {
 
             {/* ═══════════════════════════════════════
                 DASHBOARD SHOWCASE — The Product Shot
-                Unchanged — perspective tilt + ambient glow
+                macOS-style browser chrome · lightdash.png
                 ═══════════════════════════════════════ */}
             <section className="relative px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24 -mt-2 sm:mt-0">
                 <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[70%] rounded-full bg-[#3E2F2B]/[0.07] blur-[120px]" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[70%] rounded-full bg-[#3E2F2B]/[0.05] blur-[120px]" />
                 </div>
 
                 <div className="relative max-w-5xl mx-auto">
                     <div className="dashboard-showcase animate-fade-in">
                         <div className="dashboard-showcase-inner">
+                            {/* macOS-style browser chrome */}
                             <div className="dashboard-showcase-chrome">
-                                <div className="flex items-center gap-1.5">
-                                    <span className="w-[10px] h-[10px] rounded-full bg-[#E8E3DD]" />
-                                    <span className="w-[10px] h-[10px] rounded-full bg-[#E8E3DD]" />
-                                    <span className="w-[10px] h-[10px] rounded-full bg-[#E8E3DD]" />
+                                {/* Traffic light dots */}
+                                <div className="flex items-center gap-[7px]">
+                                    <span className="w-[11px] h-[11px] rounded-full bg-[#FF5F57] shadow-[inset_0_-1px_1px_rgba(0,0,0,0.12)]" />
+                                    <span className="w-[11px] h-[11px] rounded-full bg-[#FEBC2E] shadow-[inset_0_-1px_1px_rgba(0,0,0,0.12)]" />
+                                    <span className="w-[11px] h-[11px] rounded-full bg-[#28C840] shadow-[inset_0_-1px_1px_rgba(0,0,0,0.12)]" />
                                 </div>
-                                <span className="text-[10px] sm:text-xs text-[#78716C] font-medium tracking-wide">kalvora.in/dashboard</span>
+
+                                {/* URL bar */}
+                                <div className="dashboard-showcase-url-bar">
+                                    <svg width="10" height="12" viewBox="0 0 10 12" fill="none" className="flex-shrink-0 opacity-50">
+                                        <path d="M5 0C2.79 0 1 1.79 1 4v2H0v6h10V6H9V4c0-2.21-1.79-4-4-4zm3 6v4H2V6h6zM3 4c0-1.1.9-2 2-2s2 .9 2 2v2H3V4z" fill="#78716C"/>
+                                    </svg>
+                                    <span className="text-[10px] sm:text-xs text-[#78716C] font-medium tracking-wide">
+                                        kalvora.kaliprlabs.in/dashboard
+                                    </span>
+                                </div>
+
+                                {/* Spacer to balance layout */}
                                 <div className="w-[46px]" />
                             </div>
+
+                            {/* Dashboard screenshot */}
                             <img
-                                src="/dash.png"
+                                src="/lightdash.png"
                                 alt="Kalvora Dashboard — manage proposals, track client views, and auto-generate invoices"
                                 className="w-full h-auto block"
                                 loading="eager"
                             />
                         </div>
+
+                        {/* Bottom fade-out */}
                         <div className="dashboard-showcase-fade" />
+
+                        {/* Subtle reflection underneath */}
+                        <div className="dashboard-showcase-reflection" aria-hidden="true" />
                     </div>
                 </div>
             </section>

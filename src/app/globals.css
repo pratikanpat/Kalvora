@@ -420,16 +420,38 @@ html { scroll-behavior: smooth; }
 .dashboard-showcase { position: relative; }
 .dashboard-showcase-inner {
   position: relative; border-radius: 16px; overflow: hidden;
-  border: 1px solid #E8E3DD; background: #FFFFFF;
+  border: 1px solid #E0DCD6; background: #FFFFFF;
+  box-shadow:
+    0 4px 16px rgba(30,30,30,0.06),
+    0 12px 40px rgba(30,30,30,0.04),
+    0 0 0 1px rgba(30,30,30,0.03);
 }
 .dashboard-showcase-chrome {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 16px; background: #F0EBE6; border-bottom: 1px solid #E8E3DD;
+  padding: 11px 16px; background: #F5F2EE; border-bottom: 1px solid #E8E3DD;
+  position: relative;
+}
+.dashboard-showcase-chrome::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px; background: linear-gradient(90deg, transparent 0%, #D9D1C9 50%, transparent 100%);
+}
+.dashboard-showcase-url-bar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 14px; border-radius: 6px;
+  background: #FFFFFF; border: 1px solid #E8E3DD;
+  min-width: 220px; justify-content: center;
 }
 .dashboard-showcase-fade {
   position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
   background: linear-gradient(to top, #F6F3EF 0%, #F6F3EF 10%, transparent 100%);
   pointer-events: none; z-index: 2; border-radius: 0 0 16px 16px;
+}
+.dashboard-showcase-reflection {
+  position: absolute; bottom: -8px; left: 5%; right: 5%; height: 24px;
+  background: linear-gradient(to bottom, rgba(62,47,43,0.04), transparent);
+  border-radius: 0 0 50% 50%;
+  filter: blur(8px);
+  pointer-events: none;
 }
 
 /* ---- Closing Engine Components ---- */
@@ -627,6 +649,8 @@ html { scroll-behavior: smooth; }
   .dashboard-showcase-inner { border-radius: 12px; }
   .dashboard-showcase-fade { height: 80px; border-radius: 0 0 12px 12px; }
   .dashboard-showcase-chrome { padding: 8px 12px; }
+  .dashboard-showcase-url-bar { min-width: 160px; padding: 3px 10px; }
+  .dashboard-showcase-reflection { left: 8%; right: 8%; height: 16px; }
 }
 @supports (padding: env(safe-area-inset-bottom)) {
   body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
