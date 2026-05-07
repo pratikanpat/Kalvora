@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from './AuthProvider';
-import { Menu, X, LayoutDashboard } from 'lucide-react';
+import DemoVideoModal from './DemoVideoModal';
+import { Menu, X, LayoutDashboard, Play } from 'lucide-react';
 
 export default function LandingNavbar() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [demoOpen, setDemoOpen] = useState(false);
     const { session, loading } = useAuth();
 
     useEffect(() => {
@@ -19,6 +21,7 @@ export default function LandingNavbar() {
     const isLoggedIn = !loading && !!session;
 
     return (
+        <>
         <nav
             className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${scrolled
                 ? 'bg-[#F6F3EF] border-b border-[#E8E3DD]'
@@ -38,6 +41,13 @@ export default function LandingNavbar() {
                     <div className="hidden md:flex items-center gap-2">
                         {isLoggedIn ? (
                             <>
+                                <button
+                                    onClick={() => setDemoOpen(true)}
+                                    className="flex items-center gap-1.5 px-4 py-2 text-sm text-[#6F6A66] hover:text-[#1E1E1E] transition-colors rounded-[10px] hover:bg-[#F0EBE6]"
+                                >
+                                    <Play size={14} className="fill-current" />
+                                    Demo
+                                </button>
                                 <Link
                                     href="/create"
                                     className="px-4 py-2 text-sm text-[#6F6A66] hover:text-[#1E1E1E] transition-colors rounded-[10px] hover:bg-[#F0EBE6]"
@@ -87,6 +97,13 @@ export default function LandingNavbar() {
                     <div className="px-4 py-4 space-y-1">
                         {isLoggedIn ? (
                             <>
+                                <button
+                                    onClick={() => { setMobileOpen(false); setDemoOpen(true); }}
+                                    className="flex items-center gap-2 w-full px-4 py-3 text-sm text-[#6F6A66] hover:text-[#1E1E1E] hover:bg-[#F0EBE6] rounded-[10px] transition-colors"
+                                >
+                                    <Play size={14} className="fill-current" />
+                                    Watch Demo
+                                </button>
                                 <Link
                                     href="/create"
                                     onClick={() => setMobileOpen(false)}
@@ -125,5 +142,9 @@ export default function LandingNavbar() {
                 </div>
             )}
         </nav>
+
+            {/* Demo Video Modal */}
+            <DemoVideoModal isOpen={demoOpen} onClose={() => setDemoOpen(false)} />
+        </>
     );
 }
