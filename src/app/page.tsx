@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import DemoVideoModal from '@/components/DemoVideoModal';
 import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import LandingNavbar from '@/components/LandingNavbar';
@@ -12,7 +13,7 @@ import {
     Zap, Share2, Eye, FileText, Receipt, Clock,
     Sparkles, LayoutTemplate, Users, Briefcase,
     Home as HomeIcon, PenTool, Edit3, FolderOpen,
-    BarChart3
+    BarChart3, Play
 } from 'lucide-react';
 
 // ─────────────────────────────────────────
@@ -26,6 +27,7 @@ import {
 
 export default function LandingPage() {
     const { session, loading } = useAuth();
+    const [showDemo, setShowDemo] = useState(false);
 
     // ── Loading state: prevent flash of wrong content ──
     if (loading) {
@@ -101,6 +103,14 @@ export default function LandingPage() {
                             Create Account
                             <ArrowRight size={20} />
                         </Link>
+                        <button
+                            onClick={() => setShowDemo(true)}
+                            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-sm font-medium text-[#6F6A66] bg-transparent border border-[#D9D1C9] hover:border-[#C4BBB2] hover:text-[#3E2F2B] transition-all duration-200 cursor-pointer"
+                            id="hero-cta-demo"
+                        >
+                            <Play size={16} className="fill-current" />
+                            Watch Demo
+                        </button>
                     </div>
 
                     {/* Trust strip */}
@@ -556,6 +566,9 @@ export default function LandingPage() {
                     </div>
                 </div>
             </footer>
+
+            {/* Demo Video Modal */}
+            <DemoVideoModal isOpen={showDemo} onClose={() => setShowDemo(false)} />
         </div>
     );
 }
