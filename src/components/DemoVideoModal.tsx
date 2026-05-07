@@ -10,7 +10,7 @@ import { X } from 'lucide-react';
 // Matches Editorial Luxury Minimal design system.
 //
 // ▸ UPDATE THIS when the YouTube video is ready:
-export const DEMO_VIDEO_YOUTUBE_ID = 'YOUR_YOUTUBE_VIDEO_ID';
+export const DEMO_VIDEO_YOUTUBE_ID = 'YSFsgBdlBAE';
 // ─────────────────────────────────────────
 
 interface DemoVideoModalProps {
