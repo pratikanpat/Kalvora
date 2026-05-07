@@ -43,7 +43,7 @@ export default function LandingPage() {
                 <footer className="border-t border-[#E4E1DB] bg-[#F1EFEA]">
                     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#9A9A9A]">
-                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> — Kalipr Labs</p>
+                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> - Kalipr Labs</p>
                             <div className="flex items-center gap-3">
                                 <span>Privacy</span>
                                 <span className="text-[#E4E1DB]">·</span>
@@ -91,7 +91,7 @@ export default function LandingPage() {
                         <span className="text-[#1E1E1E] font-semibold">send a simple link</span>,{' '}
                         <span className="text-[#1E1E1E] font-semibold">track views</span>, and{' '}
                         <span className="text-[#1E1E1E] font-semibold">get approvals</span>{' '}
-                        — all in{' '}
+                        - all in{' '}
                         <span className="text-[#1E1E1E] font-semibold">one place</span>.
                     </p>
 
@@ -286,7 +286,7 @@ export default function LandingPage() {
                         {
                             icon: Share2,
                             title: 'Share Instantly on WhatsApp',
-                            desc: 'Send a simple link your client can open anywhere — no bulky files, no confusion.',
+                            desc: 'Send a simple link your client can open anywhere - no bulky files, no confusion.',
                             accent: 'success' as const,
                         },
                         {
