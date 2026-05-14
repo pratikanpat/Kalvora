@@ -85,9 +85,10 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
             {/* Sidebar */}
             <aside
                 className={`
-          fixed top-0 left-0 h-screen z-50
+          fixed top-0 left-0 z-50
           bg-[#F6F3EF] border-r border-[#E8E3DD]
           flex flex-col transition-colors duration-200 ease-out
+          h-[100dvh]
           ${collapsed ? 'w-[72px]' : 'w-[260px]'}
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0
@@ -103,7 +104,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                 </Link>
 
                 {/* Navigation */}
-                <nav className="flex-1 py-5 px-3 space-y-1.5">
+                <nav className="flex-1 overflow-y-auto py-5 px-3 space-y-1.5">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
                         const Icon = item.icon;
@@ -145,7 +146,7 @@ export default function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                 </nav>
 
                 {/* User info & Logout */}
-                <div className="border-t border-[#E8E3DD] p-3 space-y-1">
+                <div className="flex-shrink-0 border-t border-[#E8E3DD] p-3 space-y-1">
                     {/* User email */}
                     {user && (
                         <div className={`flex items-center gap-2.5 px-3 py-2 rounded-[10px] ${collapsed ? 'justify-center' : ''}`}>
