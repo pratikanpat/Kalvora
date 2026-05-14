@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Check } from 'lucide-react';
 
 export interface SelectOption {
@@ -18,6 +19,13 @@ interface CustomSelectProps {
     placeholder?: string;
 }
 
+// ─────────────────────────────────────────
+// CustomSelect
+//
+// The dropdown panel is rendered via React Portal at document.body so it
+// is NEVER clipped by a parent's overflow:hidden or stacking context.
+// Position is calculated from the trigger button's getBoundingClientRect().
+// ─────────────────────────────────────────
 export default function CustomSelect({
     value,
     onChange,
@@ -28,32 +36,85 @@ export default function CustomSelect({
     placeholder,
 }: CustomSelectProps) {
     const [open, setOpen] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
+    const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const [mounted, setMounted] = useState(false);
+
+    // Only render portal after hydration
+    useEffect(() => { setMounted(true); }, []);
 
     const selectedLabel = options.find(o => o.value === value)?.label || placeholder || '';
 
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (ref.current && !ref.current.contains(e.target as Node)) {
-                setOpen(false);
-            }
-        };
-        const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') setOpen(false);
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        document.addEventListener('keydown', handleEscape);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-            document.removeEventListener('keydown', handleEscape);
-        };
+    // Calculate and set dropdown position from the trigger button's rect
+    const positionDropdown = useCallback(() => {
+        if (!triggerRef.current) return;
+        const rect = triggerRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const dropdownHeight = 260; // max-h approximation
+
+        // Decide if dropdown should open upward or downward
+        const spaceBelow = viewportHeight - rect.bottom;
+        const openUpward = spaceBelow < dropdownHeight && rect.top > dropdownHeight;
+
+        setDropdownStyle({
+            position: 'fixed',
+            left: rect.left,
+            width: rect.width,
+            minWidth: Math.max(rect.width, 180),
+            zIndex: 99999,
+            ...(openUpward
+                ? { bottom: viewportHeight - rect.top + 4 }
+                : { top: rect.bottom + 4 }
+            ),
+        });
     }, []);
 
+    const handleToggle = () => {
+        if (disabled) return;
+        if (!open) positionDropdown();
+        setOpen(prev => !prev);
+    };
+
+    // Close on outside click or ESC
+    useEffect(() => {
+        if (!open) return;
+
+        const handleClick = (e: MouseEvent) => {
+            if (
+                triggerRef.current?.contains(e.target as Node) ||
+                dropdownRef.current?.contains(e.target as Node)
+            ) return;
+            setOpen(false);
+        };
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setOpen(false);
+        };
+        // Re-position on scroll/resize so the panel tracks the trigger
+        const handleReposition = () => {
+            if (open) positionDropdown();
+        };
+
+        document.addEventListener('mousedown', handleClick);
+        document.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('scroll', handleReposition, true);
+        window.addEventListener('resize', handleReposition);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClick);
+            document.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('scroll', handleReposition, true);
+            window.removeEventListener('resize', handleReposition);
+        };
+    }, [open, positionDropdown]);
+
     return (
-        <div ref={ref} className={`relative ${className}`}>
+        <div className={`relative ${className}`}>
+            {/* Trigger button */}
             <button
+                ref={triggerRef}
                 type="button"
-                onClick={() => !disabled && setOpen(!open)}
+                onClick={handleToggle}
                 disabled={disabled}
                 className={`
                     w-full bg-white border border-[#E8E3DD] rounded-[10px] px-3.5 py-3 text-sm
@@ -79,12 +140,14 @@ export default function CustomSelect({
                 />
             </button>
 
-            {open && (
+            {/* Dropdown panel — rendered via Portal so it's never clipped */}
+            {mounted && open && createPortal(
                 <div
+                    ref={dropdownRef}
+                    style={dropdownStyle}
                     className="
-                        absolute z-[9999] mt-1.5 w-full min-w-[180px]
                         bg-white border border-[#E8E3DD] rounded-xl
-                        shadow-[0px_8px_24px_rgba(0,0,0,0.08)]
+                        shadow-[0px_8px_24px_rgba(0,0,0,0.12),0px_2px_8px_rgba(0,0,0,0.06)]
                         py-1.5 max-h-[240px] overflow-y-auto
                         animate-scale-in origin-top
                     "
@@ -112,7 +175,8 @@ export default function CustomSelect({
                             )}
                         </button>
                     ))}
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
