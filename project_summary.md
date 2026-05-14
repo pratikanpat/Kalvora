@@ -1,7 +1,7 @@
 # PROJECT SUMMARY — Kalvora (ProposalFlow)
 
 > **Purpose of this file:** Provide a complete AI context snapshot so that any future coding session can immediately understand the system without scanning the entire codebase.
-> Last updated: 2026-04-27 (v13 — Accuracy audit: verified every line against actual codebase)
+> Last updated: 2026-05-14 (v14 — Added DemoVideoModal, CustomSelect, ProjectPipeline; Watch Demo button; lightdash.png macOS showcase; LoggedInHome onboarding flow; verified every line against actual codebase)
 
 ---
 
@@ -97,9 +97,12 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
   /components
     AuthProvider.tsx          → React context: session management, exposes useAuth() hook
     DashboardLayout.tsx       → Authenticated page wrapper with sidebar
+    DemoVideoModal.tsx        → Cinematic fullscreen YouTube modal (YouTube ID: YSFsgBdlBAE); closes on ESC or backdrop click; locks body scroll while open; used on sales landing hero via "Watch Demo" button
+    CustomSelect.tsx          → Accessible custom dropdown replacing native <select>; supports icons, placeholder, keyboard escape, click-outside; styled to match the Editorial Luxury Minimal design system
     LandingNavbar.tsx         → Public navbar (shows Dashboard/Create/Profile links if logged in, Get Started if not)
     LoadingSpinner.tsx        → Reusable loading UI
     ProfileSetupModal.tsx     → First-time profile setup modal on dashboard
+    ProjectPipeline.tsx       → 6-step visual progress indicator (Draft → Sent → Viewed → Approved → Paid → Completed); "Viewed" is a virtual step derived from clientViewedAt; used on proposal detail pages
     ProtectedRoute.tsx        → HOC to redirect unauthenticated users to /login
     LogoutFeedbackModal.tsx   → Modal shown on logout to capture friction feedback
     Sidebar.tsx               → Left nav sidebar for authenticated views (with red dot for incomplete profile, logout → feedback modal)
@@ -108,7 +111,7 @@ Interior designers typically create quotations manually in Word or Excel. Kalvor
     PaymentMilestones.tsx     → Payment milestone management (add/edit/delete/mark paid) with default presets (30/40/30)
     SuccessModal.tsx          → Post-generation success modal with PDF download/share links
     TemplatePreviewModal.tsx  → Template preview carousel modal on create page
-    LoggedInHome.tsx          → Closing Engine: action-driven command center for logged-in users at /
+    LoggedInHome.tsx          → Closing Engine: action-driven command center for logged-in users at /; also renders a guided onboarding flow for new users with 0 proposals (see Section 11)
     SocialProof.tsx           → Designer testimonial cards for sales landing page (currently commented out on landing page)
   /lib
     supabase.ts    → Supabase browser client + build-safe server client (service role, returns placeholder when env vars missing) + config checker
@@ -267,7 +270,8 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
 **Auth-State-Aware Landing Page (`/`):**
 - **State A (Not Logged In) — Sales Machine:**
   - Hero: "Stop Sending Proposals on WhatsApp Like It's 2012" with highlighter effect on key subheadline phrases ("track views", "get approvals").
-  - Dashboard product screenshot with perspective tilt.
+  - **Dual CTA row in hero**: Primary "Create Account" button + secondary ghost **"Watch Demo"** button (Play icon, border pill style). Clicking "Watch Demo" opens `DemoVideoModal` with the YouTube embed autoplay.
+  - **Dashboard Showcase**: macOS-style browser chrome frame (3 traffic-light dots, URL bar showing `kalvora.kaliprlabs.in/dashboard`) wrapping `lightdash.png`; bottom fade-out overlay; subtle reflection underneath. Replaces the legacy blue dashboard screenshot.
   - Pain Section: "Your current process is costing you projects" — step-by-step chaos walkthrough with punchline.
   - Before/After comparison (rewritten: messy process vs clean Kalvora workflow).
   - 6 Core Features as benefits: Create in minutes, Share on WhatsApp, Edit anytime, All proposals saved, Auto invoice, Track every project.
@@ -277,14 +281,22 @@ All templates are fully self-contained HTML/CSS strings in `src/lib/templates.ts
   - Pricing: "Simple pricing. No surprises." — Free early access + Pro ₹999/mo.
   - FAQ accordion (5 objection-handler questions).
   - Final CTA: "Your next proposal is 60 seconds away." with subheadline "Stop chasing clients. Start closing them."
+  - `DemoVideoModal` rendered at root level of the sales page; controlled via `showDemo` state.
 - **State B (Logged In) — Closing Engine (`LoggedInHome.tsx`):**
-  - Time-of-day greeting with user name.
-  - Pipeline Strip (top): Draft → Sent → Viewed → Approved → Paid → Completed counts, clickable.
-  - Primary Action Strip: Context-aware single dominant action (no profile → first proposal → resume draft → nudge viewed → follow up sent → invoice reminder → create new).
-  - Needs Your Attention: Stuck-project alarm system (stale proposals 3+ days, viewed not approved, approved not paid).
-  - Proposal Activity feed: Real-time-feeling client interaction feed ("Rahul viewed 2h ago", "Priya hasn't opened yet").
-  - Wins: Celebration cards for approvals (🎉), payments (💰), completions (✅).
-  - Quick nav link to full `/dashboard`.
+  - **Users with existing proposals (active/returning users):**
+    - Time-of-day greeting with user name.
+    - Pipeline Strip (top): Draft → Sent → Viewed → Approved → Paid → Completed counts, each clickable → `/dashboard`.
+    - Primary Action Strip: Context-aware single dominant action (priority order: no profile → nudge-approval → resume-draft → follow-up → invoice-reminder → create-new).
+    - Needs Your Attention: Stuck-project alarm system (stale proposals 3+ days, viewed not approved, approved not paid).
+    - Proposal Activity feed: Real-time-feeling client interaction feed ("Rahul viewed 2h ago", "Priya hasn't opened yet").
+    - Wins: Celebration cards for approvals (🎉), payments (💰), completions (✅).
+    - Quick nav link to full `/dashboard`.
+  - **New users with 0 proposals (onboarding flow):**
+    - Welcome greeting with user name.
+    - Setup Checklist progress bar: "0 of 3 complete" / "1 of 3 complete" (profile done).
+    - 3 onboarding steps: (1) Complete studio profile — active/completed state based on profile existence; (2) Create first proposal — active if profile exists, dimmed if not; (3) Send & track — always dimmed until proposals exist.
+    - Hero CTA button: "Set Up Your Studio" (no profile) or "Create Your First Proposal" (profile done).
+    - "How Kalvora Works" 4-step visual strip: Create → Send → Track → Get Paid.
 - Both states render at `/` — no redirects. Auth detected via `useAuth()` session.
 
 **Email to Client (`POST /api/send-proposal`):**
