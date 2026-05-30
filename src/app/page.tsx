@@ -45,7 +45,7 @@ export default function LandingPage() {
                 <footer className="border-t border-[#E4E1DB] bg-[#F1EFEA]">
                     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#9A9A9A]">
-                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> - Kalipr Labs</p>
+                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> — Built by <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#6B6B6B] transition-colors">Kalipr Labs</a></p>
                             <div className="flex items-center gap-3">
                                 <span>Privacy</span>
                                 <span className="text-[#E4E1DB]">·</span>
@@ -53,7 +53,6 @@ export default function LandingPage() {
                                 <span className="text-[#E4E1DB]">·</span>
                                 <a href="mailto:hello@kaliprlabs.in" className="hover:text-[#6B6B6B] transition-colors">Contact</a>
                             </div>
-                            <p className="text-[#9A9A9A]/60">v1.0.0</p>
                         </div>
                     </div>
                 </footer>
@@ -115,7 +114,7 @@ export default function LandingPage() {
 
                     {/* Trust strip */}
                     <p className="text-[#6F6A66] text-xs sm:text-sm animate-fade-in">
-                        Used by interior designers to close projects faster
+                        Trusted by 100+ interior designers across India
                     </p>
                 </div>
             </section>
@@ -533,7 +532,8 @@ export default function LandingPage() {
                             <div>
                                 <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#1E1E1E] mb-4">Company</h4>
                                 <ul className="space-y-2.5">
-                                    <li><span className="text-[#6B6B6B] text-sm">About</span></li>
+                                    <li><a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Kalipr Labs</a></li>
+                                    <li><a href="https://pratik.kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Founder</a></li>
                                     <li><Link href="/public-feedback" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Feedback</Link></li>
                                     <li><a href="mailto:hello@kaliprlabs.in" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Contact</a></li>
                                 </ul>
@@ -553,7 +553,7 @@ export default function LandingPage() {
                     {/* Section 3: Bottom Trust Strip */}
                     <div className="border-t border-[#E4E1DB] pt-6">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#9A9A9A]">
-                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> — Kalipr Labs</p>
+                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> — Built by <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#6B6B6B] transition-colors">Kalipr Labs</a> · Founded by <a href="https://pratik.kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#6B6B6B] transition-colors">Pratik Anpat</a></p>
                             <div className="flex items-center gap-3">
                                 <span>Privacy</span>
                                 <span className="text-[#E4E1DB]">·</span>
@@ -561,7 +561,6 @@ export default function LandingPage() {
                                 <span className="text-[#E4E1DB]">·</span>
                                 <a href="mailto:hello@kaliprlabs.in" className="hover:text-[#6B6B6B] transition-colors">Contact</a>
                             </div>
-                            <p className="text-[#9A9A9A]/60">v1.0.0</p>
                         </div>
                     </div>
                 </div>
@@ -581,24 +580,28 @@ export default function LandingPage() {
    ═══════════════════════════════════════ */
 const faqItems = [
     {
-        q: 'Is it really free?',
-        a: 'Yes. Every feature is free during early access. No credit card, no time limit, no catches. When we launch Pro, early users get 50% off forever.',
+        q: 'Can I generate GST invoices with Kalvora?',
+        a: 'Yes. Add your GSTIN and Kalvora auto-generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI - the moment your client approves the proposal.',
     },
     {
-        q: 'Does it support GST invoices?',
-        a: 'Yes. Add your GSTIN and Kalvora auto-generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI - after every client approval.',
+        q: 'Is Kalvora built for Indian interior designers?',
+        a: 'Yes. Kalvora is purpose-built for interior designers in India. Pricing is in INR, GST invoicing is built-in, and proposals are designed for the Indian market. 100+ designers across India already use it.',
     },
     {
-        q: 'Can I try it without signing up?',
-        a: 'Absolutely. Click "Try demo" to create a sample proposal instantly. No account needed. Sign up only when you\'re ready to save and share with real clients. [Right now this feature is under development]',
+        q: 'How does the proposal approval process work?',
+        a: 'You create a proposal, share a link with your client (WhatsApp, email, anywhere). The client can view it, leave comments, and approve it with one click. Once approved, an invoice is auto-generated.',
     },
     {
-        q: 'What happens when the client approves?',
-        a: 'The invoice is auto-generated with payment milestones (advance / mid-project / final). You get an email notification. The client gets a payment schedule.',
-    },
-    {
-        q: 'Can I use my own branding?',
+        q: 'Can I add my logo and branding to proposals?',
         a: 'Yes. Upload your studio logo, set your accent color, add your payment terms. Every proposal and invoice carries your brand - not ours.',
+    },
+    {
+        q: 'What does Kalvora cost?',
+        a: 'Every feature is free during early access. No credit card, no time limit. When we launch Pro, early users get 50% off forever. Pro will be priced at ₹999/month.',
+    },
+    {
+        q: 'Is it really free?',
+        a: 'Yes. Every feature is free during early access. No credit card, no time limit, no catches.',
     },
 ];
 

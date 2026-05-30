@@ -19,8 +19,22 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-    title: 'Kalvora - Proposals & Invoicing for Interior Designers',
-    description: 'Create branded PDF proposals, get client approval, and auto-generate GST invoices in minutes. Built for Indian interior designers.',
+    title: 'Kalvora — Proposal & Invoice Software for Interior Designers',
+    description: 'Create branded PDF proposals, get client approval, and auto-generate GST invoices in minutes. Built for Indian interior designers. 100+ designers use Kalvora. Built by Kalipr Labs.',
+    keywords: 'Kalvora, proposal software interior designers, invoice software interior designers India, GST invoice generator, interior designer billing software, Kalipr Labs, Pratik Anpat',
+    authors: [{ name: 'Kalipr Labs', url: 'https://kaliprlabs.in' }],
+    openGraph: {
+        title: 'Kalvora — Proposal & Invoice Software for Interior Designers',
+        description: 'Create branded PDF proposals, get client approval, and auto-generate GST invoices in minutes. Used by 100+ interior designers across India.',
+        url: 'https://kalvora.kaliprlabs.in',
+        siteName: 'Kalvora',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Kalvora — Proposal & Invoice Software for Interior Designers',
+        description: 'Create branded proposals, collect approvals, and auto-generate GST invoices. Built for Indian interior designers.',
+    },
     icons: {
         icon: '/favicon.png',
         shortcut: '/favicon.png',
@@ -35,6 +49,36 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+            <head>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "SoftwareApplication",
+                            name: "Kalvora",
+                            url: "https://kalvora.kaliprlabs.in",
+                            description:
+                                "Proposal and invoice software for interior designers. Create branded PDF proposals, get client approval, and auto-generate GST invoices.",
+                            applicationCategory: "BusinessApplication",
+                            operatingSystem: "Web",
+                            creator: {
+                                "@type": "Organization",
+                                name: "Kalipr Labs",
+                                url: "https://kaliprlabs.in",
+                            },
+                            author: {
+                                "@type": "Person",
+                                name: "Pratik Anpat",
+                            },
+                            offers: {
+                                "@type": "Offer",
+                                priceCurrency: "INR",
+                            },
+                        }),
+                    }}
+                />
+            </head>
             <body className="antialiased">
                 <AuthProvider>
                     <Toaster
