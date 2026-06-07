@@ -1,8 +1,8 @@
 'use client';
 
+export const runtime = 'edge';
+
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { resolveShortCode } from '@/lib/shortcode';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function ShortProposalRedirect() {

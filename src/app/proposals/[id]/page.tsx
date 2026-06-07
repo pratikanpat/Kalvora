@@ -1,9 +1,8 @@
 'use client';
 
+export const runtime = 'edge';
+
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import DashboardLayout from '@/components/DashboardLayout';
 import StatusBadge from '@/components/StatusBadge';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/AuthProvider';

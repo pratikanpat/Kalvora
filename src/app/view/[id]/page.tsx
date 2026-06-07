@@ -1,8 +1,8 @@
 'use client';
 
+export const runtime = 'edge';
+
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Download, MapPin, Phone, Mail, Building, User, Sparkles, CheckCircle2, MessageSquare, Clock, Send, Loader2, X, FileText } from 'lucide-react';
