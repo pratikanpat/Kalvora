@@ -3,3 +3,10 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
 pages_build_output_dir = ".vercel/output/static"
+
+[vars]
+NEXT_PUBLIC_SUPABASE_URL = "https://zareyawtjnzzclvaaqyd.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_A8exU2rGedKQ4PqKKuhzlA_-faXPJBI"
+NEXT_PUBLIC_APP_URL = "https://kalvora.kaliprlabs.in"
+NEXT_PUBLIC_ADMIN_EMAILS = "kaliprlabs@gmail.com"
+ADMIN_EMAILS = "kaliprlabs@gmail.com"
