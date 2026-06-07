@@ -3,6 +3,8 @@
 export const runtime = 'edge';
 
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { FileText, Download, Building, User, Mail, Phone, MapPin, Calendar, Hash, Landmark, CreditCard, Clock } from 'lucide-react';
 
 interface ProjectData {
