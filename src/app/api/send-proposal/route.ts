@@ -3,6 +3,7 @@ import { createServerClient } from '@/lib/supabase';
 import { Resend } from 'resend';
 import { getOrCreateShortCodeServer, buildShortUrl } from '@/lib/shortcode';
 
+export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 const APP_URL =

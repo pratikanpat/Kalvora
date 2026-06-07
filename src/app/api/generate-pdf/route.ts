@@ -3,7 +3,7 @@ import { createServerClient } from '@/lib/supabase';
 import { minimalTemplate, luxuryTemplate, modernTemplate, blueprintTemplate, editorialTemplate, highContrastTemplate } from '@/lib/templates';
 import type { TemplateData } from '@/lib/templates';
 
-export const maxDuration = 30;
+export const runtime = 'edge';
 
 const BROWSERLESS_TOKEN = process.env.BROWSERLESS_API_TOKEN;
 

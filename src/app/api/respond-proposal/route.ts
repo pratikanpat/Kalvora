@@ -3,6 +3,7 @@ import { createServerClient } from '@/lib/supabase';
 import { Resend } from 'resend';
 import { getOrCreateShortCodeServer, buildShortUrl } from '@/lib/shortcode';
 
+export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 /** Production URL — used in all email links. Env var takes priority, else hardcoded prod URL. */
