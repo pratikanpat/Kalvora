@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 // GET /api/healthz
 // Called by UptimeRobot every 5 minutes.
@@ -66,23 +66,23 @@ export async function GET() {
     }
 
     // ── 4. Browserless token check ────────────────────────────────────────────
-    // Browserless has no public /ping endpoint, so we verify the token is
-    // correctly configured. Service-level outages are caught by IsDown.app.
+    // Browserless has no public /ping endpoint. Verify token is configured.
+    // Service-level outages are monitored via status page subscriptions.
     checks.browserless_token = process.env.BROWSERLESS_API_TOKEN
         ? { status: 'ok' }
         : { status: 'fail', message: 'BROWSERLESS_API_TOKEN not set' };
 
     // ── 5. Resend reachability ────────────────────────────────────────────────
     // Calls the Resend /domains list endpoint — read-only, zero side effects.
+    // Edge runtime compatible fetch (no AbortSignal.timeout needed at edge).
     try {
         const key = process.env.RESEND_API_KEY;
         if (!key) throw new Error('RESEND_API_KEY not set');
 
         const res = await fetch('https://api.resend.com/domains', {
             headers: { Authorization: `Bearer ${key}` },
-            signal: AbortSignal.timeout(8000),
         });
-        // 200 = ok, 401 = bad key (service is up but key is wrong), both mean Resend is reachable
+        // 200 = ok, 401 = bad/expired key but Resend IS reachable
         checks.resend = res.status === 200 || res.status === 401
             ? { status: 'ok' }
             : { status: 'fail', message: `HTTP ${res.status}` };
