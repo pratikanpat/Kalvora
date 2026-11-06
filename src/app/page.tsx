@@ -1,40 +1,52 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import DemoVideoModal from '@/components/DemoVideoModal';
 import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import LandingNavbar from '@/components/LandingNavbar';
 import LoggedInHome from '@/components/LoggedInHome';
-import SocialProof from '@/components/SocialProof';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import CustomSelect, { SelectOption } from '@/components/CustomSelect';
 import {
-    ArrowRight, ChevronDown, X, Check, CheckCircle2,
-    Zap, Share2, Eye, FileText, Receipt, Clock,
-    Sparkles, LayoutTemplate, Users, Briefcase,
-    Home as HomeIcon, PenTool, Edit3, FolderOpen,
-    BarChart3, Play
+    ArrowRight, ChevronDown, Check,
+    Zap, Eye, FileText, Receipt,
+    Sparkles, Layers, Send, CheckCircle2,
+    X, ExternalLink
 } from 'lucide-react';
 
-// ─────────────────────────────────────────
-// LANDING PAGE — Auth-State-Aware Entry Point
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// LANDING PAGE â€” Auth-State-Aware Entry Point
 //
-// State A (no session): Sales Machine — convince, educate, convert
-// State B (session):    Closing Engine — action-driven command center
+// State A (no session): Sales Machine â€” convince, educate, convert
+// State B (session):    Closing Engine â€” action-driven command center
 //
-// Both render at "/" — no redirects.
-// ─────────────────────────────────────────
+// Both render at "/" â€” no redirects.
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+// â”€â”€ Reusable scroll-reveal hook â”€â”€
+function useScrollReveal() {
+    const ref = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const obs = new IntersectionObserver(
+            ([entry]) => { if (entry.isIntersecting) { el.classList.add('is-visible'); obs.disconnect(); } },
+            { threshold: 0.12 }
+        );
+        obs.observe(el);
+        return () => obs.disconnect();
+    }, []);
+    return ref;
+}
 
 export default function LandingPage() {
     const { session, loading } = useAuth();
     const [showDemo, setShowDemo] = useState(false);
 
-    // ── Loading state: prevent flash of wrong content ──
-    if (loading) {
-        return <LoadingSpinner text="" />;
-    }
+    if (loading) return <LoadingSpinner text="" />;
 
-    // ── State B: Logged-in users see the Closing Engine ──
+    // â”€â”€ State B: Logged-in users see the Closing Engine â”€â”€
     if (session) {
         return (
             <div className="min-h-screen bg-[#F6F3EF] flex flex-col">
@@ -45,12 +57,12 @@ export default function LandingPage() {
                 <footer className="border-t border-[#E4E1DB] bg-[#F1EFEA]">
                     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#9A9A9A]">
-                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> — Built by <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#6B6B6B] transition-colors">Kalipr Labs</a></p>
+                            <p>Â© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> â€” Product of <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#6B6B6B] transition-colors">Kalipr Labs</a></p>
                             <div className="flex items-center gap-3">
                                 <span>Privacy</span>
-                                <span className="text-[#E4E1DB]">·</span>
+                                <span className="text-[#E4E1DB]">Â·</span>
                                 <span>Terms</span>
-                                <span className="text-[#E4E1DB]">·</span>
+                                <span className="text-[#E4E1DB]">Â·</span>
                                 <a href="mailto:hello@kaliprlabs.in" className="hover:text-[#6B6B6B] transition-colors">Contact</a>
                             </div>
                         </div>
@@ -60,582 +72,720 @@ export default function LandingPage() {
         );
     }
 
-    // ── State A: Sales Landing Page ──
+    // â”€â”€ State A: Premium Sales Landing Page â”€â”€
     return (
-        <div className="min-h-screen bg-[#F6F3EF] relative">
-
-
+        <div className="min-h-screen lp-font-ui" style={{ background: 'var(--lp-canvas)', color: 'var(--lp-text)' }}>
             <LandingNavbar />
-
-            {/* ═══════════════════════════════════════
-                HERO — Editorial Typography
-                Playfair Display headline · Clean hierarchy
-                ═══════════════════════════════════════ */}
-            <section className="relative pt-28 pb-16 sm:pt-32 sm:pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
-                <div className="relative max-w-4xl mx-auto text-center">
-                    {/* Trust badge */}
-                    <div className="landing-proof-badge animate-fade-in">
-                        <span className="landing-proof-dot" />
-                        Free during Early Access · No credit card required
-                    </div>
-
-                    {/* Editorial Headline — Playfair Display */}
-                    <h1 className="hero-editorial-title text-[34px] sm:text-[48px] lg:text-[62px] mb-7 animate-fade-in">
-                        <span>Stop Sending Proposals</span>
-                        <br />
-                        <span>on WhatsApp </span>
-                        <span className="hero-italic-accent">Like It&apos;s 2012.</span>
-                    </h1>
-
-                    <p className="text-[#6F6A66] text-base sm:text-lg lg:text-xl max-w-2xl mx-auto mb-12 animate-fade-in leading-relaxed">
-                        Create professional interior design proposals,{' '}
-                        <span className="text-[#1E1E1E] font-semibold">send a simple link</span>,{' '}
-                        <span className="text-[#1E1E1E] font-semibold">track views</span>, and{' '}
-                        <span className="text-[#1E1E1E] font-semibold">get approvals</span>{' '}
-                        - all in{' '}
-                        <span className="text-[#1E1E1E] font-semibold">one place</span>.
-                    </p>
-
-                    {/* CTAs */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-7 animate-fade-in">
-                        <Link href="/signup" className="landing-cta-primary" id="hero-cta-primary">
-                            Create Account
-                            <ArrowRight size={20} />
-                        </Link>
-                        <button
-                            onClick={() => setShowDemo(true)}
-                            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full text-sm font-medium text-[#6F6A66] bg-transparent border border-[#D9D1C9] hover:border-[#C4BBB2] hover:text-[#3E2F2B] transition-all duration-200 cursor-pointer"
-                            id="hero-cta-demo"
-                        >
-                            <Play size={16} className="fill-current" />
-                            Watch Demo
-                        </button>
-                    </div>
-
-                    {/* Trust strip */}
-                    <p className="text-[#6F6A66] text-xs sm:text-sm animate-fade-in">
-                        Trusted by 100+ interior designers across India
-                    </p>
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════
-                DASHBOARD SHOWCASE — The Product Shot
-                macOS-style browser chrome · lightdash.png
-                ═══════════════════════════════════════ */}
-            <section className="relative px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24 -mt-2 sm:mt-0">
-                <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[70%] rounded-full bg-[#3E2F2B]/[0.05] blur-[120px]" />
-                </div>
-
-                <div className="relative max-w-5xl mx-auto">
-                    <div className="dashboard-showcase animate-fade-in">
-                        <div className="dashboard-showcase-inner">
-                            {/* macOS-style browser chrome */}
-                            <div className="dashboard-showcase-chrome">
-                                {/* Traffic light dots */}
-                                <div className="flex items-center gap-[7px]">
-                                    <span className="w-[11px] h-[11px] rounded-full bg-[#FF5F57] shadow-[inset_0_-1px_1px_rgba(0,0,0,0.12)]" />
-                                    <span className="w-[11px] h-[11px] rounded-full bg-[#FEBC2E] shadow-[inset_0_-1px_1px_rgba(0,0,0,0.12)]" />
-                                    <span className="w-[11px] h-[11px] rounded-full bg-[#28C840] shadow-[inset_0_-1px_1px_rgba(0,0,0,0.12)]" />
-                                </div>
-
-                                {/* URL bar */}
-                                <div className="dashboard-showcase-url-bar">
-                                    <svg width="10" height="12" viewBox="0 0 10 12" fill="none" className="flex-shrink-0 opacity-50">
-                                        <path d="M5 0C2.79 0 1 1.79 1 4v2H0v6h10V6H9V4c0-2.21-1.79-4-4-4zm3 6v4H2V6h6zM3 4c0-1.1.9-2 2-2s2 .9 2 2v2H3V4z" fill="#78716C"/>
-                                    </svg>
-                                    <span className="text-[10px] sm:text-xs text-[#78716C] font-medium tracking-wide">
-                                        kalvora.kaliprlabs.in/dashboard
-                                    </span>
-                                </div>
-
-                                {/* Spacer to balance layout */}
-                                <div className="w-[46px]" />
-                            </div>
-
-                            {/* Dashboard screenshot */}
-                            <img
-                                src="/lightdash.png"
-                                alt="Kalvora Dashboard — manage proposals, track client views, and auto-generate invoices"
-                                className="w-full h-auto block"
-                                loading="eager"
-                            />
-                        </div>
-
-                        {/* Bottom fade-out */}
-                        <div className="dashboard-showcase-fade" />
-
-                        {/* Subtle reflection underneath */}
-                        <div className="dashboard-showcase-reflection" aria-hidden="true" />
-                    </div>
-                </div>
-            </section>
-
-            {/* ═══ Section Divider ═══ */}
-            <div className="section-divider" />
-
-            {/* ═══════════════════════════════════════
-                😤 PAIN SECTION — Hook them emotionally
-                "Your current process is costing you projects"
-                ═══════════════════════════════════════ */}
-            <section className="px-4 sm:px-6 lg:px-8 pb-6 sm:pb-10 pt-10 sm:pt-14">
-                <div className="max-w-3xl mx-auto">
-                    <div className="landing-problem-card">
-                        <h2 className="text-xl sm:text-2xl font-bold text-[#1E1E1E] mb-6 text-center">
-                            Your current process is{' '}
-                            <span className="text-[#B85C5C] font-bold">costing you projects</span>
-                        </h2>
-
-                        <div className="max-w-lg mx-auto space-y-1">
-                            {[
-                                'You create proposals in Word or Excel',
-                                'Convert to PDF',
-                                'Send it on WhatsApp',
-                                'Then wait… and follow up… again… and again',
-                                "Half the time, you don't even know if the client opened it",
-                            ].map((step, i) => (
-                                <div key={i} className="pain-step" style={{ animationDelay: `${i * 120}ms` }}>
-                                    <span className="pain-step-number">{i + 1}</span>
-                                    <span>{step}</span>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="text-center mt-8">
-                            <span className="pain-punchline">That&apos;s not a system. That&apos;s chaos.</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ═══ Section Divider ═══ */}
-            <div className="section-divider-wide" style={{ margin: '16px auto' }} />
-
-            {/* ═══════════════════════════════════════
-                ⚡ BEFORE / AFTER — Visual Contrast
-                Rewritten content — specific, punchy
-                ═══════════════════════════════════════ */}
-            <section className="landing-section pt-10 sm:pt-14 pb-10 sm:pb-14">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto">
-                    {/* Before */}
-                    <div className="landing-card p-6 sm:p-7 border-[#B85C5C]/15 relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#B85C5C]/50" />
-                        <div className="flex items-center gap-2.5 mb-5">
-                            <div className="w-8 h-8 rounded-lg bg-[#FDF2F2] flex items-center justify-center">
-                                <X size={16} className="text-[#B85C5C]" />
-                            </div>
-                            <h3 className="text-[15px] font-semibold text-[#B85C5C]">Before Kalvora</h3>
-                        </div>
-                        <ul className="space-y-3.5 text-sm text-[#6F6A66]">
-                            {[
-                                'Messy Word/Excel proposals',
-                                'Endless WhatsApp follow-ups',
-                                'No idea if client saw it',
-                                'Manual invoices after every approval',
-                            ].map((item, i) => (
-                                <li key={i} className="flex items-start gap-2.5">
-                                    <X size={14} className="text-[#B85C5C]/40 mt-0.5 flex-shrink-0" />
-                                    {item}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* After */}
-                    <div className="landing-card p-6 sm:p-7 border-[#EDF5F1] relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#6A9C89]" />
-                        <div className="flex items-center gap-2.5 mb-5">
-                            <div className="w-8 h-8 rounded-lg bg-[#EDF5F1] flex items-center justify-center">
-                                <CheckCircle2 size={16} className="text-[#6A9C89]" />
-                            </div>
-                            <h3 className="text-[15px] font-semibold text-[#6A9C89]">After Kalvora</h3>
-                        </div>
-                        <ul className="space-y-3.5 text-sm text-[#6F6A66]">
-                            {[
-                                'Clean proposals in minutes',
-                                'Share with one link',
-                                'Know when client views',
-                                'One-click approval + Invoice ready instantly',
-                            ].map((item, i) => (
-                                <li key={i} className="flex items-start gap-2.5">
-                                    <Check size={14} className="text-[#6A9C89]/60 mt-0.5 flex-shrink-0" />
-                                    {item}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════
-                🧩 CORE FEATURES — 6 benefits, human language
-                Not features — outcomes.
-                ═══════════════════════════════════════ */}
-            <section className="landing-section pt-10 sm:pt-14">
-                <div className="text-center mb-12 sm:mb-14">
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1E1E1E]">
-                        Everything You Need to{' '}
-                        <span className="text-[#3E2F2B]">Close Faster</span>
-                    </h2>
-                    <p className="text-[#6F6A66] text-sm mt-3 max-w-md mx-auto">
-                        Six powerful features that{' '}
-                        <span className="text-[#6F6A66] font-medium">simplify</span>{' '}your workflow
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
-                    {[
-                        {
-                            icon: Zap,
-                            title: 'Create Proposals in Minutes',
-                            desc: 'No formatting. No design work. Just fill details and generate a clean, client-ready proposal instantly.',
-                            accent: 'brand' as const,
-                        },
-                        {
-                            icon: Share2,
-                            title: 'Share Instantly on WhatsApp',
-                            desc: 'Send a simple link your client can open anywhere - no bulky files, no confusion.',
-                            accent: 'success' as const,
-                        },
-                        {
-                            icon: Edit3,
-                            title: 'Edit Without the Headache',
-                            desc: 'Update pricing or details anytime without recreating the whole proposal.',
-                            accent: 'amber' as const,
-                        },
-                        {
-                            icon: FolderOpen,
-                            title: 'All Your Proposals, One Place',
-                            desc: 'Every past proposal is saved and easy to access whenever you need it.',
-                            accent: 'brand' as const,
-                        },
-                        {
-                            icon: Receipt,
-                            title: 'Auto Invoice Generator',
-                            desc: 'Once your client approves, your invoice is ready. No extra steps.',
-                            accent: 'success' as const,
-                        },
-                        {
-                            icon: BarChart3,
-                            title: 'Track Every Project',
-                            desc: 'See exactly where each client stands: Draft → Sent → Viewed → Approved → Paid → Completed.',
-                            accent: 'amber' as const,
-                        },
-                    ].map((item, i) => {
-                        const accentMap = {
-                            brand: { bg: 'bg-[#3E2F2B]/12', border: 'border-[#3E2F2B]/20', text: 'text-[#3E2F2B]' },
-                            success: { bg: 'bg-[#EDF5F1]', border: 'border-[#D0E5DA]', text: 'text-[#6A9C89]' },
-                            amber: { bg: 'bg-[#F0EBE6]', border: 'border-[#D9D1C9]', text: 'text-[#C47A5A]' },
-                        };
-                        const a = accentMap[item.accent];
-                        return (
-                            <div key={i} className="feature-benefit-card animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
-                                <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-5 ${a.bg} border ${a.border}`}>
-                                    <item.icon size={20} className={a.text} />
-                                </div>
-                                <h3 className="text-[15px] font-semibold text-[#1E1E1E] mb-2.5 leading-snug">{item.title}</h3>
-                                <p className="text-[#6F6A66] text-sm leading-relaxed">{item.desc}</p>
-                            </div>
-                        );
-                    })}
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════
-                🎯 POWER FEATURE — USP Spotlight
-                "Client Viewed" is the killer feature
-                ═══════════════════════════════════════ */}
-            {/* ═══ Section Divider ═══ */}
-            <div className="section-divider" />
-
-            <section className="landing-section pt-10 sm:pt-14">
-                <div className="max-w-3xl mx-auto">
-                    <div className="power-feature-section text-center">
-                        <div className="relative z-10">
-                            <div className="power-feature-icon-ring mx-auto mb-6">
-                                <Eye size={36} className="text-[#3E2F2B]" />
-                            </div>
-                            <h2 className="text-2xl sm:text-3xl font-bold text-[#1E1E1E] mb-4">
-                                Finally…{' '}
-                                <span className="hero-italic-accent">Know When</span> Your Client{' '}
-                                <span className="text-[#3E2F2B] font-bold">Sees Your Proposal</span>
-                            </h2>
-                            <p className="text-[#6F6A66] text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-6">
-                                No more guessing. No more awkward follow-ups.
-                                <br />
-                                Get clarity on when to follow up - and close faster.
-                            </p>
-                            {/* Mock notification */}
-                            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-[#3E2F2B]/10 border border-[#3E2F2B]/15 ">
-                                <Eye size={16} className="text-[#3E2F2B]" />
-                                <span className="text-[#1E1E1E] text-sm font-medium">Rahul just viewed your proposal</span>
-                                <span className="text-[#3E2F2B] text-xs">2m ago</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════
-                🧑‍🎨 WHO IT'S FOR — Self-Identification
-                Simplified list
-                ═══════════════════════════════════════ */}
-            {/* ═══ Section Divider ═══ */}
-            <div className="section-divider-wide" style={{ margin: '0 auto' }} />
-
-            <section className="landing-section pt-10 sm:pt-14">
-                <div className="text-center mb-10 sm:mb-12">
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1E1E1E]">
-                        Built for{' '}
-                        <span className="text-[#C47A5A]">Your</span>{' '}Studio
-                    </h2>
-                </div>
-
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                    {[
-                        { icon: PenTool, title: 'Interior Designers', desc: 'Stop looking amateur with Word docs.' },
-                        { icon: Briefcase, title: 'Freelancers', desc: 'Close deals with professional proposals.' },
-                        { icon: HomeIcon, title: 'Small Design Studios', desc: 'Brand consistency in every proposal.' },
-                        { icon: Users, title: 'Tired of Chasing?', desc: 'Track views, get approvals, move faster.' },
-                    ].map((item) => (
-                        <div key={item.title} className="landing-persona-card">
-                            <div className="w-10 h-10 rounded-xl bg-[#3E2F2B]/10 border border-[#3E2F2B]/15 flex items-center justify-center mb-3">
-                                <item.icon size={18} className="text-[#3E2F2B]" />
-                            </div>
-                            <h3 className="text-sm font-semibold text-[#1E1E1E] mb-1">{item.title}</h3>
-                            <p className="text-[#6F6A66] text-xs leading-relaxed">{item.desc}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════
-                ⭐ DESIGNER REVIEWS — Social Proof
-                TEMPORARILY HIDDEN — uncomment to re-enable
-                ═══════════════════════════════════════ */}
-            {/* <SocialProof /> */}
-
-            {/* ═══════════════════════════════════════
-                💰 PRICING — Simple, No Surprises
-                ═══════════════════════════════════════ */}
-            <section className="landing-section pt-10 sm:pt-14" id="pricing">
-                <div className="max-w-xl mx-auto">
-                    <div className="landing-card p-8 sm:p-10 text-center relative overflow-hidden">
-                        <div className="absolute inset-0 bg-[#F0EBE6]/30 pointer-events-none" />
-                        <div className="relative">
-                            <p className="text-[#3E2F2B] text-[10px] font-bold uppercase tracking-[0.25em] mb-5">Pricing</p>
-                            <h2 className="text-3xl sm:text-4xl font-bold text-[#1E1E1E] mb-3">
-                                <span className="hero-italic-accent">Simple</span> pricing.{' '}
-                                <span className="text-[#3E2F2B] font-bold">No surprises.</span>
-                            </h2>
-                            <p className="text-[#6F6A66] text-base mb-7 leading-relaxed">
-                                Every feature. Unlimited proposals. Zero credit card.
-                            </p>
-                            <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#C47A5A]/8 border border-[#C47A5A]/12 text-[#C47A5A] text-sm font-medium mb-8">
-                                <Sparkles size={14} />
-                                Pro at ₹999/mo · Early users lock in 50% off forever
-                            </div>
-                            <div>
-                                <Link
-                                    href="/signup"
-                                    className="landing-cta-primary inline-flex"
-                                    id="pricing-cta"
-                                >
-                                    Claim Early Access
-                                    <ArrowRight size={18} />
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════
-                FAQ — Objection Handling
-                ═══════════════════════════════════════ */}
-            <section className="landing-section pt-10 sm:pt-14">
-                <div className="text-center mb-10 sm:mb-12">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-[#1E1E1E]">
-                        Common{' '}
-                        <span className="text-[#C47A5A]">Questions</span>
-                    </h2>
-                </div>
-                <div className="max-w-2xl mx-auto">
-                    <FAQSection />
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════
-                🔥 FINAL CTA — The Closer
-                "Stop chasing clients. Start closing them."
-                ═══════════════════════════════════════ */}
-            <section className="px-4 sm:px-6 lg:px-8 pb-20 sm:pb-28">
-                <div className="max-w-3xl mx-auto relative overflow-hidden rounded-3xl">
-                    <div className="absolute inset-0 bg-[#F0EBE6]" />
-                    <div className="absolute inset-0 border border-[#3E2F2B]/15 rounded-3xl" />
-                    <div className="relative px-8 py-14 sm:px-16 sm:py-16 text-center">
-                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#3E2F2B] mb-5">
-                            <LayoutTemplate size={24} className="text-white" />
-                        </div>
-                        <h2 className="text-2xl sm:text-3xl font-bold text-[#1E1E1E] mb-3">
-                            Your next proposal is{' '}
-                            <span className="text-[#3E2F2B] font-bold">60 seconds</span> away.
-                        </h2>
-                        <p className="text-[#6F6A66] max-w-md mx-auto mb-8 text-sm sm:text-base leading-relaxed">
-                            Stop chasing clients. Start closing them.
-                        </p>
-                        <Link
-                            href="/signup"
-                            className="landing-cta-primary inline-flex"
-                            id="final-cta"
-                        >
-                            Get Started
-                            <ArrowRight size={20} />
-                        </Link>
-                    </div>
-                </div>
-            </section>
-
-            {/* ═══════════════════════════════════════
-                FOOTER — Premium Marketing Footer
-                ═══════════════════════════════════════ */}
-            <footer className="border-t border-[#E4E1DB] bg-[#F1EFEA]">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
-
-                    {/* Section 1 + 2: Brand + Link Columns */}
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-10">
-
-                        {/* Brand Strip */}
-                        <div className="md:col-span-5">
-                            <Link href="/" className="group inline-block">
-                                <span className="brand-wordmark text-lg group-hover:opacity-80 transition-opacity">Kalvora</span>
-                            </Link>
-                            <p className="text-[#6B6B6B] text-sm mt-2.5 leading-relaxed max-w-xs">
-                                Professional proposals for interior designers. Create, send, track, get paid.
-                            </p>
-                        </div>
-
-                        {/* Link Columns */}
-                        <div className="md:col-span-7 grid grid-cols-3 gap-6">
-                            {/* Product */}
-                            <div>
-                                <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#1E1E1E] mb-4">Product</h4>
-                                <ul className="space-y-2.5">
-                                    <li><Link href="/#pricing" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Features</Link></li>
-                                    <li><Link href="/#pricing" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Pricing</Link></li>
-                                    {/* <li><Link href="/try" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Try Demo</Link></li> */}
-                                </ul>
-                            </div>
-
-                            {/* Company */}
-                            <div>
-                                <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#1E1E1E] mb-4">Company</h4>
-                                <ul className="space-y-2.5">
-                                    <li><a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Kalipr Labs</a></li>
-                                    <li><a href="https://pratik.kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Founder</a></li>
-                                    <li><Link href="/public-feedback" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Feedback</Link></li>
-                                    <li><a href="mailto:hello@kaliprlabs.in" className="text-[#6B6B6B] text-sm hover:text-[#1E1E1E] transition-colors">Contact</a></li>
-                                </ul>
-                            </div>
-
-                            {/* Legal */}
-                            <div>
-                                <h4 className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#1E1E1E] mb-4">Legal</h4>
-                                <ul className="space-y-2.5">
-                                    <li><span className="text-[#6B6B6B] text-sm cursor-default">Privacy Policy</span></li>
-                                    <li><span className="text-[#6B6B6B] text-sm cursor-default">Terms of Service</span></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Section 3: Bottom Trust Strip */}
-                    <div className="border-t border-[#E4E1DB] pt-6">
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#9A9A9A]">
-                            <p>© 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> — Built by <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#6B6B6B] transition-colors">Kalipr Labs</a> · Founded by <a href="https://pratik.kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#6B6B6B] transition-colors">Pratik Anpat</a></p>
-                            <div className="flex items-center gap-3">
-                                <span>Privacy</span>
-                                <span className="text-[#E4E1DB]">·</span>
-                                <span>Terms</span>
-                                <span className="text-[#E4E1DB]">·</span>
-                                <a href="mailto:hello@kaliprlabs.in" className="hover:text-[#6B6B6B] transition-colors">Contact</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-
-            {/* Demo Video Modal */}
+            <HeroSection />
+            <PainContrastSection />
+            <LifecycleSection />
+            <TemplateShowroom />
+            <TryoutGateway />
+            <FAQSection />
+            <DarkFooter />
             <DemoVideoModal isOpen={showDemo} onClose={() => setShowDemo(false)} />
         </div>
     );
 }
 
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  LAYER 1 â€” HERO ARCHITECTURE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const heroMessages = [
+    'Sent to client via magic link',
+    'Tejas opened proposal link (Just Now)',
+    'Tejas is adding line-item comments...',
+    'Proposal Approved by Client! 50% Advance Invoice Ready âœ“',
+];
 
+function HeroSection() {
+    const [pulseIdx, setPulseIdx] = useState(0);
+    const [fading, setFading] = useState(false);
 
-/* ═══════════════════════════════════════
-   FAQ — Accordion Component
-   5 questions max — only objection-handlers.
-   ═══════════════════════════════════════ */
+    useEffect(() => {
+        const timers = [
+            setTimeout(() => advance(1), 2500),
+            setTimeout(() => advance(2), 5200),
+            setTimeout(() => advance(3), 8400),
+        ];
+        return () => timers.forEach(clearTimeout);
+    }, []);
+
+    function advance(idx: number) {
+        setFading(true);
+        setTimeout(() => { setPulseIdx(idx); setFading(false); }, 320);
+    }
+
+    const isApproved = pulseIdx === 3;
+
+    return (
+        <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            {/* Subtle radial glow */}
+            <div className="absolute inset-0 pointer-events-none" aria-hidden>
+                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full"
+                    style={{ background: 'radial-gradient(ellipse, rgba(197,168,128,0.07) 0%, transparent 70%)' }} />
+            </div>
+
+            <div className="relative max-w-4xl mx-auto text-center space-y-8">
+
+                {/* Pre-header badge */}
+                <div className="lp-badge lp-animate-entry mx-auto w-fit">
+                    <Sparkles size={12} className="text-[#C5A880]" />
+                    <span>âœ¦ Platform Build Version 14 â€” Designed for Premium Design Studios</span>
+                </div>
+
+                {/* Headline */}
+                <h1 className="lp-animate-entry lp-delay-1 lp-font-display text-[38px] sm:text-[58px] lg:text-[70px] font-light leading-[1.08] tracking-tight"
+                    style={{ color: 'var(--lp-text)' }}>
+                    Stop Sending Proposals<br />
+                    on WhatsApp{' '}
+                    <span className="font-normal italic" style={{ color: '#C5A880' }}>Like It&apos;s 2012.</span>
+                </h1>
+
+                {/* Sub-copy */}
+                <p className="lp-animate-entry lp-delay-2 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-light"
+                    style={{ color: 'var(--lp-text-muted)' }}>
+                    Transform scattered spreadsheets and manual layout tables into organised, digital scopes.
+                    Track client interactions, capture specific line-item notes, and secure structural
+                    down payments smoothly.
+                </p>
+
+                {/* CTAs */}
+                <div className="lp-animate-entry lp-delay-3 flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                    <Link href="/signup" className="lp-btn-primary group">
+                        Build a Proposal
+                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                    <Link href="/try" className="lp-btn-ghost">
+                        Test Sandbox View
+                    </Link>
+                </div>
+
+                {/* Trust strip */}
+                <p className="lp-animate-entry lp-delay-4 text-xs" style={{ color: 'var(--lp-text-subtle)' }}>
+                    Free during Early Access Â· No credit card required Â· Trusted by 100+ designers across India
+                </p>
+
+                {/* Live activity widget */}
+                <div className="lp-animate-entry lp-delay-5 pt-6 max-w-2xl mx-auto">
+                    <div className="lp-activity-widget">
+                        <div className="lp-activity-widget-bar" />
+                        <div className="p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className={`p-3 rounded-xl border transition-all duration-500 ${isApproved
+                                    ? 'bg-green-50 border-green-200'
+                                    : 'border-[#E8DDD0]'
+                                }`} style={!isApproved ? { background: 'var(--lp-gold-bg)' } : {}}>
+                                    <Layers
+                                        size={20}
+                                        className={`transition-colors duration-500 ${isApproved ? 'text-green-600' : 'text-[#C5A880]'}`}
+                                        style={{ animation: 'spin 6s linear infinite' }}
+                                    />
+                                </div>
+                                <div>
+                                    <span className="block text-[9px] font-mono font-bold tracking-widest uppercase mb-1"
+                                        style={{ color: 'var(--lp-text-subtle)' }}>
+                                        Live Pipeline Activity Log
+                                    </span>
+                                    <p className={`text-sm font-semibold transition-opacity duration-300 ${fading ? 'opacity-0' : 'opacity-100'} ${isApproved ? 'text-green-700' : ''}`}
+                                        style={!isApproved ? { color: 'var(--lp-text)' } : {}}>
+                                        {heroMessages[pulseIdx]}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="text-right font-mono text-[10px] px-3 py-1.5 rounded-lg border shrink-0"
+                                style={{ color: 'var(--lp-text-subtle)', background: '#F5F3F0', borderColor: 'var(--lp-stone-border)' }}>
+                                KV-8721 // Gargi Reddy Office
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  LAYER 2 â€” RE-FRAMING OPERATIONAL PAIN
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const beforeItems = [
+    'Manually formatting spacing in Excel tables',
+    'Uploading massive files that clutter chat histories',
+    'Following up repeatedly to see if a quote was read',
+    'Calculating milestone breakdowns by hand',
+];
+const afterItems = [
+    'Guided multi-step forms built for space planning',
+    'Fast, responsive short tracking links (/p/KV-xxx)',
+    'Direct alerts the second a client views a proposal',
+    'Automatic invoice generation with local GST fields',
+];
+
+function PainContrastSection() {
+    const ref = useScrollReveal();
+    return (
+        <section className="px-4 sm:px-6 lg:px-8 py-20 sm:py-28 max-w-5xl mx-auto">
+            <div ref={ref} className="lp-animate-entry text-center mb-14">
+                <span className="text-[10px] font-bold tracking-widest uppercase font-mono mb-3 block" style={{ color: 'var(--lp-gold)' }}>
+                    The Real Cost of Chaos
+                </span>
+                <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
+                    Your current process is{' '}
+                    <span className="italic" style={{ color: '#C5A880' }}>costing you projects</span>
+                </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Before */}
+                <div className="lp-contrast-col">
+                    <div className="lp-contrast-col-bar" style={{ background: '#E57373' }} />
+                    <div className="p-6 sm:p-7">
+                        <div className="flex items-center gap-2.5 mb-6">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#FEF2F2' }}>
+                                <X size={15} className="text-red-500" />
+                            </div>
+                            <h3 className="text-sm font-bold uppercase tracking-widest" style={{ color: '#B91C1C' }}>The Fragmented Routine</h3>
+                        </div>
+                        <div className="space-y-1">
+                            {beforeItems.map((item, i) => (
+                                <div key={i} className="lp-contrast-row" style={{ color: 'var(--lp-text-muted)' }}>
+                                    <span className="text-red-400 text-base shrink-0">âŒ</span>
+                                    <span className="text-[13.5px]">{item}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* After */}
+                <div className="lp-contrast-col">
+                    <div className="lp-contrast-col-bar" style={{ background: '#4ADE80' }} />
+                    <div className="p-6 sm:p-7">
+                        <div className="flex items-center gap-2.5 mb-6">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-content" style={{ background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Check size={15} style={{ color: '#15803D' }} />
+                            </div>
+                            <h3 className="text-sm font-bold uppercase tracking-widest" style={{ color: '#15803D' }}>The Structured Pipeline</h3>
+                        </div>
+                        <div className="space-y-1">
+                            {afterItems.map((item, i) => (
+                                <div key={i} className="lp-contrast-row" style={{ color: 'var(--lp-text-muted)' }}>
+                                    <span className="text-base shrink-0">âœ¨</span>
+                                    <span className="text-[13.5px]">{item}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  LAYER 3 â€” THE LIFECYCLE INTERACTION
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const pipelineSteps = [
+    {
+        title: '1. The Guided Studio Worksheet',
+        tag: 'STRUCTURE',
+        icon: FileText,
+        heading: 'An 8-section builder form structured around real design projects.',
+        desc: 'Input client specifications, total square footage, and room layouts. Toggle custom services like 3D visualisations, material sourcing packages, or electrical schematics â€” without touching a spreadsheet.',
+        terminal: [
+            { key: 'client_context_name', val: '"Gargi Reddy"' },
+            { key: 'area_dimension_sqft', val: '2400' },
+            { key: 'room_nodes_allocated', val: '["Boutique Cabin", "Conference Room", "Server Hub"]' },
+            { key: 'active_service_hooks', val: '["3D_Visualization", "Lighting_Design"]' },
+        ],
+    },
+    {
+        title: '2. The Magic Short-Link',
+        tag: 'DELIVERY',
+        icon: Send,
+        heading: 'Ditch heavy file attachments. Share via one elegant link.',
+        desc: 'Compile detailed estimates into short tracking links (/p/KV-xxxxx). These optimised presentation sheets are lightweight, responsive, secure, and load instantly on client mobile devices over WhatsApp.',
+        terminal: [
+            { key: 'generation_token', val: '"KV-89271-PROPOSAL"' },
+            { key: 'redirect_mask_path', val: '"/view/proposal_id_secure"' },
+            { key: 'encrypted_short_route', val: '"kaliprlabs.in/p/KV-89271"' },
+            { key: 'link_status', val: '"ACTIVE"' },
+        ],
+    },
+    {
+        title: '3. Real-Time Tracking Alerts',
+        tag: 'ENGAGEMENT',
+        icon: Eye,
+        heading: 'Know the exact second a client reviews your quotation.',
+        desc: 'Receive instant project dashboard notifications the moment a client opens their link. This precise insight lets you pick up the phone, resolve questions, and close deals when engagement is highest.',
+        terminal: [
+            { key: 'event_type', val: '"CLIENT_VIEW_LOGGED"', green: true },
+            { key: 'timestamp_utc', val: '"2026-11-07T20:14:33Z"' },
+            { key: 'webhook_dispatch', val: '"Resend API â†’ studio@email.in"' },
+            { key: 'pipeline_status_update', val: '"draft â†’ viewed"', green: true },
+        ],
+    },
+    {
+        title: '4. One-Click Milestone Checkout',
+        tag: 'CASH FLOW',
+        icon: CheckCircle2,
+        heading: 'Frictionless sign-offs that launch milestone payments automatically.',
+        desc: 'Clients review project costs, add specific feedback notes, and authorise quotes instantly. Once approved, the platform locks pricing, generates payment milestones, and creates print-ready GST invoices.',
+        terminal: [
+            { key: 'project_total_gross_inr', val: 'â‚¹8,00,000.00' },
+            { key: 'local_tax_gst_18', val: 'â‚¹1,44,000.00' },
+            { key: 'milestone_advance_50pct', val: 'â‚¹4,72,000.00', green: true },
+            { key: 'invoice_status', val: '"GENERATED â€” Awaiting Checkout"', green: true },
+        ],
+    },
+];
+
+function LifecycleSection() {
+    const [activeStep, setActiveStep] = useState(0);
+    const [visible, setVisible] = useState(true);
+    const ref = useScrollReveal();
+
+    const handleStep = useCallback((idx: number) => {
+        if (idx === activeStep) return;
+        setVisible(false);
+        setTimeout(() => { setActiveStep(idx); setVisible(true); }, 280);
+    }, [activeStep]);
+
+    const step = pipelineSteps[activeStep];
+
+    return (
+        <section id="pipeline" className="px-4 sm:px-6 lg:px-8 py-20 sm:py-28 max-w-6xl mx-auto border-t"
+            style={{ borderColor: 'var(--lp-stone-border)' }}>
+            <div ref={ref} className="lp-animate-entry text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span className="text-[10px] font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--lp-gold)' }}>
+                    Platform Workflow Architecture
+                </span>
+                <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
+                    How Kalvora coordinates your business
+                </h2>
+                <p className="text-sm font-light" style={{ color: 'var(--lp-text-muted)' }}>
+                    Click through the architectural phases to see exactly how Kalvora manages client interactions â€” from structural pitch to final invoice.
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+                {/* Left â€” Tab triggers */}
+                <div className="lg:col-span-5 space-y-3">
+                    {pipelineSteps.map((s, idx) => {
+                        const Icon = s.icon;
+                        const isActive = activeStep === idx;
+                        return (
+                            <button
+                                key={idx}
+                                onClick={() => handleStep(idx)}
+                                className={`lp-tab-trigger ${isActive ? 'active' : ''}`}
+                            >
+                                <div className="lp-tab-icon-wrap">
+                                    <Icon size={18} style={{ color: 'var(--lp-gold)' }} />
+                                </div>
+                                <div className="space-y-1 text-left">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <span className="text-sm font-bold" style={{ color: 'var(--lp-text)' }}>{s.title}</span>
+                                        <span className="text-[9px] font-mono font-bold tracking-widest px-2 py-0.5 rounded-full"
+                                            style={{ background: '#F0EDE9', color: 'var(--lp-text-muted)' }}>
+                                            {s.tag}
+                                        </span>
+                                    </div>
+                                    {isActive && (
+                                        <p className="text-xs font-light leading-relaxed" style={{ color: 'var(--lp-text-muted)' }}>
+                                            {s.heading}
+                                        </p>
+                                    )}
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Right â€” Adaptive panel */}
+                <div className="lg:col-span-7">
+                    <div className={`lp-tab-panel ${visible ? 'visible' : 'entering'}`}>
+                        <div className="lp-card p-7 space-y-5">
+                            {/* Context label */}
+                            <div className="flex items-center gap-2">
+                                <span className="text-[9px] font-mono font-bold tracking-widest uppercase px-2.5 py-1 rounded-full border"
+                                    style={{ background: 'var(--lp-gold-bg)', borderColor: 'var(--lp-gold-border)', color: '#92714A' }}>
+                                    {step.tag}
+                                </span>
+                            </div>
+                            <h3 className="lp-font-display text-xl sm:text-2xl font-light leading-snug" style={{ color: 'var(--lp-text)' }}>
+                                {step.heading}
+                            </h3>
+                            <p className="text-sm font-light leading-relaxed" style={{ color: 'var(--lp-text-muted)' }}>
+                                {step.desc}
+                            </p>
+
+                            {/* Terminal block */}
+                            <div className="lp-terminal">
+                                <div className="lp-terminal-header">
+                                    â¬¡ SCHEMA CORE ENGINE &nbsp;Â·&nbsp; LIVE SIMULATOR ACTIVE
+                                </div>
+                                {step.terminal.map((line, i) => (
+                                    <div key={i}>
+                                        <span className="lp-terminal-dim">{'>'} </span>
+                                        <span className="lp-terminal-key">{line.key}</span>
+                                        <span className="lp-terminal-dim">: </span>
+                                        <span className={line.green ? 'lp-terminal-green' : 'lp-terminal-val'}>{line.val}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  LAYER 4 â€” THE LIVE TEMPLATE SHOWROOM
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+type ThemeKey = 'minimal' | 'luxury' | 'blueprint';
+
+const themes: { key: ThemeKey; label: string; sub: string }[] = [
+    { key: 'minimal', label: 'Minimalist Architecture', sub: 'Clean layout, sans-serif, thin structural lines.' },
+    { key: 'luxury',  label: 'Luxury Editorial Format', sub: 'Elegant serif display, soft margins, gold accents.' },
+    { key: 'blueprint', label: 'Blueprint Production Layout', sub: 'Technical grid structure, monospaced engineering detail.' },
+];
+
+function TemplateShowroom() {
+    const [theme, setTheme] = useState<ThemeKey>('minimal');
+    const ref = useScrollReveal();
+
+    return (
+        <section id="showroom" className="px-4 sm:px-6 lg:px-8 py-20 sm:py-28 max-w-6xl mx-auto border-t"
+            style={{ borderColor: 'var(--lp-stone-border)' }}>
+            <div ref={ref} className="lp-animate-entry text-center max-w-3xl mx-auto mb-14 space-y-3">
+                <span className="text-[10px] font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--lp-gold)' }}>
+                    Branding Customisation
+                </span>
+                <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
+                    Complement your studio&apos;s stylistic profile
+                </h2>
+                <p className="text-sm font-light" style={{ color: 'var(--lp-text-muted)' }}>
+                    Switch template layouts natively. Kalvora updates font pairings and border alignments smoothly across custom themes.
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+                {/* Left â€” Theme selectors */}
+                <div className="lg:col-span-4 space-y-3">
+                    <p className="text-[10px] font-bold uppercase tracking-widest font-mono mb-4"
+                        style={{ color: 'var(--lp-text-subtle)' }}>Select Live Style</p>
+                    {themes.map((t) => (
+                        <button
+                            key={t.key}
+                            onClick={() => setTheme(t.key)}
+                            className={`lp-theme-trigger ${theme === t.key ? 'active' : ''}`}
+                        >
+                            <div className="text-left">
+                                <p className="text-sm font-semibold mb-0.5" style={{ color: 'var(--lp-text)' }}>{t.label}</p>
+                                <p className="text-xs font-light" style={{ color: 'var(--lp-text-muted)' }}>{t.sub}</p>
+                            </div>
+                            <span className="lp-theme-dot shrink-0" />
+                        </button>
+                    ))}
+                </div>
+
+                {/* Right â€” Single canvas div, class-driven theming */}
+                <div className={`lg:col-span-8 theme-${theme}`}>
+                    <div className="lp-proposal-canvas">
+                        {/* Accent bar */}
+                        <div className="lp-proposal-accent h-[3px] rounded-full mb-6" />
+
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-6">
+                            <div>
+                                <p className="lp-proposal-title">KALIPR STUDIO</p>
+                                <p className="lp-proposal-ref mt-1">Project Proposal Specification</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="lp-proposal-ref">Ref Date: Nov 07, 2026</p>
+                                <p className="lp-proposal-ref">Design Area: 2,400 sq.ft Office</p>
+                            </div>
+                        </div>
+
+                        {/* Client block */}
+                        <div className="lp-proposal-row">
+                            <p className="lp-proposal-label mb-1">Target Client Reference</p>
+                            <p className="lp-proposal-value">Gargi Reddy â€” CEO Corporate Suite Layout</p>
+                        </div>
+
+                        {/* Line items */}
+                        <div className="lp-proposal-row">
+                            <div className="flex justify-between items-baseline gap-4">
+                                <p className="lp-proposal-value flex-1">Premium Partition Architecture &amp; Soundproof Glazing</p>
+                                <p className="lp-proposal-value shrink-0 font-semibold">â‚¹5,00,000.00</p>
+                            </div>
+                        </div>
+                        <div className="lp-proposal-row">
+                            <div className="flex justify-between items-baseline gap-4">
+                                <p className="lp-proposal-value flex-1">Integrated Acoustic Ceiling Grid &amp; Diffuse Lighting</p>
+                                <p className="lp-proposal-value shrink-0 font-semibold">â‚¹3,00,000.00</p>
+                            </div>
+                        </div>
+
+                        {/* Totals */}
+                        <div className="lp-proposal-total mt-5 space-y-2">
+                            <div className="flex justify-between">
+                                <span className="lp-proposal-total-label">Subtotal Base Fee</span>
+                                <span className="lp-proposal-value">â‚¹8,00,000.00</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="lp-proposal-total-label">GST (18%)</span>
+                                <span className="lp-proposal-value">â‚¹1,44,000.00</span>
+                            </div>
+                            <div className="flex justify-between pt-2 border-t" style={{ borderColor: 'rgba(0,0,0,0.08)' }}>
+                                <span className="lp-proposal-total-label">Grand Aggregate Fee</span>
+                                <span className="lp-proposal-total-val">â‚¹9,44,000.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  LAYER 5 â€” ZERO-AUTH TRYOUT GATEWAY
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const projectScaleOptions: SelectOption[] = [
+    { value: '2bhk', label: '2BHK Apartment' },
+    { value: '3bhk', label: '3BHK Residence' },
+    { value: 'villa', label: 'Premium Commercial Villa' },
+];
+const budgetTierOptions: SelectOption[] = [
+    { value: 'standard', label: 'Standard Finish' },
+    { value: 'luxury', label: 'Premium Luxury Spec' },
+];
+
+function TryoutGateway() {
+    const [scale, setScale] = useState('');
+    const [tier, setTier]   = useState('');
+    const [client, setClient] = useState('');
+    const ref = useScrollReveal();
+
+    return (
+        <section id="sandbox" className="px-4 sm:px-6 lg:px-8 py-20 sm:py-28 max-w-5xl mx-auto border-t"
+            style={{ borderColor: 'var(--lp-stone-border)' }}>
+            <div ref={ref} className="lp-animate-entry text-center max-w-2xl mx-auto mb-12 space-y-3">
+                <span className="text-[10px] font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--lp-gold)' }}>
+                    Zero-Auth Onboarding Sandbox
+                </span>
+                <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
+                    Your next proposal is{' '}
+                    <span className="italic" style={{ color: '#C5A880' }}>60 seconds away.</span>
+                </h2>
+                <p className="text-sm font-light" style={{ color: 'var(--lp-text-muted)' }}>
+                    Experience the layout configuration interface instantly before creating an account.
+                </p>
+            </div>
+
+            <div className="max-w-2xl mx-auto">
+                <div className="lp-tryout-card">
+                    <p className="text-xs font-bold uppercase tracking-widest font-mono mb-6"
+                        style={{ color: 'var(--lp-text-subtle)' }}>
+                        Test the Proposal Builder in 15 Seconds
+                    </p>
+
+                    <div className="space-y-4">
+                        {/* Project Scale */}
+                        <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider mb-2"
+                                style={{ color: 'var(--lp-text-muted)' }}>
+                                Project Scale
+                            </label>
+                            <CustomSelect
+                                value={scale}
+                                onChange={setScale}
+                                options={projectScaleOptions}
+                                placeholder="Select project type..."
+                            />
+                        </div>
+
+                        {/* Budget Tier */}
+                        <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider mb-2"
+                                style={{ color: 'var(--lp-text-muted)' }}>
+                                Target Budget Tier
+                            </label>
+                            <CustomSelect
+                                value={tier}
+                                onChange={setTier}
+                                options={budgetTierOptions}
+                                placeholder="Select finish level..."
+                            />
+                        </div>
+
+                        {/* Client name */}
+                        <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider mb-2"
+                                style={{ color: 'var(--lp-text-muted)' }}>
+                                Client Baseline Header
+                            </label>
+                            <input
+                                type="text"
+                                className="input-field"
+                                placeholder="e.g. Gargi Reddy"
+                                value={client}
+                                onChange={(e) => setClient(e.target.value)}
+                            />
+                        </div>
+
+                        <Link
+                            href="/try"
+                            className="lp-btn-primary w-full mt-2 group"
+                            style={{ justifyContent: 'center' }}
+                        >
+                            Launch Dynamic Demo Space
+                            <ExternalLink size={15} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        </Link>
+
+                        <p className="text-center text-xs" style={{ color: 'var(--lp-text-subtle)' }}>
+                            No account required Â· Full template switcher unlocked
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  LAYER 6A â€” LOCALIZED FAQ
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const faqItems = [
     {
+        q: 'Can I structure localised tax fields and down payment formats?',
+        a: 'Yes. Kalvora is built to calculate structured project breakdowns, including options for localised GST itemisation and customised advance payment milestones â€” for example, locking a 50% initial deposit before work begins.',
+    },
+    {
+        q: 'How do client view alerts keep me updated in real-time?',
+        a: 'The application tracks client access on unique short links (/p/KV-xxxx). The second a client opens the document page, the platform logs the entry and updates your pipeline view status dynamically to "Viewed" â€” no polling, no delays.',
+    },
+    {
         q: 'Can I generate GST invoices with Kalvora?',
-        a: 'Yes. Add your GSTIN and Kalvora auto-generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI - the moment your client approves the proposal.',
-    },
-    {
-        q: 'Is Kalvora built for Indian interior designers?',
-        a: 'Yes. Kalvora is purpose-built for interior designers in India. Pricing is in INR, GST invoicing is built-in, and proposals are designed for the Indian market. 100+ designers across India already use it.',
-    },
-    {
-        q: 'How does the proposal approval process work?',
-        a: 'You create a proposal, share a link with your client (WhatsApp, email, anywhere). The client can view it, leave comments, and approve it with one click. Once approved, an invoice is auto-generated.',
+        a: 'Yes. Add your GSTIN and Kalvora auto-generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI â€” the moment your client approves the proposal.',
     },
     {
         q: 'Can I add my logo and branding to proposals?',
-        a: 'Yes. Upload your studio logo, set your accent color, add your payment terms. Every proposal and invoice carries your brand - not ours.',
+        a: 'Yes. Upload your studio logo, set your accent colour, and add your payment terms. Every proposal and invoice carries your brand â€” not ours.',
     },
     {
         q: 'What does Kalvora cost?',
-        a: 'Every feature is free during early access. No credit card, no time limit. When we launch Pro, early users get 50% off forever. Pro will be priced at ₹999/month.',
-    },
-    {
-        q: 'Is it really free?',
-        a: 'Yes. Every feature is free during early access. No credit card, no time limit, no catches.',
+        a: 'Every feature is free during early access. No credit card, no time limit. When we launch Pro, early users get 50% off forever. Pro will be priced at â‚¹999/month.',
     },
 ];
 
 function FAQSection() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
+    const ref = useScrollReveal();
 
     return (
-        <div className="space-y-3">
-            {faqItems.map((item, i) => (
-                <div key={i} className="landing-faq-item">
-                    <button
-                        onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                        className="w-full flex items-center justify-between px-5 sm:px-6 py-4 text-left group"
-                        aria-expanded={openIndex === i}
-                    >
-                        <span className="text-[#1E1E1E] text-sm font-medium pr-4 group-hover:text-[#2F2421] transition-colors">
-                            {item.q}
-                        </span>
-                        <ChevronDown
-                            size={18}
-                            className={`text-[#78716C] flex-shrink-0 transition-transform duration-300 ${openIndex === i ? 'rotate-180 text-[#3E2F2B]' : ''
-                                }`}
-                        />
-                    </button>
-                    <div
-                        className={`overflow-hidden transition-colors duration-300 ease-in-out ${openIndex === i ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
-                            }`}
-                    >
-                        <div className="px-5 sm:px-6 pb-4">
-                            <p className="text-[#6F6A66] text-sm leading-relaxed">{item.a}</p>
+        <section className="px-4 sm:px-6 lg:px-8 py-20 sm:py-24 max-w-3xl mx-auto">
+            <div ref={ref} className="lp-animate-entry text-center mb-12 space-y-3">
+                <span className="text-[10px] font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--lp-gold)' }}>
+                    Platform Operational Inquiries
+                </span>
+                <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
+                    Common <span className="italic" style={{ color: '#C5A880' }}>Questions</span>
+                </h2>
+            </div>
+
+            <div className="space-y-3">
+                {faqItems.map((item, i) => (
+                    <div key={i} className="lp-faq-item">
+                        <button
+                            onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                            className="w-full flex items-center justify-between px-5 sm:px-6 py-4 text-left group"
+                            aria-expanded={openIndex === i}
+                        >
+                            <span className="text-sm font-medium pr-4 transition-colors"
+                                style={{ color: openIndex === i ? 'var(--lp-text)' : '#57534E' }}>
+                                {item.q}
+                            </span>
+                            <ChevronDown
+                                size={17}
+                                className={`flex-shrink-0 transition-transform duration-300 ${openIndex === i ? 'rotate-180' : ''}`}
+                                style={{ color: 'var(--lp-text-muted)' }}
+                            />
+                        </button>
+                        <div className={`overflow-hidden transition-all duration-300 ${openIndex === i ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className="px-5 sm:px-6 pb-5">
+                                <p className="text-sm font-light leading-relaxed" style={{ color: 'var(--lp-text-muted)' }}>{item.a}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </section>
+    );
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  LAYER 6B â€” DARK PREMIUM FOOTER
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function DarkFooter() {
+    return (
+        <footer className="lp-footer">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-12">
+                    {/* Brand strip */}
+                    <div className="md:col-span-5">
+                        <Link href="/" className="inline-block mb-4">
+                            <span className="brand-wordmark text-xl" style={{ color: '#C5A880', letterSpacing: '0.4em' }}>
+                                KALVORA
+                            </span>
+                        </Link>
+                        <p className="text-sm font-light leading-relaxed max-w-xs" style={{ color: '#78716C' }}>
+                            Structured proposal tracking, automated invoicing, and milestone management workflows designed for premium interior design studios.
+                        </p>
+                    </div>
+
+                    {/* Nav columns */}
+                    <div className="md:col-span-7 grid grid-cols-3 gap-6">
+                        <div>
+                            <p className="lp-footer-col-label">Product</p>
+                            <a href="#pipeline" className="lp-footer-link">Pipeline Workflow</a>
+                            <a href="#showroom" className="lp-footer-link">Studio Showroom</a>
+                            <a href="#sandbox" className="lp-footer-link">Sandbox Space</a>
+                            <Link href="/#pricing" className="lp-footer-link">Pricing</Link>
+                        </div>
+                        <div>
+                            <p className="lp-footer-col-label">Studio Pipeline</p>
+                            <Link href="/signup" className="lp-footer-link">Create Account</Link>
+                            <Link href="/login" className="lp-footer-link">Sign In</Link>
+                            <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="lp-footer-link">Kalipr Labs</a>
+                            <Link href="/public-feedback" className="lp-footer-link">Give Feedback</Link>
+                        </div>
+                        <div>
+                            <p className="lp-footer-col-label">Legal Documentation</p>
+                            <span className="lp-footer-link cursor-default">Privacy Policy</span>
+                            <span className="lp-footer-link cursor-default">Terms of Service</span>
+                            <a href="mailto:hello@kaliprlabs.in" className="lp-footer-link">Contact</a>
                         </div>
                     </div>
                 </div>
-            ))}
-        </div>
+
+                {/* Bottom strip */}
+                <div className="pt-8 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <p className="text-xs" style={{ color: '#57534E' }}>
+                            Â© 2026 <span style={{ color: '#78716C' }}>KALVORA</span> Â· Architecture Design Concept Snapshot.
+                        </p>
+                        <p className="text-xs italic" style={{ color: '#57534E' }}>
+                            Designed by Kalipr Labs Â· Engineered for Creative Professionals.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     );
 }
+

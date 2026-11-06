@@ -23,16 +23,19 @@ export default function LandingNavbar() {
     return (
         <>
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${scrolled
-                ? 'bg-[#F6F3EF] border-b border-[#E8E3DD]'
-                : 'bg-transparent'
-                }`}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+                scrolled
+                    ? 'lp-nav border-b border-[#E4E0DB]'
+                    : isLoggedIn ? 'bg-[#F6F3EF]' : 'bg-transparent'
+            }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-[72px]">
                     {/* Logo */}
                     <Link href="/" className="group">
-                        <span className="brand-wordmark text-[28px] mt-1 inline-block group-hover:opacity-80 transition-opacity">
+                        <span className={`brand-wordmark text-[26px] mt-1 inline-block group-hover:opacity-75 transition-opacity ${
+                            !isLoggedIn && !scrolled ? 'text-[#1A1512]' : ''
+                        }`}>
                             Kalvora
                         </span>
                     </Link>
@@ -70,11 +73,23 @@ export default function LandingNavbar() {
                             </>
                         ) : (
                             <>
+                                <a
+                                    href="#pipeline"
+                                    className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#78716C] hover:text-[#1A1512] transition-colors rounded-lg"
+                                >
+                                    How It Works
+                                </a>
+                                <Link
+                                    href="/login"
+                                    className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#78716C] hover:text-[#1A1512] transition-colors rounded-lg"
+                                >
+                                    Sign In
+                                </Link>
                                 <Link
                                     href="/signup"
-                                    className="btn-primary text-sm px-5 py-2"
+                                    className="lp-btn-primary text-[11px] px-5 py-2.5"
                                 >
-                                    Get Started
+                                    Get Started Free
                                 </Link>
                             </>
                         )}
@@ -93,7 +108,7 @@ export default function LandingNavbar() {
 
             {/* Mobile menu */}
             {mobileOpen && (
-                <div className="md:hidden bg-[#F6F3EF] border-t border-[#E8E3DD] animate-fade-in">
+                <div className="md:hidden bg-[#FAF8F5] border-t border-[#E4E0DB] animate-fade-in">
                     <div className="px-4 py-4 space-y-1">
                         {isLoggedIn ? (
                             <>
@@ -129,12 +144,26 @@ export default function LandingNavbar() {
                             </>
                         ) : (
                             <>
+                                <a
+                                    href="#pipeline"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block px-4 py-3 text-sm text-[#6F6A66] hover:text-[#1E1E1E] hover:bg-[#F5F3F0] rounded-[10px] transition-colors font-medium"
+                                >
+                                    How It Works
+                                </a>
+                                <Link
+                                    href="/login"
+                                    onClick={() => setMobileOpen(false)}
+                                    className="block px-4 py-3 text-sm text-[#6F6A66] hover:text-[#1E1E1E] hover:bg-[#F5F3F0] rounded-[10px] transition-colors font-medium"
+                                >
+                                    Sign In
+                                </Link>
                                 <Link
                                     href="/signup"
                                     onClick={() => setMobileOpen(false)}
-                                    className="block px-4 py-3 text-sm text-white bg-[#3E2F2B] rounded-[10px] text-center font-semibold"
+                                    className="block px-4 py-3 text-sm text-white bg-[#1A1512] rounded-[10px] text-center font-semibold tracking-wide"
                                 >
-                                    Get Started
+                                    Get Started Free
                                 </Link>
                             </>
                         )}
