@@ -126,15 +126,10 @@ function HeroSection() {
             </div>
 
             <div className="relative max-w-4xl mx-auto text-center space-y-8">
-                <div className="lp-animate-entry mx-auto w-fit flex items-center gap-3 px-5 py-2.5 border-l-2 rounded-sm"
-                    style={{ borderLeftColor: 'var(--lp-terracotta)', background: 'rgba(200,122,83,0.06)' }}>
-                    <span className="font-mono font-bold text-[11px] uppercase tracking-widest"
-                        style={{ color: 'var(--lp-terracotta)' }}>✦ VOL. 14</span>
-                    <span className="font-mono text-[10px] uppercase tracking-widest"
-                        style={{ color: 'var(--lp-text-subtle)' }}>//&nbsp;SPECIFICATION ENGINE</span>
-                    <span className="hidden sm:inline font-mono text-[10px] uppercase tracking-widest"
-                        style={{ color: 'var(--lp-text-subtle)' }}>&mdash;&nbsp;Built for Premium Practices</span>
-                </div>
+                <p className="lp-animate-entry text-[11px] font-medium uppercase tracking-[0.2em] text-center"
+                    style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif", color: '#C5A880' }}>
+                    ✦ The Closing Engine for Premium Interior Design Studios
+                </p>
 
                 {/* FIX 4: Updated headline copy with designer vocabulary */}
                 <h1 className="lp-animate-entry lp-delay-1 lp-font-display text-[38px] sm:text-[58px] lg:text-[70px] font-light leading-[1.08] tracking-tight"
