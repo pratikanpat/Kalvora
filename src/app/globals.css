@@ -693,6 +693,7 @@ html { scroll-behavior: smooth; }
   --lp-sand:         #EFEBE4;
   --lp-olive:        #556B2F;
   --lp-gold-polish:  #D4AF37;
+  --lp-terracotta:   #C87A53;
 }
 
 /* -- Typography -- */
@@ -1157,7 +1158,6 @@ html { scroll-behavior: smooth; }
 }
 
 /* -- Batch D: Motion system -- */
-body { overscroll-behavior-y: none; }
 
 /* Delay class for staggered reveals */
 .lp-delay-0 { animation-delay: 0ms; transition-delay: 0ms; }
@@ -1307,7 +1307,6 @@ body { overscroll-behavior-y: none; }
 }
 
 /* -- Batch D: Motion system -- */
-body { overscroll-behavior-y: none; }
 
 /* Delay class for staggered reveals */
 .lp-delay-0 { animation-delay: 0ms; transition-delay: 0ms; }
@@ -1350,4 +1349,132 @@ body { overscroll-behavior-y: none; }
   .lp-section-rule { transition: none !important; transform: scaleX(1); }
   .lp-designer-card:hover { transform: none; }
   .lp-btn-primary:hover { letter-spacing: inherit !important; }
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   LANDING PAGE v3.1 ADDITIONS — Terracotta, Marquee, Vocabulary
+   ═══════════════════════════════════════════════════════ */
+
+/* -- Continuous studio logo marquee ticker -- */
+@keyframes lp-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.lp-marquee-track {
+  display: flex; width: max-content;
+  animation: lp-marquee 28s linear infinite;
+}
+.lp-marquee-track:hover { animation-play-state: paused; }
+.lp-marquee-outer {
+  overflow: hidden; mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+.lp-marquee-logo {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.24em;
+  text-transform: uppercase; color: rgba(26,21,18,0.28);
+  transition: color 400ms ease, transform 400ms ease;
+  cursor: default; white-space: nowrap; padding: 0 36px;
+  display: inline-flex; align-items: center;
+}
+.lp-marquee-logo:hover {
+  color: var(--lp-terracotta) !important;
+  transform: scale(1.03);
+}
+.lp-marquee-sep {
+  display: inline-flex; align-items: center; padding: 0 4px;
+  color: rgba(26,21,18,0.12); font-size: 10px;
+}
+
+/* -- Testimonial material sample cards -- */
+.lp-testimonial-card {
+  background: var(--lp-sand);
+  border: 1px solid var(--lp-panel-border);
+  border-radius: 1.125rem; padding: 28px 28px 24px;
+  position: relative; overflow: hidden;
+  transition: transform 400ms cubic-bezier(0.16,1,0.3,1), box-shadow 400ms cubic-bezier(0.16,1,0.3,1);
+  min-width: 320px;
+}
+.lp-testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(26,21,18,0.10);
+}
+.lp-testimonial-quotemark {
+  position: absolute; top: 12px; right: 20px;
+  font-family: 'Georgia', serif; font-size: 80px; line-height: 1;
+  color: var(--lp-terracotta); opacity: 0.18; pointer-events: none;
+  font-style: italic; user-select: none;
+}
+.lp-testimonial-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 8px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; font-family: var(--font-inter), monospace;
+  padding: 4px 10px; border-radius: 999px;
+  background: rgba(200,122,83,0.10); color: var(--lp-terracotta);
+  border: 1px solid rgba(200,122,83,0.20);
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   LANDING PAGE v3.1 ADDITIONS — Terracotta, Marquee, Vocabulary
+   ═══════════════════════════════════════════════════════ */
+
+/* -- Continuous studio logo marquee ticker -- */
+@keyframes lp-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.lp-marquee-track {
+  display: flex; width: max-content;
+  animation: lp-marquee 28s linear infinite;
+}
+.lp-marquee-track:hover { animation-play-state: paused; }
+.lp-marquee-outer {
+  overflow: hidden; mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+.lp-marquee-logo {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.24em;
+  text-transform: uppercase; color: rgba(26,21,18,0.28);
+  transition: color 400ms ease, transform 400ms ease;
+  cursor: default; white-space: nowrap; padding: 0 36px;
+  display: inline-flex; align-items: center;
+}
+.lp-marquee-logo:hover {
+  color: var(--lp-terracotta) !important;
+  transform: scale(1.03);
+}
+.lp-marquee-sep {
+  display: inline-flex; align-items: center; padding: 0 4px;
+  color: rgba(26,21,18,0.12); font-size: 10px;
+}
+
+/* -- Testimonial material sample cards -- */
+.lp-testimonial-card {
+  background: var(--lp-sand);
+  border: 1px solid var(--lp-panel-border);
+  border-radius: 1.125rem; padding: 28px 28px 24px;
+  position: relative; overflow: hidden;
+  transition: transform 400ms cubic-bezier(0.16,1,0.3,1), box-shadow 400ms cubic-bezier(0.16,1,0.3,1);
+  min-width: 320px;
+}
+.lp-testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(26,21,18,0.10);
+}
+.lp-testimonial-quotemark {
+  position: absolute; top: 12px; right: 20px;
+  font-family: 'Georgia', serif; font-size: 80px; line-height: 1;
+  color: var(--lp-terracotta); opacity: 0.18; pointer-events: none;
+  font-style: italic; user-select: none;
+}
+.lp-testimonial-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 8px; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; font-family: var(--font-inter), monospace;
+  padding: 4px 10px; border-radius: 999px;
+  background: rgba(200,122,83,0.10); color: var(--lp-terracotta);
+  border: 1px solid rgba(200,122,83,0.20);
 }

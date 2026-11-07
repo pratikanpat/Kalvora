@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import DemoVideoModal from '@/components/DemoVideoModal';
@@ -17,11 +17,8 @@ import {
 
 // ─────────────────────────────────────────────────────────
 // LANDING PAGE - Auth-State-Aware Entry Point
-// State A (no session): Sales Machine
-// State B (session):    Closing Engine
 // ─────────────────────────────────────────────────────────
 
-// ── Reusable scroll-reveal hook ──
 function useScrollReveal() {
     const ref = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -43,23 +40,18 @@ export default function LandingPage() {
 
     if (loading) return <LoadingSpinner text="" />;
 
-    // ── State B: Logged-in users see the Closing Engine ──
     if (session) {
         return (
             <div className="min-h-screen bg-[#F6F3EF] flex flex-col">
                 <LandingNavbar />
-                <div className="flex-1">
-                    <LoggedInHome />
-                </div>
+                <div className="flex-1"><LoggedInHome /></div>
                 <footer className="border-t border-[#E4E1DB] bg-[#F1EFEA]">
                     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#9A9A9A]">
                             <p>&copy; 2026 <span className="brand-wordmark-inline text-[#9A9A9A] text-xs">Kalvora</span> &mdash; Product of <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="hover:text-[#6B6B6B] transition-colors">Kalipr Labs</a></p>
                             <div className="flex items-center gap-3">
-                                <span>Privacy</span>
-                                <span className="text-[#E4E1DB]">&middot;</span>
-                                <span>Terms</span>
-                                <span className="text-[#E4E1DB]">&middot;</span>
+                                <span>Privacy</span><span className="text-[#E4E1DB]">&middot;</span>
+                                <span>Terms</span><span className="text-[#E4E1DB]">&middot;</span>
                                 <a href="mailto:hello@kaliprlabs.in" className="hover:text-[#6B6B6B] transition-colors">Contact</a>
                             </div>
                         </div>
@@ -69,15 +61,14 @@ export default function LandingPage() {
         );
     }
 
-    // ── State A: Premium Sales Landing Page ──
     return (
         <div className="min-h-screen lp-font-ui" style={{ background: 'var(--lp-canvas)', color: 'var(--lp-text)' }}>
             <LandingNavbar />
             <HeroSection />
-            <SocialProofSection />
             <PainContrastSection />
             <LifecycleSection />
             <TemplateShowroom />
+            <SocialProofSection />
             <TryoutGateway />
             <FAQSection />
             <DarkFooter />
@@ -89,30 +80,37 @@ export default function LandingPage() {
 // ═══════════════════════════════════════════════════════
 //  LAYER 1 - HERO ARCHITECTURE
 // ═══════════════════════════════════════════════════════
+
+// FIX 1: Updated names (Gargi → Namita, Tejas → Client)
 const heroMessages = [
-    'Sent to client via magic link',
-    'Tejas opened proposal link (Just Now)',
-    'Tejas is adding line-item comments...',
-    'Proposal Approved by Client! 50% Advance Invoice Ready ✓',
+    'Design Pitch sent to client via magic link',
+    'Client opened proposal link (Just Now)',
+    'Client is adding line-item comments...',
+    'Design Pitch Approved! 50% Studio Advance Invoice Ready ✓',
 ];
 
 function HeroSection() {
     const [pulseIdx, setPulseIdx] = useState(0);
     const [fading, setFading] = useState(false);
 
+    // FIX 1: Continuous looping — restarts from 0 after reaching end
     useEffect(() => {
-        const timers = [
-            setTimeout(() => advance(1), 2500),
-            setTimeout(() => advance(2), 5200),
-            setTimeout(() => advance(3), 8400),
-        ];
-        return () => timers.forEach(clearTimeout);
-    }, []);
+        let idx = 0;
+        const delays = [2800, 2800, 2800, 3200];
 
-    function advance(idx: number) {
-        setFading(true);
-        setTimeout(() => { setPulseIdx(idx); setFading(false); }, 320);
-    }
+        function scheduleNext() {
+            const delay = delays[idx % delays.length];
+            const timer = setTimeout(() => {
+                const next = (idx + 1) % heroMessages.length;
+                setFading(true);
+                setTimeout(() => { setPulseIdx(next); setFading(false); idx = next; scheduleNext(); }, 320);
+            }, delay);
+            return timer;
+        }
+
+        const t = scheduleNext();
+        return () => clearTimeout(t);
+    }, []);
 
     const isApproved = pulseIdx === 3;
     const dotColors = ['#A8A29E', '#D97706', '#D97706', '#556B2F'];
@@ -121,64 +119,56 @@ function HeroSection() {
 
     return (
         <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-            {/* Subtle radial glow */}
             <div className="absolute inset-0 pointer-events-none" aria-hidden>
                 <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full"
                     style={{ background: 'radial-gradient(ellipse, rgba(197,168,128,0.07) 0%, transparent 70%)' }} />
             </div>
 
             <div className="relative max-w-4xl mx-auto text-center space-y-8">
-
-                {/* Pre-header badge */}
                 <div className="lp-badge lp-animate-entry mx-auto w-fit">
                     <Sparkles size={12} className="text-[#C5A880]" />
-                    <span>&#10022; Platform Build Version 14 &mdash; Designed for Premium Design Studios</span>
+                    <span>&#10022; Studio Platform &mdash; Built for Premium Interior Design Practices</span>
                 </div>
 
-                {/* Headline */}
+                {/* FIX 4: Updated headline copy with designer vocabulary */}
                 <h1 className="lp-animate-entry lp-delay-1 lp-font-display text-[38px] sm:text-[58px] lg:text-[70px] font-light leading-[1.08] tracking-tight"
                     style={{ color: 'var(--lp-text)' }}>
-                    Stop Sending Proposals<br />
+                    Stop Sending Design Pitches<br />
                     on WhatsApp{' '}
                     <span className="font-normal italic" style={{ color: '#C5A880' }}>Like It&apos;s 2012.</span>
                 </h1>
 
-                {/* Sub-copy — constrained to 42rem */}
+                {/* FIX 4: Emotional hook copy */}
                 <p className="lp-animate-entry lp-delay-2 lp-hero-subtitle text-base sm:text-lg leading-relaxed font-light"
                     style={{ color: 'var(--lp-text-muted)' }}>
-                    Transform scattered spreadsheets and manual layout tables into organised, digital scopes.
-                    Track client interactions, capture specific line-item notes, and secure structural
-                    down payments smoothly.
+                    You spend weeks perfecting a material selection palette. Don&apos;t ruin the experience
+                    by sending a messy price breakdown over WhatsApp. Present your studio fees
+                    clearly &mdash; so clients feel confident authorising your advance.
                 </p>
 
-                {/* CTAs */}
                 <div className="lp-animate-entry lp-delay-3 flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
                     <Link href="/signup" className="lp-btn-primary group">
-                        Build a Proposal
+                        Start Your Studio Pipeline
                         <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                     <Link href="/try" className="lp-btn-ghost">
-                        Test Sandbox View
+                        Preview a Design Pitch
                     </Link>
                 </div>
 
-                {/* Trust strip */}
                 <p className="lp-animate-entry lp-delay-4 text-xs" style={{ color: 'var(--lp-text-subtle)' }}>
-                    Free during Early Access &middot; No credit card required &middot; Trusted by 100+ designers across India
+                    Free during Early Access &middot; No credit card required &middot; Trusted by 100+ design studios across India
                 </p>
 
-                {/* Live activity widget — elevated floating shadow applied via CSS */}
+                {/* Activity widget — continuous loop */}
                 <div className="lp-animate-entry lp-delay-5 pt-6 max-w-2xl mx-auto">
                     <div className="lp-activity-widget">
                         <div className="lp-activity-widget-bar" />
                         <div className="p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
-                                <div className={`p-3 rounded-xl border transition-all duration-500 ${isApproved
-                                    ? 'bg-green-50 border-green-200'
-                                    : 'border-[#E8DDD0]'
-                                }`} style={!isApproved ? { background: 'var(--lp-gold-bg)' } : {}}>
-                                    <Layers
-                                        size={20}
+                                <div className={`p-3 rounded-xl border transition-all duration-500 ${isApproved ? 'bg-green-50 border-green-200' : 'border-[#E8DDD0]'}`}
+                                    style={!isApproved ? { background: 'var(--lp-gold-bg)' } : {}}>
+                                    <Layers size={20}
                                         className={`transition-colors duration-500 ${isApproved ? 'text-green-600' : 'text-[#C5A880]'}`}
                                         style={{ animation: 'spin 6s linear infinite' }}
                                     />
@@ -186,36 +176,29 @@ function HeroSection() {
                                 <div>
                                     <span className="block text-[9px] font-mono font-bold tracking-widest uppercase mb-1 flex items-center gap-2"
                                         style={{ color: 'var(--lp-text-subtle)' }}>
-                                        <span
-                                            className="inline-block w-2 h-2 rounded-full shrink-0"
+                                        <span className="inline-block w-2 h-2 rounded-full shrink-0"
                                             style={{
                                                 background: dotColors[pulseIdx],
                                                 animation: dotIsAmber ? 'pulse 1s ease-in-out infinite' : dotIsOlive ? 'lp-pulse-glow 1.8s ease-in-out infinite' : 'none',
-                                            }}
-                                        />
-                                        Live Pipeline Activity Log
+                                            }} />
+                                        Studio Pipeline Activity
                                     </span>
                                     <p className={`text-sm font-semibold transition-opacity duration-300 ${fading ? 'opacity-0' : 'opacity-100'} ${isApproved ? 'text-green-700' : ''}`}
-                                        style={!isApproved ? { color: 'var(--lp-text)' } : {
-                                            transform: fading ? 'translateY(4px)' : 'translateY(0)',
-                                            transition: 'opacity 300ms ease, transform 300ms ease',
-                                        }}>
+                                        style={!isApproved ? { color: 'var(--lp-text)', transition: 'opacity 300ms ease, transform 300ms ease', transform: fading ? 'translateY(4px)' : 'translateY(0)' } : {}}>
                                         {heroMessages[pulseIdx]}
                                     </p>
                                 </div>
                             </div>
+                            {/* FIX 1: Namita Sharma */}
                             <div className="text-right font-mono text-[10px] px-3 py-1.5 rounded-lg border shrink-0"
                                 style={{ color: 'var(--lp-text-subtle)', background: '#F5F3F0', borderColor: 'var(--lp-stone-border)' }}>
-                                KV-8721 // Gargi Reddy Office
+                                KV-8721 // Namita Sharma
                             </div>
                         </div>
-                        {/* Status bar — hidden on xs to avoid crowding */}
                         <div className="hidden sm:flex px-5 sm:px-6 pb-4 items-center gap-2 border-t" style={{ borderColor: 'var(--lp-stone-border)' }}>
-                            <span className="text-[9px] font-mono tracking-widest uppercase" style={{ color: 'var(--lp-text-subtle)' }}>
-                                Status
-                            </span>
+                            <span className="text-[9px] font-mono tracking-widest uppercase" style={{ color: 'var(--lp-text-subtle)' }}>Status</span>
                             <span className="text-[9px] font-mono font-bold" style={{ color: isApproved ? '#556B2F' : '#D97706' }}>
-                                {isApproved ? 'APPROVED' : pulseIdx === 0 ? 'SENT' : pulseIdx === 1 ? 'VIEWED' : 'ENGAGING'}
+                                {isApproved ? 'ADVANCE COLLECTED' : pulseIdx === 0 ? 'PITCH SENT' : pulseIdx === 1 ? 'CLIENT VIEWING' : 'IN DISCUSSION'}
                             </span>
                         </div>
                     </div>
@@ -226,135 +209,19 @@ function HeroSection() {
 }
 
 // ═══════════════════════════════════════════════════════
-//  LAYER 1.5 - SOCIAL PROOF (Batch B)
-// ═══════════════════════════════════════════════════════
-const studioLogos = [
-    'Veritas Studio',
-    'Mehta & Co.',
-    'Arjun Spaces',
-    'The Loft Co.',
-    'Prism Interiors',
-    'Studio Raga',
-];
-
-const designerCards = [
-    {
-        initials: 'GR',
-        color: '#7C6B5A',
-        name: 'Gargi Reddy',
-        role: 'Principal Interior Designer',
-        city: 'Hyderabad',
-        studio: 'Veritas Studio',
-        quote: 'Kalvora saved me hours every week on proposal follow-ups. Clients actually read the links.',
-    },
-    {
-        initials: 'AM',
-        color: '#5A6B7C',
-        name: 'Arjun Mehta',
-        role: 'Design Consultant',
-        city: 'Mumbai',
-        studio: 'Mehta & Co.',
-        quote: 'The milestone checkout feature alone is worth switching. No more chasing advance payments.',
-    },
-    {
-        initials: 'PS',
-        color: '#6B7C5A',
-        name: 'Priya Sharma',
-        role: 'Senior Space Planner',
-        city: 'Bengaluru',
-        studio: 'Prism Interiors',
-        quote: 'The view notifications are a game changer. I know exactly when to call a client.',
-    },
-];
-
-function SocialProofSection() {
-    const logoRef = useScrollReveal();
-    const gridRef = useScrollReveal();
-
-    return (
-        <section className="lp-proof-section py-14 sm:py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-5xl mx-auto">
-                {/* Eyebrow */}
-                <p className="text-center text-[10px] font-bold tracking-widest uppercase font-mono mb-8"
-                    style={{ color: 'var(--lp-text-subtle)' }}>
-                    Trusted by Design Studios Across India
-                </p>
-
-                {/* Studio logo row */}
-                <div ref={logoRef} className="reveal-on-scroll lp-proof-logo-row mb-12">
-                    {studioLogos.map((name, i) => (
-                        <span key={i} className="lp-proof-logo">{name}</span>
-                    ))}
-                </div>
-
-                {/* Thin divider */}
-                <div className="h-px mx-auto max-w-xs mb-12"
-                    style={{ background: 'linear-gradient(90deg, transparent, var(--lp-stone-border), transparent)' }} />
-
-                {/* Designer lookbook grid */}
-                <div ref={gridRef} className="reveal-on-scroll grid grid-cols-1 md:grid-cols-3 gap-5">
-                    {designerCards.map((d, i) => (
-                        <div
-                            key={i}
-                            className={`lp-designer-card lp-animate-entry lp-delay-${i + 1}`}
-                        >
-                            {/* Header */}
-                            <div className="flex items-center gap-3 mb-4">
-                                <div
-                                    className="lp-designer-avatar"
-                                    style={{ background: d.color }}
-                                >
-                                    {d.initials}
-                                </div>
-                                <div>
-                                    <p className="text-sm font-bold leading-tight" style={{ color: 'var(--lp-text)' }}>{d.name}</p>
-                                    <p className="text-[10px] font-mono tracking-wide" style={{ color: 'var(--lp-text-subtle)' }}>{d.city}</p>
-                                </div>
-                            </div>
-
-                            {/* Star rating */}
-                            <div className="flex items-center gap-0.5 mb-3">
-                                {[...Array(5)].map((_, si) => (
-                                    <Star key={si} size={11} className="fill-current" style={{ color: '#D4AF37' }} />
-                                ))}
-                            </div>
-
-                            {/* Quote */}
-                            <p className="text-[13px] font-light leading-relaxed mb-4" style={{ color: 'var(--lp-text-muted)' }}>
-                                &ldquo;{d.quote}&rdquo;
-                            </p>
-
-                            {/* Footer */}
-                            <div className="pt-3 border-t flex items-center gap-2" style={{ borderColor: 'var(--lp-panel-border)' }}>
-                                <span className="text-[9px] font-bold uppercase tracking-widest font-mono"
-                                    style={{ color: 'var(--lp-text-subtle)' }}>
-                                    {d.role}
-                                </span>
-                                <span className="text-[9px]" style={{ color: 'var(--lp-stone-border)' }}>&middot;</span>
-                                <span className="text-[9px] font-mono" style={{ color: 'var(--lp-gold)' }}>{d.studio}</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-}
-
-// ═══════════════════════════════════════════════════════
 //  LAYER 2 - RE-FRAMING OPERATIONAL PAIN
 // ═══════════════════════════════════════════════════════
 const beforeItems = [
-    'Manually formatting spacing in Excel tables',
-    'Uploading massive files that clutter chat histories',
-    'Following up repeatedly to see if a quote was read',
-    'Calculating milestone breakdowns by hand',
+    'Manually formatting spacing in Excel rate cards',
+    'Sending full PDF BOQs over WhatsApp group chats',
+    'Following up repeatedly to see if a quote was opened',
+    'Calculating GST milestone breakdowns by hand',
 ];
 const afterItems = [
-    'Guided multi-step forms built for space planning',
-    'Fast, responsive short tracking links (/p/KV-xxx)',
-    'Direct alerts the second a client views a proposal',
-    'Automatic invoice generation with local GST fields',
+    'Guided spatial program forms built for room layouts',
+    'Fast, responsive design pitch links (/p/KV-xxx)',
+    'Instant alerts the second a client views your pitch',
+    'Auto-generated GST invoices with UPI payment links',
 ];
 
 function PainContrastSection() {
@@ -373,9 +240,7 @@ function PainContrastSection() {
                 </h2>
             </div>
 
-            {/* Bento wrapper — applies panel bg, the two columns sit inside */}
             <div ref={bentoRef} className="reveal-on-scroll lp-pain-bento grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Before — recessed surface */}
                 <div className="lp-contrast-col lp-contrast-col-before" style={{ borderRadius: '0.75rem', overflow: 'hidden' }}>
                     <div className="lp-contrast-col-bar" style={{ background: '#E57373' }} />
                     <div className="p-6 sm:p-7">
@@ -383,7 +248,7 @@ function PainContrastSection() {
                             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#FEF2F2' }}>
                                 <X size={15} className="text-red-500" />
                             </div>
-                            <h3 className="text-sm font-bold uppercase tracking-widest" style={{ color: '#B91C1C' }}>The Fragmented Routine</h3>
+                            <h3 className="text-sm font-bold uppercase tracking-widest" style={{ color: '#B91C1C' }}>The Fragmented Studio</h3>
                         </div>
                         <div className="space-y-1">
                             {beforeItems.map((item, i) => (
@@ -396,7 +261,6 @@ function PainContrastSection() {
                     </div>
                 </div>
 
-                {/* After — lifted white surface */}
                 <div className="lp-contrast-col lp-contrast-col-after" style={{ borderRadius: '0.75rem', overflow: 'hidden' }}>
                     <div className="lp-contrast-col-bar" style={{ background: '#4ADE80' }} />
                     <div className="p-6 sm:p-7">
@@ -438,13 +302,13 @@ const trackerSteps: TrackerStep[] = [
         tag: 'DRAFT',
         tagStyle: { background: '#F7F5F2', color: '#78716C', border: '1px solid #E4E0DB' },
         label: 'Draft',
-        headline: 'The proposal begins as a structured workspace.',
-        body: 'Fill in client details, project scope, and room configurations. The 8-section guided form is built around real interior design workflows — not generic invoice templates.',
+        headline: 'The spatial program begins as a guided spec sheet.',
+        body: 'Fill in client design briefs, carpet areas, and room configurations. The 8-section guided form is built around real interior design workflows — not generic invoice templates.',
         terminal: [
-            { key: 'proposal_status', val: '"DRAFT"' },
-            { key: 'client_ref', val: '"Gargi Reddy — Corporate Suite"' },
-            { key: 'area_sqft', val: '2400' },
-            { key: 'sections_complete', val: '0 / 8' },
+            { key: 'pitch_status', val: '"SPATIAL_DRAFT"' },
+            { key: 'client_ref', val: '"Namita Sharma — Residential Suite"' },
+            { key: 'carpet_area_sqft', val: '2400' },
+            { key: 'program_sections_complete', val: '0 / 8' },
         ],
     },
     {
@@ -452,10 +316,10 @@ const trackerSteps: TrackerStep[] = [
         tagStyle: { background: '#FEF3E2', color: '#C08A5D', border: '1px solid #F5DFC0' },
         label: 'Sent',
         headline: 'Share a single magic link. No attachments, no PDFs.',
-        body: 'The proposal compiles into a lightweight, mobile-first presentation page at /p/KV-xxxxx. Send it via WhatsApp, email, or any channel your client prefers — it loads instantly.',
+        body: 'The design pitch compiles into a lightweight, mobile-first presentation page at /p/KV-xxxxx. Send it via WhatsApp, email, or any channel your client prefers — it loads instantly on mobile.',
         terminal: [
-            { key: 'short_link', val: '"kaliprlabs.in/p/KV-89271"' },
-            { key: 'proposal_status', val: '"SENT"', green: true },
+            { key: 'pitch_link', val: '"kaliprlabs.in/p/KV-89271"' },
+            { key: 'delivery_status', val: '"PITCH_SENT"', green: true },
             { key: 'link_encrypted', val: 'true' },
             { key: 'delivery_channel', val: '"WhatsApp + Email"' },
         ],
@@ -464,12 +328,12 @@ const trackerSteps: TrackerStep[] = [
         tag: 'VIEWED',
         tagStyle: { background: '#FEF3E2', color: '#D97706', border: '1px solid #FDE68A' },
         label: 'Viewed',
-        headline: 'Know the exact second your client opens it.',
+        headline: 'Know the exact second your client reviews your pitch.',
         body: 'The platform logs every client view event in real time. Your dashboard flips from Sent to Viewed the moment they open the link — giving you a precise window to follow up while engagement is highest.',
         terminal: [
             { key: 'event', val: '"CLIENT_VIEW_LOGGED"', green: true },
             { key: 'timestamp_utc', val: `"${new Date().toISOString()}"` },
-            { key: 'pipeline_status', val: '"SENT \u2192 VIEWED"', green: true },
+            { key: 'pipeline_status', val: '"PITCH_SENT \u2192 CLIENT_VIEWING"', green: true },
             { key: 'webhook', val: '"Resend API \u2192 studio@email.in"' },
         ],
     },
@@ -478,38 +342,38 @@ const trackerSteps: TrackerStep[] = [
         tagStyle: { background: '#EFF6FF', color: '#3B82F6', border: '1px solid #BFDBFE' },
         label: 'Feedback',
         headline: 'Clients annotate line items directly — no back and forth.',
-        body: 'Clients can drop comments on specific scope items, quantities, or service inclusions without leaving the proposal view. All feedback is captured structurally inside your project record.',
+        body: 'Clients drop comments on specific scope items, quantities, or service inclusions without leaving the pitch view. All notes are captured structurally inside your project record.',
         terminal: [
-            { key: 'comment_thread', val: '"Line 3 — Lighting Design"' },
-            { key: 'client_note', val: '"Can we add smart lighting?"' },
+            { key: 'comment_thread', val: '"Line 3 — Lighting Schema"' },
+            { key: 'client_note', val: '"Can we add smart lighting nodes?"' },
             { key: 'interaction_count', val: '3' },
-            { key: 'schematics_reviewed', val: 'true', green: true },
+            { key: 'mep_schematics_reviewed', val: 'true', green: true },
         ],
     },
     {
         tag: 'APPROVED',
         tagStyle: { background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' },
         label: 'Approved',
-        headline: 'One-click sign-off. Pricing locked. Milestone created.',
-        body: 'The client approves the quote directly on the proposal page. The platform immediately locks the scope, generates a GST-ready invoice, and creates the first milestone payment link.',
+        headline: 'One-click sign-off. Pricing locked. Advance milestone created.',
+        body: 'The client approves the design pitch directly on the page. The platform immediately locks the spatial program, generates a GST-ready invoice, and creates the first advance payment link.',
         terminal: [
-            { key: 'approval_status', val: '"APPROVED"', green: true },
+            { key: 'approval_status', val: '"SPATIAL_PROGRAM_APPROVED"', green: true },
             { key: 'project_total_inr', val: '\u20B98,00,000.00' },
-            { key: 'gst_18_pct', val: '\u20B91,44,000.00' },
-            { key: 'milestone_advance', val: '\u20B94,72,000.00', green: true },
+            { key: 'procurement_ledger', val: '"GST_18_Itemized_Calculations"' },
+            { key: 'billing_pipeline_state', val: '"50_PERCENT_DEPOSIT_AWAITING"', green: true },
         ],
     },
     {
         tag: 'PAID',
         tagStyle: { background: '#F0FDF4', color: '#556B2F', border: '1px solid #A3E635' },
         label: 'Paid',
-        headline: 'Advance collected. Project begins. Full audit trail saved.',
-        body: 'Once the advance milestone is paid, the full project record — scope, approvals, invoices, and payment receipts — is archived in one place. Your studio stays protected and organised.',
+        headline: 'Studio advance collected. Execution begins. Full audit trail saved.',
+        body: 'Once the advance milestone is paid, the full project record — spatial program, approvals, invoices, and payment receipts — is archived in one place. Your studio stays protected and organised.',
         terminal: [
-            { key: 'invoice_status', val: '"PAID"', green: true },
-            { key: 'advance_received', val: '\u20B94,72,000.00', green: true },
+            { key: 'invoice_status', val: '"STUDIO_ADVANCE_PAID"', green: true },
+            { key: 'billing_pipeline_state', val: '"50_PERCENT_DEPOSIT_COLLECTED"', green: true },
             { key: 'gstin_applied', val: 'true' },
-            { key: 'project_phase', val: '"EXECUTION_STARTED"', green: true },
+            { key: 'project_phase', val: '"SITE_EXECUTION_STARTED"', green: true },
         ],
     },
 ];
@@ -521,23 +385,22 @@ function PipelineTracker() {
 
     return (
         <div className="mb-20">
-            {/* Section header */}
             <div className="text-center mb-12 space-y-3">
                 <span className="text-[10px] font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--lp-olive)' }}>
                     Studio Workflow Interface
                 </span>
+                {/* FIX 4: Updated section header vocabulary */}
                 <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
-                    From first quote to final payment &mdash;{' '}
-                    <span className="italic" style={{ color: '#C5A880' }}>every step, one place.</span>
+                    From Initial Brief to Site Handover:{' '}
+                    <span className="italic" style={{ color: '#C5A880' }}>The Studio Pipeline.</span>
                 </h2>
                 <p className="text-sm font-light max-w-2xl mx-auto" style={{ color: 'var(--lp-text-muted)' }}>
                     Click each stage to see exactly what Kalvora handles for your studio.
                 </p>
             </div>
 
-            {/* Tracker bar + nodes unified */}
+            {/* Tracker bar + nodes */}
             <div className="relative mb-2" style={{ paddingTop: '28px' }}>
-                {/* Node labels above */}
                 <div className="flex mb-3">
                     {trackerSteps.map((s, idx) => (
                         <button key={idx} className="lp-tracker-node" onClick={() => setActiveNode(idx)} aria-label={`Stage: ${s.label}`}>
@@ -550,13 +413,9 @@ function PipelineTracker() {
                         </button>
                     ))}
                 </div>
-
-                {/* Bar with dots overlay */}
                 <div className="lp-tracker-bar flex-1 mx-5">
                     <div className="lp-tracker-fill" style={{ width: `${progressPct}%` }} />
                 </div>
-
-                {/* Dots overlay on bar */}
                 <div className="absolute inset-x-5 flex items-center" style={{ top: '28px + 20px', bottom: 0 }}>
                     <div className="w-full flex items-center" style={{ marginTop: '-1px' }}>
                         {trackerSteps.map((_, idx) => {
@@ -571,12 +430,10 @@ function PipelineTracker() {
                 </div>
             </div>
 
-            {/* Mobile stage indicator */}
             <p className="sm:hidden text-center text-xs mt-4 mb-2" style={{ color: 'var(--lp-text-subtle)' }}>
                 Stage {activeNode + 1} of {trackerSteps.length} &mdash; {trackerSteps[activeNode].label}
             </p>
 
-            {/* Content card */}
             <div key={activeNode} className="lp-tracker-card lp-tracker-card-anim mt-8">
                 <div className="flex flex-col sm:flex-row sm:items-start gap-6">
                     <div className="flex-1 space-y-4">
@@ -593,20 +450,19 @@ function PipelineTracker() {
                     <div className="sm:w-[300px] shrink-0">
                         <div className="lp-terminal">
                             <div className="lp-terminal-header">
-                                &#11035; SCHEMA ENGINE &nbsp;&middot;&nbsp; STAGE {activeNode + 1} / {trackerSteps.length}
+                                &#11035; STUDIO ENGINE &nbsp;&middot;&nbsp; STAGE {activeNode + 1} / {trackerSteps.length}
                             </div>
                             {step.terminal.map((line, i) => (
                                 <div key={i}>
                                     <span className="lp-terminal-dim">{'>'} </span>
                                     <span className="lp-terminal-key">{line.key}</span>
                                     <span className="lp-terminal-dim">: </span>
-                                    <span className={line.green ? 'lp-terminal-green' : 'lp-terminal-val'}>{line.val}</span>
+                                    <span className={(line as {key:string;val:string;green?:boolean}).green ? 'lp-terminal-green' : 'lp-terminal-val'}>{line.val}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
-                {/* Stage nav */}
                 <div className="flex items-center justify-between mt-6 pt-5 border-t" style={{ borderColor: 'var(--lp-stone-border)' }}>
                     <button onClick={() => setActiveNode(Math.max(0, activeNode - 1))} disabled={activeNode === 0}
                         className="text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-lg border transition-all"
@@ -615,8 +471,7 @@ function PipelineTracker() {
                     </button>
                     <div className="flex gap-1.5">
                         {trackerSteps.map((_, idx) => (
-                            <button key={idx} onClick={() => setActiveNode(idx)}
-                                className="rounded-full transition-all"
+                            <button key={idx} onClick={() => setActiveNode(idx)} className="rounded-full transition-all"
                                 style={{ width: idx === activeNode ? '20px' : '6px', height: '6px', background: idx === activeNode ? '#1A1512' : idx < activeNode ? '#556B2F' : '#EFEBE4' }}
                                 aria-label={`Go to stage ${idx + 1}`} />
                         ))}
@@ -635,57 +490,60 @@ function PipelineTracker() {
 // ═══════════════════════════════════════════════════════
 //  LAYER 3 - THE LIFECYCLE INTERACTION
 // ═══════════════════════════════════════════════════════
+
+// FIX 4: Updated tab titles + body copy with designer vocabulary
 const pipelineSteps = [
     {
-        title: '1. The Guided Studio Worksheet',
-        tag: 'STRUCTURE',
+        title: '1. The Digital Space Program',
+        tag: 'BILL OF QUANTITIES',
         icon: FileText,
-        heading: 'An 8-section builder form structured around real design projects.',
-        desc: 'Input client specifications, total square footage, and room layouts. Toggle custom services like 3D visualisations, material sourcing packages, or electrical schematics — without touching a spreadsheet.',
+        heading: 'A guided architectural spec sheet built for real room layouts.',
+        desc: 'Input client design briefs, carpet areas, and custom mood board directions. Toggle precise line items like 3D photorealistic renders, MEP electrical schemas, and custom loose furniture layouts — without breaking an Excel cell formula.',
         terminal: [
-            { key: 'client_context_name', val: '"Gargi Reddy"' },
-            { key: 'area_dimension_sqft', val: '2400' },
-            { key: 'room_nodes_allocated', val: '["Boutique Cabin", "Conference Room", "Server Hub"]' },
-            { key: 'active_service_hooks', val: '["3D_Visualization", "Lighting_Design"]' },
+            { key: 'active_space_program', val: '["Master Suite Layout", "Modular Kitchen Layout"]' },
+            { key: 'carpet_area_sqft', val: '2400' },
+            { key: 'mood_board_ref', val: '"Client Brief v3 — Japandi Minimal"' },
+            { key: 'active_service_hooks', val: '["3D_Renders", "MEP_Electrical_Schema"]' },
         ],
     },
     {
-        title: '2. The Magic Short-Link',
-        tag: 'DELIVERY',
+        title: '2. The Design Pitch Link',
+        tag: 'CLIENT DELIVERY',
         icon: Send,
-        heading: 'Ditch heavy file attachments. Share via one elegant link.',
-        desc: 'Compile detailed estimates into short tracking links (/p/KV-xxxxx). These optimised presentation sheets are lightweight, responsive, secure, and load instantly on client mobile devices over WhatsApp.',
+        heading: 'Ditch heavy PDFs. Share your design pitch via one elegant link.',
+        body: '',
+        desc: 'Compile your spatial program and BOQ into short tracking links (/p/KV-xxxxx). These optimised presentation sheets are lightweight, responsive, and load instantly on a client\'s mobile over WhatsApp.',
         terminal: [
-            { key: 'generation_token', val: '"KV-89271-PROPOSAL"' },
-            { key: 'redirect_mask_path', val: '"/view/proposal_id_secure"' },
+            { key: 'pitch_token', val: '"KV-89271-DESIGN-PITCH"' },
+            { key: 'redirect_mask_path', val: '"/view/pitch_id_secure"' },
             { key: 'encrypted_short_route', val: '"kaliprlabs.in/p/KV-89271"' },
-            { key: 'link_status', val: '"ACTIVE"' },
+            { key: 'pitch_status', val: '"ACTIVE"' },
         ],
     },
     {
-        title: '3. Real-Time Tracking Alerts',
+        title: '3. Real-Time Client Tracking',
         tag: 'ENGAGEMENT',
         icon: Eye,
-        heading: 'Know the exact second a client reviews your quotation.',
-        desc: 'Receive instant project dashboard notifications the moment a client opens their link. This precise insight lets you pick up the phone, resolve questions, and close deals when engagement is highest.',
+        heading: 'Know the exact second a client reviews your design pitch.',
+        desc: 'Receive instant project dashboard notifications the moment a client opens their link. This precise insight lets you call at the right time, resolve spatial queries, and close the brief while engagement is highest.',
         terminal: [
             { key: 'event_type', val: '"CLIENT_VIEW_LOGGED"', green: true },
             { key: 'timestamp_utc', val: '"2026-11-07T20:14:33Z"' },
             { key: 'webhook_dispatch', val: '"Resend API \u2192 studio@email.in"' },
-            { key: 'pipeline_status_update', val: '"draft \u2192 viewed"', green: true },
+            { key: 'pipeline_status_update', val: '"PITCH_SENT \u2192 CLIENT_VIEWING"', green: true },
         ],
     },
     {
-        title: '4. One-Click Milestone Checkout',
+        title: '4. Studio Advance Checkout',
         tag: 'CASH FLOW',
         icon: CheckCircle2,
-        heading: 'Frictionless sign-offs that launch milestone payments automatically.',
-        desc: 'Clients review project costs, add specific feedback notes, and authorise quotes instantly. Once approved, the platform locks pricing, generates payment milestones, and creates print-ready GST invoices.',
+        heading: 'Frictionless sign-offs that launch your advance milestone automatically.',
+        desc: 'Clients review design fees, add specific scope notes, and authorise the pitch instantly. Once approved, the platform locks the spatial program, generates a GST invoice, and creates your advance payment link.',
         terminal: [
-            { key: 'project_total_gross_inr', val: '\u20B98,00,000.00' },
-            { key: 'local_tax_gst_18', val: '\u20B91,44,000.00' },
-            { key: 'milestone_advance_50pct', val: '\u20B94,72,000.00', green: true },
-            { key: 'invoice_status', val: '"GENERATED \u2014 Awaiting Checkout"', green: true },
+            { key: 'procurement_ledger', val: '"GST_18_Itemized_Calculations"' },
+            { key: 'project_total_inr', val: '\u20B98,00,000.00' },
+            { key: 'studio_advance_50pct', val: '\u20B94,72,000.00', green: true },
+            { key: 'billing_pipeline_state', val: '"50_PERCENT_DEPOSIT_AWAITING"', green: true },
         ],
     },
 ];
@@ -714,28 +572,26 @@ function LifecycleSection() {
 
     return (
         <>
-            {/* Section divider rule */}
             <div ref={ruleRef} className="reveal-on-scroll lp-section-rule mx-auto max-w-6xl" />
-
             <section id="pipeline" className="px-4 sm:px-6 lg:px-8 py-20 sm:py-28 max-w-6xl mx-auto">
                 <div ref={ref} className="reveal-on-scroll">
-                    {/* Pipeline Tracker */}
                     <PipelineTracker />
 
+                    {/* FIX 4: Updated section header */}
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
                         <span className="text-[10px] font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--lp-gold)' }}>
-                            Platform Workflow Architecture
+                            Architectural Workflow
                         </span>
                         <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
-                            How Kalvora coordinates your business
+                            From Initial Brief to Site Handover:{' '}
+                            <span className="italic" style={{ color: '#C5A880' }}>The Studio Pipeline</span>
                         </h2>
                         <p className="text-sm font-light" style={{ color: 'var(--lp-text-muted)' }}>
-                            Click through the architectural phases to see exactly how Kalvora manages client interactions &mdash; from structural pitch to final invoice.
+                            Click through each architectural phase to see how Kalvora manages your studio &mdash; from spatial pitch to advance payment collected.
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-                        {/* Left - Tab triggers with sliding capsule */}
                         <div className="lg:col-span-5 relative">
                             <div className="lp-tab-capsule" style={{ top: `${activeStep * 79}px` }} />
                             <div className="space-y-3 relative">
@@ -768,7 +624,6 @@ function LifecycleSection() {
                             </div>
                         </div>
 
-                        {/* Right - Adaptive panel */}
                         <div className="lg:col-span-7">
                             <div className={`lp-tab-panel ${visible ? 'visible' : 'entering'}`}>
                                 <div className="lp-card p-7 space-y-5">
@@ -784,10 +639,9 @@ function LifecycleSection() {
                                     <p className="text-sm font-light leading-relaxed" style={{ color: 'var(--lp-text-muted)' }}>
                                         {step.desc}
                                     </p>
-                                    {/* Terminal — recessed via CSS opacity + font size */}
                                     <div className="lp-terminal">
                                         <div className="lp-terminal-header">
-                                            &#11035; SCHEMA CORE ENGINE &nbsp;&middot;&nbsp; LIVE SIMULATOR ACTIVE
+                                            &#11035; STUDIO ENGINE &nbsp;&middot;&nbsp; LIVE SIMULATOR ACTIVE
                                         </div>
                                         {step.terminal.map((line, i) => (
                                             visibleLines.includes(i) ? (
@@ -795,7 +649,7 @@ function LifecycleSection() {
                                                     <span className="lp-terminal-dim">{'>'} </span>
                                                     <span className="lp-terminal-key">{line.key}</span>
                                                     <span className="lp-terminal-dim">: </span>
-                                                    <span className={line.green ? 'lp-terminal-green' : 'lp-terminal-val'}>{line.val}</span>
+                                                    <span className={(line as {key:string;val:string;green?:boolean}).green ? 'lp-terminal-green' : 'lp-terminal-val'}>{line.val}</span>
                                                 </div>
                                             ) : null
                                         ))}
@@ -828,28 +682,24 @@ function TemplateShowroom() {
 
     return (
         <>
-            {/* Section divider rule */}
             <div ref={ruleRef} className="reveal-on-scroll lp-section-rule mx-auto max-w-6xl" />
-
             <section id="showroom" className="px-4 sm:px-6 lg:px-8 py-20 sm:py-28 max-w-6xl mx-auto">
                 <div ref={ref} className="reveal-on-scroll text-center max-w-3xl mx-auto mb-14 space-y-3">
                     <span className="text-[10px] font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--lp-gold)' }}>
-                        Branding Customisation
+                        Studio Branding Customisation
                     </span>
                     <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
                         Complement your studio&apos;s stylistic profile
                     </h2>
                     <p className="text-sm font-light" style={{ color: 'var(--lp-text-muted)' }}>
-                        Switch template layouts natively. Kalvora updates font pairings and border alignments smoothly across custom themes.
+                        Switch pitch layouts natively. Kalvora updates font pairings and border alignments smoothly across custom presentation themes.
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-                    {/* Left — Theme selectors: swipeable on mobile, stacked on desktop */}
                     <div className="lg:col-span-4">
                         <p className="text-[10px] font-bold uppercase tracking-widest font-mono mb-4"
-                            style={{ color: 'var(--lp-text-subtle)' }}>Select Live Style</p>
-                        {/* Mobile: horizontal snap scroll. Desktop: vertical stack */}
+                            style={{ color: 'var(--lp-text-subtle)' }}>Select Presentation Style</p>
                         <div className="lp-theme-selector-row lg:flex lg:flex-col lg:space-y-3 lg:overflow-visible">
                             {themes.map((t) => (
                                 <button key={t.key} onClick={() => setTheme(t.key)}
@@ -864,23 +714,23 @@ function TemplateShowroom() {
                         </div>
                     </div>
 
-                    {/* Right — Canvas with fade on theme change */}
                     <div className={`lg:col-span-8 theme-${theme}`}>
                         <div key={theme} className="lp-proposal-canvas animate-fade-in">
                             <div className="lp-proposal-accent h-[3px] rounded-full mb-6" />
                             <div className="flex items-start justify-between mb-6">
                                 <div>
                                     <p className="lp-proposal-title">KALIPR STUDIO</p>
-                                    <p className="lp-proposal-ref mt-1">Project Proposal Specification</p>
+                                    <p className="lp-proposal-ref mt-1">Design Pitch &amp; Spatial Program</p>
                                 </div>
                                 <div className="text-right">
                                     <p className="lp-proposal-ref">Ref Date: Nov 07, 2026</p>
-                                    <p className="lp-proposal-ref">Design Area: 2,400 sq.ft Office</p>
+                                    {/* FIX 1: Namita Sharma */}
+                                    <p className="lp-proposal-ref">Client: Namita Sharma</p>
                                 </div>
                             </div>
                             <div className="lp-proposal-row">
-                                <p className="lp-proposal-label mb-1">Target Client Reference</p>
-                                <p className="lp-proposal-value">Gargi Reddy &mdash; CEO Corporate Suite Layout</p>
+                                <p className="lp-proposal-label mb-1">Spatial Program Reference</p>
+                                <p className="lp-proposal-value">Namita Sharma &mdash; Corporate Office Suite, 2400 sq.ft</p>
                             </div>
                             <div className="lp-proposal-row">
                                 <div className="flex justify-between items-baseline gap-4">
@@ -890,7 +740,7 @@ function TemplateShowroom() {
                             </div>
                             <div className="lp-proposal-row">
                                 <div className="flex justify-between items-baseline gap-4">
-                                    <p className="lp-proposal-value flex-1">Integrated Acoustic Ceiling Grid &amp; Diffuse Lighting</p>
+                                    <p className="lp-proposal-value flex-1">Integrated Acoustic Ceiling Grid &amp; Diffuse Lighting Schema</p>
                                     <p className="lp-proposal-value shrink-0 font-semibold">&#8377;3,00,000.00</p>
                                 </div>
                             </div>
@@ -913,6 +763,115 @@ function TemplateShowroom() {
                 </div>
             </section>
         </>
+    );
+}
+
+// ═══════════════════════════════════════════════════════
+//  LAYER 1.5 — SOCIAL PROOF (FIX 3: moved above TryoutGateway)
+//  Continuous marquee ticker + material sample cards
+// ═══════════════════════════════════════════════════════
+const studioNames = [
+    'Veritas Studio', 'Mehta & Co.', 'Arjun Spaces', 'The Loft Co.',
+    'Prism Interiors', 'Studio Raga', 'Kairos Design', 'Arc & Form',
+];
+
+const testimonials = [
+    {
+        initials: 'GR',
+        color: '#7C6B5A',
+        name: 'Gargi Reddy',
+        role: 'Principal Interior Architect',
+        city: 'Hyderabad',
+        studio: 'Veritas Studio',
+        quote: 'Kalvora saved me hours every week on design pitch follow-ups. Clients actually read the links instead of ignoring PDF attachments.',
+    },
+    {
+        initials: 'AM',
+        color: '#5A6B7C',
+        name: 'Arjun Mehta',
+        role: 'Space Planning Consultant',
+        city: 'Mumbai',
+        studio: 'Mehta & Co.',
+        quote: 'The studio advance checkout feature alone is worth switching. No more uncomfortable conversations about advance payments over the phone.',
+    },
+    {
+        initials: 'PS',
+        color: '#6B7C5A',
+        name: 'Priya Sharma',
+        role: 'Senior Interior Designer',
+        city: 'Bengaluru',
+        studio: 'Prism Interiors',
+        quote: 'The client view notifications are a game changer. I know the exact moment to call and close the brief while they\'re engaged.',
+    },
+];
+
+function SocialProofSection() {
+    const gridRef = useScrollReveal();
+    // Duplicate array for seamless loop
+    const logoSet = [...studioNames, ...studioNames];
+
+    return (
+        <section className="lp-proof-section py-14 sm:py-16">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <p className="text-center text-[10px] font-bold tracking-widest uppercase font-mono mb-10"
+                    style={{ color: 'var(--lp-text-subtle)' }}>
+                    Design Studios Across India Trust Kalvora
+                </p>
+            </div>
+
+            {/* FIX 4: Continuous marquee ticker — no overflow on the outer wrapper */}
+            <div className="lp-marquee-outer py-3 mb-12">
+                <div className="lp-marquee-track">
+                    {logoSet.map((name, i) => (
+                        <span key={i} className="lp-marquee-logo">
+                            {name}
+                            <span className="lp-marquee-sep">&middot;</span>
+                        </span>
+                    ))}
+                </div>
+            </div>
+
+            {/* Designer testimonial cards */}
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div ref={gridRef} className="reveal-on-scroll grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {testimonials.map((d, i) => (
+                        <div key={i} className={`lp-testimonial-card lp-animate-entry lp-delay-${i + 1}`}>
+                            {/* Giant terracotta quote mark */}
+                            <div className="lp-testimonial-quotemark">&ldquo;</div>
+
+                            {/* Star rating */}
+                            <div className="flex items-center gap-0.5 mb-4">
+                                {[...Array(5)].map((_, si) => (
+                                    <Star key={si} size={11} className="fill-current" style={{ color: '#D4AF37' }} />
+                                ))}
+                            </div>
+
+                            {/* Quote */}
+                            <p className="text-[13.5px] font-light leading-relaxed mb-5" style={{ color: 'var(--lp-text)' }}>
+                                &ldquo;{d.quote}&rdquo;
+                            </p>
+
+                            {/* Badge */}
+                            <div className="lp-testimonial-badge mb-4">
+                                <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--lp-terracotta)' }} />
+                                Closed using Kalvora Luxury Template
+                            </div>
+
+                            {/* Designer identity */}
+                            <div className="flex items-center gap-3 pt-4 border-t" style={{ borderColor: 'var(--lp-panel-border)' }}>
+                                <div className="lp-designer-avatar" style={{ background: d.color, width: '36px', height: '36px', fontSize: '13px' }}>
+                                    {d.initials}
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold leading-tight" style={{ color: 'var(--lp-text)' }}>{d.name}</p>
+                                    <p className="text-[10px]" style={{ color: 'var(--lp-text-subtle)' }}>{d.role} &middot; {d.city}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
     );
 }
 
@@ -940,14 +899,14 @@ function TryoutGateway() {
             style={{ borderColor: 'var(--lp-stone-border)' }}>
             <div ref={ref} className="reveal-on-scroll text-center max-w-2xl mx-auto mb-12 space-y-3">
                 <span className="text-[10px] font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--lp-gold)' }}>
-                    Zero-Auth Onboarding Sandbox
+                    Zero-Auth Studio Sandbox
                 </span>
                 <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
-                    Your next proposal is{' '}
+                    Your next design pitch is{' '}
                     <span className="italic" style={{ color: '#C5A880' }}>60 seconds away.</span>
                 </h2>
                 <p className="text-sm font-light" style={{ color: 'var(--lp-text-muted)' }}>
-                    Experience the layout configuration interface instantly before creating an account.
+                    Experience the spatial program builder instantly before creating an account.
                 </p>
             </div>
 
@@ -955,7 +914,7 @@ function TryoutGateway() {
                 <div className="lp-tryout-card">
                     <p className="text-xs font-bold uppercase tracking-widest font-mono mb-6"
                         style={{ color: 'var(--lp-text-subtle)' }}>
-                        Test the Proposal Builder in 15 Seconds
+                        Configure a Design Pitch in 15 Seconds
                     </p>
                     <div className="space-y-4">
                         <div>
@@ -966,20 +925,19 @@ function TryoutGateway() {
                         </div>
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--lp-text-muted)' }}>
-                                Target Budget Tier
+                                Finish Specification Tier
                             </label>
                             <CustomSelect value={tier} onChange={setTier} options={budgetTierOptions} placeholder="Select finish level..." />
                         </div>
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'var(--lp-text-muted)' }}>
-                                Client Baseline Header
+                                Client Name
                             </label>
-                            <input type="text" className="input-field" placeholder="e.g. Gargi Reddy"
+                            <input type="text" className="input-field" placeholder="e.g. Namita Sharma"
                                 value={client} onChange={(e) => setClient(e.target.value)} />
                         </div>
-                        {/* E4: removed inline justifyContent style — use Tailwind only */}
                         <Link href="/try" className="lp-btn-primary w-full mt-2 group justify-center">
-                            Launch Dynamic Demo Space
+                            Launch Studio Demo Space
                             <ExternalLink size={15} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         </Link>
                         <p className="text-center text-xs" style={{ color: 'var(--lp-text-subtle)' }}>
@@ -997,20 +955,20 @@ function TryoutGateway() {
 // ═══════════════════════════════════════════════════════
 const faqItems = [
     {
-        q: 'Can I structure localised tax fields and down payment formats?',
-        a: 'Yes. Kalvora is built to calculate structured project breakdowns, including options for localised GST itemisation and customised advance payment milestones &mdash; for example, locking a 50% initial deposit before work begins.',
+        q: 'Can I structure localised GST fields and advance payment milestones?',
+        a: 'Yes. Kalvora calculates structured project breakdowns, including GST itemisation and customised advance payment milestones &mdash; for example, locking a 50% studio advance before work begins.',
     },
     {
         q: 'How do client view alerts keep me updated in real-time?',
-        a: 'The application tracks client access on unique short links (/p/KV-xxxx). The second a client opens the document page, the platform logs the entry and updates your pipeline view status dynamically to &ldquo;Viewed&rdquo; &mdash; no polling, no delays.',
+        a: 'The application tracks client access on unique short links (/p/KV-xxxx). The second a client opens the design pitch, the platform logs the entry and updates your pipeline view status dynamically to &ldquo;Viewed&rdquo; &mdash; no polling, no delays.',
     },
     {
         q: 'Can I generate GST invoices with Kalvora?',
-        a: 'Yes. Add your GSTIN and Kalvora auto-generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI &mdash; the moment your client approves the proposal.',
+        a: 'Yes. Add your GSTIN and Kalvora auto-generates invoices with CGST/SGST breakdown, HSN/SAC codes, bank details, and UPI &mdash; the moment your client approves the design pitch.',
     },
     {
-        q: 'Can I add my logo and branding to proposals?',
-        a: 'Yes. Upload your studio logo, set your accent colour, and add your payment terms. Every proposal and invoice carries your brand &mdash; not ours.',
+        q: 'Can I add my studio logo and branding?',
+        a: 'Yes. Upload your studio logo, set your accent colour, and add your payment terms. Every design pitch and invoice carries your brand &mdash; not ours.',
     },
     {
         q: 'What does Kalvora cost?',
@@ -1026,7 +984,7 @@ function FAQSection() {
         <section className="px-4 sm:px-6 lg:px-8 py-20 sm:py-24 max-w-3xl mx-auto">
             <div ref={ref} className="reveal-on-scroll text-center mb-12 space-y-3">
                 <span className="text-[10px] font-bold tracking-widest uppercase font-mono" style={{ color: 'var(--lp-gold)' }}>
-                    Platform Operational Inquiries
+                    Studio Operational Inquiries
                 </span>
                 <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight" style={{ color: 'var(--lp-text)' }}>
                     Common <span className="italic" style={{ color: '#C5A880' }}>Questions</span>
@@ -1036,21 +994,17 @@ function FAQSection() {
             <div className="space-y-3">
                 {faqItems.map((item, i) => (
                     <div key={i} className="lp-faq-item">
-                        <button
-                            onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                        <button onClick={() => setOpenIndex(openIndex === i ? null : i)}
                             className="w-full flex items-center justify-between px-5 sm:px-6 py-4 text-left group"
-                            aria-expanded={openIndex === i}
-                        >
+                            aria-expanded={openIndex === i}>
                             <span className="text-sm font-medium pr-4 transition-colors"
                                 style={{ color: openIndex === i ? 'var(--lp-text)' : '#57534E' }}>
                                 {item.q}
                             </span>
                             <ChevronDown size={17}
                                 className={`flex-shrink-0 transition-transform duration-500 ${openIndex === i ? 'rotate-180' : ''}`}
-                                style={{ color: 'var(--lp-text-muted)' }}
-                            />
+                                style={{ color: 'var(--lp-text-muted)' }} />
                         </button>
-                        {/* D6: smooth height transition 500ms */}
                         <div className={`overflow-hidden transition-[max-height,opacity] duration-500 ${openIndex === i ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}
                             style={{ transitionTimingFunction: 'cubic-bezier(0.16,1,0.3,1)' }}>
                             <div className="px-5 sm:px-6 pb-5">
@@ -1078,14 +1032,14 @@ function DarkFooter() {
                             <span className="brand-wordmark text-xl" style={{ color: '#C5A880', letterSpacing: '0.4em' }}>KALVORA</span>
                         </Link>
                         <p className="text-sm font-light leading-relaxed max-w-xs" style={{ color: '#78716C' }}>
-                            Structured proposal tracking, automated invoicing, and milestone management workflows designed for premium interior design studios.
+                            Structured design pitch tracking, automated invoicing, and milestone management workflows built for premium interior design studios.
                         </p>
                     </div>
                     <div className="md:col-span-7 grid grid-cols-3 gap-6">
                         <div>
-                            <p className="lp-footer-col-label">Product</p>
+                            <p className="lp-footer-col-label">Studio Tools</p>
                             <a href="#pipeline" className="lp-footer-link">Pipeline Workflow</a>
-                            <a href="#showroom" className="lp-footer-link">Studio Showroom</a>
+                            <a href="#showroom" className="lp-footer-link">Pitch Showroom</a>
                             <a href="#sandbox" className="lp-footer-link">Sandbox Space</a>
                             <Link href="/#pricing" className="lp-footer-link">Pricing</Link>
                         </div>
@@ -1097,7 +1051,7 @@ function DarkFooter() {
                             <Link href="/public-feedback" className="lp-footer-link">Give Feedback</Link>
                         </div>
                         <div>
-                            <p className="lp-footer-col-label">Legal Documentation</p>
+                            <p className="lp-footer-col-label">Legal</p>
                             <span className="lp-footer-link cursor-default">Privacy Policy</span>
                             <span className="lp-footer-link cursor-default">Terms of Service</span>
                             <a href="mailto:hello@kaliprlabs.in" className="lp-footer-link">Contact</a>
@@ -1107,7 +1061,7 @@ function DarkFooter() {
                 <div className="pt-8 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                         <p className="text-xs" style={{ color: '#57534E' }}>
-                            &copy; 2026 <span style={{ color: '#78716C' }}>KALVORA</span> &middot; Architecture Design Concept Snapshot.
+                            &copy; 2026 <span style={{ color: '#78716C' }}>KALVORA</span> &middot; Built for Indian Design Studios.
                         </p>
                         <p className="text-xs italic" style={{ color: '#57534E' }}>
                             Designed by Kalipr Labs &middot; Engineered for Creative Professionals.
