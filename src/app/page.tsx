@@ -1099,13 +1099,28 @@ function StudioContactForm() {
     const [sent, setSent] = useState(false);
     const ref = useScrollReveal();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const body = encodeURIComponent(
-            `Name: ${cName}\nFirm: ${cFirm}\nSpatial Focus: ${cSpatial}\nScope: ${cScope}\nEmail: ${cEmail}\nPhone: ${cPhone}\nNotes: ${cNotes}`
-        );
-        window.location.href = `mailto:hello@kaliprlabs.in?subject=Studio Enquiry — ${cFirm}&body=${body}`;
-        setSent(true);
+        setSubmitting(true); setSubmitError('');
+        try {
+            const res = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: cName, firm: cFirm, spatial: cSpatial,
+                    scope: cScope, email: cEmail, phone: cPhone, notes: cNotes,
+                }),
+            });
+            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed'); }
+            setSent(true);
+        } catch (err: unknown) {
+            setSubmitError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const inlineInput = {
@@ -1204,8 +1219,13 @@ function StudioContactForm() {
                         </div>
 
                         {/* CTA */}
-                        <button type="submit" className="lp-btn-primary w-full justify-center group">
-                            Authenticate Studio Space &rarr;
+                        {/* CTA */}
+                        {submitError && (
+                            <p className="text-xs text-center" style={{ color: '#B91C1C' }}>{submitError}</p>
+                        )}
+                        <button type="submit" disabled={submitting}
+                            className="lp-btn-primary w-full justify-center group disabled:opacity-60 disabled:cursor-not-allowed">
+                            {submitting ? 'Sending brief…' : <>Authenticate Studio Space &rarr;</>}
                         </button>
                         <p className="text-center text-xs" style={{ color: 'var(--lp-text-subtle)' }}>
                             Response within 24 hours &middot; No spam, ever
