@@ -1465,62 +1465,78 @@ html { scroll-behavior: smooth; }
 }
 
 /* ═══════════════════════════════════════════════════════
-   LANDING PAGE v4.2 — TACTILE MONOLITH SHOWCASE GRID
+   LANDING PAGE v4.3 — 3-RAIL MONOLITH REGISTRY GRID
    ═══════════════════════════════════════════════════════ */
 
-.lp-monolith-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 8px 0 16px;
-  /* overflow visible so parallax travel isn't clipped hard */
-  overflow: hidden;
+/* Infinite scroll keyframes */
+@keyframes monolith-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes monolith-right {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
 
-.lp-monolith-row {
+/* Outer clip + edge fade */
+.lp-monolith-outer {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%);
+}
+
+/* The moving track — width is auto so it fits all cards */
+.lp-monolith-track {
   display: flex;
   flex-direction: row;
   gap: 10px;
-  padding: 0 24px;
-  /* transition eases the scroll-driven movement */
-  transition: transform 80ms linear;
+  padding: 6px 10px;
+  width: max-content;
 }
+.lp-monolith-track-left  { animation: monolith-left  32s linear infinite; }
+.lp-monolith-track-right { animation: monolith-right 38s linear infinite; }
+.lp-monolith-track:hover { animation-play-state: paused; }
 
-/* The plate card */
+/* Each studio plate */
 .lp-monolith-plate {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 32px;
+  padding: 16px 28px;
   background: #FFFFFF;
-  border: 1px solid rgba(26,21,18,0.10);
+  border: 1px solid rgba(26,21,18,0.09);
   border-radius: 10px;
   cursor: default;
   transition:
     transform     400ms cubic-bezier(0.16, 1, 0.3, 1),
     border-color  400ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-width  400ms cubic-bezier(0.16, 1, 0.3, 1),
     opacity       300ms ease,
     box-shadow    400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 .lp-monolith-plate:hover {
   transform: translateY(-6px) scale(1.04);
-  border-color: #C87A53;
+  border: 1.5px solid #C87A53;
   box-shadow: 0 16px 40px rgba(200,122,83,0.14);
 }
 
-/* Dim siblings when any plate is hovered — requires CSS :has() */
-.lp-monolith-row:has(.lp-monolith-plate:hover) .lp-monolith-plate:not(:hover) {
-  opacity: 0.45;
+/* Dim siblings on hover via CSS :has() */
+.lp-monolith-track:has(.lp-monolith-plate:hover) .lp-monolith-plate:not(:hover) {
+  opacity: 0.42;
 }
 
+/* Studio name text */
 .lp-monolith-name {
   font-family: 'Cormorant Garamond', 'Georgia', serif;
-  font-size: 17px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: #1A1512;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #A8A29E;  /* stone-400 — idle */
   white-space: nowrap;
-  font-style: normal;
+  transition: color 300ms ease;
+}
+.lp-monolith-plate:hover .lp-monolith-name {
+  color: #1A1512;  /* deep obsidian on hover */
 }

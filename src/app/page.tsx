@@ -772,148 +772,62 @@ function TemplateShowroom() {
 //  Continuous marquee ticker + material sample cards
 // ═══════════════════════════════════════════════════════
 // ── DUAL-AXIS RUNWAY DATA ────────────────────────────────────────────────────
-const westAxisStudios = [
+// ── 3-RAIL MONOLITH DATA ─────────────────────────────────────────────────────
+const rail1Studios = [
     'Studio Canvas Architecture', 'Mati Design Collective', 'The Brick & Mortar Lab',
-    'Atelier Shunya', 'Spade & Trowel Studios', 'Svarupa Space Designers',
-    'Form & Function Lounge', 'The Charcoal Grid', 'Koriv Studio',
-    'Tattva Spatial Studio', 'Ananta Design Partners', 'Prana Habitat Group',
+    'Atelier Shunya', 'Spade & Trowel Studios', 'Svarupa Space Designers', 'Form & Function Lounge',
 ];
-const eastAxisStudios = [
+const rail2Studios = [
     'Vinyasa Design House', 'The Minimalist Archetype', 'Akasha Living Spaces',
-    'Atelier Ochre', 'The Teak & Terrazzo Co.', 'Dhruva Space Curators',
-    'Kala & Karma Labs', 'The Mudroom Collective', 'Sutra Interior Architects',
-    'Bhumika Spatial Curation', 'Sthapatya Design Group', 'The Ochre Envelope',
+    'Atelier Ochre', 'The Teak & Terrazzo Co.', 'Dhruva Space Curators', 'Kala & Karma Labs',
 ];
-// Doubled for seamless infinite scroll
-const westSet  = [...westAxisStudios,  ...westAxisStudios];
-const eastSet  = [...eastAxisStudios, ...eastAxisStudios];
+const rail3Studios = [
+    'The Charcoal Grid', 'Clay & Conifer Interiors', 'Tattva Spatial Studio',
+    'Ananta Design Partners', 'Prana Habitat Group', 'The Ochre Envelope',
+];
 
-const testimonials = [
-    {
-        initials: 'TK',
-        color: '#7C6B5A',
-        name: 'Tanvi Kulkarni',
-        role: 'Principal Architect',
-        city: 'Erandwane, Pune',
-        studio: 'Studio Svara',
-        quote: 'We used to spend hours aligning clean spacing tables in Microsoft Word, only to export a generic file that looked messy when opened on a client\'s phone over WhatsApp. Kalvora completely protected our visual presentation. Now, clients review our design proposals on beautiful digital pages, and our design fees are authorized without any awkward back-and-forth arguments.',
-    },
-    {
-        initials: 'RH',
-        color: '#5A6B7C',
-        name: 'Rohan Hegde',
-        role: 'Luxury Residential Consultant',
-        city: 'Koramangala, Bangalore',
-        studio: 'The Minimalist Archetype',
-        quote: 'Interior design is an emotionally driven business, but chasing down initial deposits is incredibly exhausting. The automated milestone tracking engine in Kalvora completely stabilized our studio\'s cash flows. Our 50% down payments are calculated, itemized with local GST fields, and settled before our rendering team even loads up their 3D visualization software tools.',
-    },
-    {
-        initials: 'MD',
-        color: '#8A6B52',
-        name: 'Meera Deshmukh',
-        role: 'Independent Interior Stylist',
-        city: 'Prabhadevi, Mumbai',
-        studio: 'Mati Design Collective',
-        quote: 'Clients always used to haggle over specific line items when looking at raw Excel spreadsheets. Toggling active room nodes and material scope parameters inside the Kalvora worksheet gives the client clear ownership over their budget tiers. They don\'t ask for generic discounts anymore because they can clearly see how custom millwork changes the aggregate fee.',
-    },
-    {
-        initials: 'AG',
-        color: '#6B7C5A',
-        name: 'Amit Gokhale',
-        role: 'Commercial Project Director',
-        city: 'Kalyani Nagar, Pune',
-        studio: 'The Charcoal Grid',
-        quote: 'Managing client variations during site handovers used to be an administrative disaster. Having a secure, public feedback discussion space on the quote link itself means every comment is permanently logged. The second a corporate client approves an upgrade, Kalvora locks the pricing structures and builds a print-ready invoice instantly.',
-    },
-    {
-        initials: 'GR',
-        color: '#7C5A6B',
-        name: 'Gargi Reddy',
-        role: 'Founder',
-        city: 'Pune',
-        studio: 'Koriv Studio',
-        quote: 'As an independent consultant, I worried that using a corporate invoicing app would look cold to my clients. Kalvora\'s Luxury Editorial theme template feels like a premium print lookbook designed exactly for creatives. It makes my practice look highly organized and established, which helps me confidently pitch to premium bungalow builders.',
-    },
-    {
-        initials: 'NR',
-        color: '#5A7C6B',
-        name: 'Nandan R.',
-        role: 'Founding Partner',
-        city: 'College Road, Nashik',
-        studio: 'Atelier Ochre',
-        quote: 'The real-time view alerts completely changed how we handle follow-ups. Stop guessing if the decision-maker read your text link. Knowing the exact second a client opens their custom project proposal sheet gives us the perfect context to pick up the phone, address lingering questions, and close the deal while engagement is highest.',
-    },
-];
+function MonolithPlate({ name }: { name: string }) {
+    return (
+        <div className="lp-monolith-plate">
+            <span className="lp-monolith-name">{name}</span>
+        </div>
+    );
+}
 
 function SocialProofSection() {
-    const sectionRef = useRef<HTMLElement>(null);
-    const row1Ref    = useRef<HTMLDivElement>(null);
-    const row2Ref    = useRef<HTMLDivElement>(null);
-
-    // Scroll-driven parallax — ties horizontal slide to vertical scroll
-    useEffect(() => {
-        let ticking = false;
-        const onScroll = () => {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(() => {
-                if (!sectionRef.current || !row1Ref.current || !row2Ref.current) {
-                    ticking = false; return;
-                }
-                const rect   = sectionRef.current.getBoundingClientRect();
-                const viewH  = window.innerHeight;
-                // progress: -1 (above viewport) → 0 (centered) → 1 (below viewport)
-                const prog   = (viewH / 2 - rect.top - rect.height / 2) / viewH;
-                const travel = prog * 120; // max 120px each direction
-                row1Ref.current.style.transform = `translateX(${-travel}px)`;
-                row2Ref.current.style.transform = `translateX(${travel}px)`;
-                ticking = false;
-            });
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll(); // init position
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
-
     return (
-        <section ref={sectionRef} className="lp-proof-section py-16 sm:py-20 overflow-hidden">
-            {/* Section label */}
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <p className="text-center text-[10px] font-bold tracking-widest uppercase font-mono mb-10"
-                    style={{ color: 'var(--lp-text-subtle)' }}>
-                    Design Studios Across India Trust Kalvora
+        <section className="lp-proof-section py-16 sm:py-20 overflow-hidden">
+
+            {/* ── SECTION HEADER ── */}
+            <div className="text-center mb-10 px-4 space-y-2">
+                <h2 className="lp-font-display text-2xl sm:text-3xl font-light tracking-[0.12em] uppercase"
+                    style={{ color: 'var(--lp-text)' }}>
+                    Design House Registry
+                </h2>
+                <p className="text-xs font-medium tracking-widest"
+                    style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif", color: 'var(--lp-text-subtle)' }}>
+                    Trusted by leading interior architecture practices across India.
                 </p>
             </div>
 
-            {/* ── MONOLITH SHOWCASE GRID ── */}
-            <div className="lp-monolith-wrapper">
-                {/* Row 1 — slides left on scroll */}
-                <div ref={row1Ref} className="lp-monolith-row" style={{ willChange: 'transform' }}>
-                    {westAxisStudios.map((name, i) => (
-                        <div key={i} className="lp-monolith-plate">
-                            <span className="lp-monolith-name">{name}</span>
-                        </div>
-                    ))}
-                    {/* Duplicate for seamless overflow on wide screens */}
-                    {westAxisStudios.slice(0, 4).map((name, i) => (
-                        <div key={`r1x-${i}`} className="lp-monolith-plate" aria-hidden>
-                            <span className="lp-monolith-name">{name}</span>
-                        </div>
-                    ))}
+            {/* ── RAIL 1 — Upper Canopy — slides LEFT ── */}
+            <div className="lp-monolith-outer mb-3">
+                <div className="lp-monolith-track lp-monolith-track-left" style={{ animationDuration: '32s' }}>
+                    {[...rail1Studios, ...rail1Studios].map((n, i) => <MonolithPlate key={i} name={n} />)}
                 </div>
+            </div>
 
-                {/* Row 2 — slides right on scroll */}
-                <div ref={row2Ref} className="lp-monolith-row" style={{ willChange: 'transform' }}>
-                    {eastAxisStudios.map((name, i) => (
-                        <div key={i} className="lp-monolith-plate">
-                            <span className="lp-monolith-name">{name}</span>
-                        </div>
-                    ))}
-                    {eastAxisStudios.slice(0, 4).map((name, i) => (
-                        <div key={`r2x-${i}`} className="lp-monolith-plate" aria-hidden>
-                            <span className="lp-monolith-name">{name}</span>
-                        </div>
-                    ))}
+            {/* ── RAIL 2 — Center Meridian — slides RIGHT ── */}
+            <div className="lp-monolith-outer mb-3">
+                <div className="lp-monolith-track lp-monolith-track-right" style={{ animationDuration: '38s' }}>
+                    {[...rail2Studios, ...rail2Studios].map((n, i) => <MonolithPlate key={i} name={n} />)}
+                </div>
+            </div>
+
+            {/* ── RAIL 3 — Base Foundation — slides LEFT (slower) ── */}
+            <div className="lp-monolith-outer">
+                <div className="lp-monolith-track lp-monolith-track-left" style={{ animationDuration: '44s' }}>
+                    {[...rail3Studios, ...rail3Studios].map((n, i) => <MonolithPlate key={i} name={n} />)}
                 </div>
             </div>
 
@@ -953,7 +867,6 @@ function SocialProofSection() {
         </section>
     );
 }
-
 // ═══════════════════════════════════════════════════════
 //  LAYER 5 - ZERO-AUTH TRYOUT GATEWAY
 // ═══════════════════════════════════════════════════════
