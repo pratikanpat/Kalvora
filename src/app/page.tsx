@@ -846,67 +846,95 @@ const testimonials = [
 ];
 
 function SocialProofSection() {
-    const gridRef = useScrollReveal();
+    const sectionRef = useRef<HTMLElement>(null);
+    const row1Ref    = useRef<HTMLDivElement>(null);
+    const row2Ref    = useRef<HTMLDivElement>(null);
+
+    // Scroll-driven parallax — ties horizontal slide to vertical scroll
+    useEffect(() => {
+        let ticking = false;
+        const onScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                if (!sectionRef.current || !row1Ref.current || !row2Ref.current) {
+                    ticking = false; return;
+                }
+                const rect   = sectionRef.current.getBoundingClientRect();
+                const viewH  = window.innerHeight;
+                // progress: -1 (above viewport) → 0 (centered) → 1 (below viewport)
+                const prog   = (viewH / 2 - rect.top - rect.height / 2) / viewH;
+                const travel = prog * 120; // max 120px each direction
+                row1Ref.current.style.transform = `translateX(${-travel}px)`;
+                row2Ref.current.style.transform = `translateX(${travel}px)`;
+                ticking = false;
+            });
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll(); // init position
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
 
     return (
-        <section className="lp-proof-section py-14 sm:py-16">
+        <section ref={sectionRef} className="lp-proof-section py-16 sm:py-20 overflow-hidden">
             {/* Section label */}
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <p className="text-center text-[10px] font-bold tracking-widest uppercase font-mono mb-8"
+                <p className="text-center text-[10px] font-bold tracking-widest uppercase font-mono mb-10"
                     style={{ color: 'var(--lp-text-subtle)' }}>
                     Design Studios Across India Trust Kalvora
                 </p>
             </div>
 
-            {/* ── DUAL-AXIS INTERLOCKING RUNWAY ── */}
-            <div className="lp-runway-outer py-4 mb-14" style={{ background: '#FAF8F5' }}>
-                {/* West Axis — moves left at 25s */}
-                <div className="lp-runway-row lp-runway-row-left">
-                    {westSet.map((name, i) => (
-                        <span key={i} className="lp-runway-name">
-                            {name}
-                            <span className="lp-runway-sep">&nbsp;·&nbsp;</span>
-                        </span>
+            {/* ── MONOLITH SHOWCASE GRID ── */}
+            <div className="lp-monolith-wrapper">
+                {/* Row 1 — slides left on scroll */}
+                <div ref={row1Ref} className="lp-monolith-row" style={{ willChange: 'transform' }}>
+                    {westAxisStudios.map((name, i) => (
+                        <div key={i} className="lp-monolith-plate">
+                            <span className="lp-monolith-name">{name}</span>
+                        </div>
+                    ))}
+                    {/* Duplicate for seamless overflow on wide screens */}
+                    {westAxisStudios.slice(0, 4).map((name, i) => (
+                        <div key={`r1x-${i}`} className="lp-monolith-plate" aria-hidden>
+                            <span className="lp-monolith-name">{name}</span>
+                        </div>
                     ))}
                 </div>
-                {/* East Axis — moves right at 32s */}
-                <div className="lp-runway-row lp-runway-row-right">
-                    {eastSet.map((name, i) => (
-                        <span key={i} className="lp-runway-name">
-                            {name}
-                            <span className="lp-runway-sep">&nbsp;·&nbsp;</span>
-                        </span>
+
+                {/* Row 2 — slides right on scroll */}
+                <div ref={row2Ref} className="lp-monolith-row" style={{ willChange: 'transform' }}>
+                    {eastAxisStudios.map((name, i) => (
+                        <div key={i} className="lp-monolith-plate">
+                            <span className="lp-monolith-name">{name}</span>
+                        </div>
+                    ))}
+                    {eastAxisStudios.slice(0, 4).map((name, i) => (
+                        <div key={`r2x-${i}`} className="lp-monolith-plate" aria-hidden>
+                            <span className="lp-monolith-name">{name}</span>
+                        </div>
                     ))}
                 </div>
             </div>
 
-            {/* ── TESTIMONIAL THEATRE — 6 cards, 2-row horizontal scroll on mobile, 3-col grid on desktop ── */}
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div ref={gridRef} className="reveal-on-scroll grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {/* ── TESTIMONIAL CARDS — commented out per design direction ──
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-14">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {testimonials.map((d, i) => (
                         <div key={i} className={`lp-testimonial-card lp-animate-entry lp-delay-${Math.min(i + 1, 5)}`}>
-                            {/* Giant terracotta quote mark */}
                             <div className="lp-testimonial-quotemark">&ldquo;</div>
-
-                            {/* Star rating */}
                             <div className="flex items-center gap-0.5 mb-4">
                                 {[...Array(5)].map((_, si) => (
                                     <Star key={si} size={11} className="fill-current" style={{ color: '#D4AF37' }} />
                                 ))}
                             </div>
-
-                            {/* Quote */}
                             <p className="text-[13px] font-light leading-relaxed mb-5" style={{ color: 'var(--lp-text)' }}>
                                 &ldquo;{d.quote}&rdquo;
                             </p>
-
-                            {/* Badge */}
                             <div className="lp-testimonial-badge mb-4">
                                 <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--lp-terracotta)' }} />
                                 Active on Kalvora Studio Platform
                             </div>
-
-                            {/* Designer identity */}
                             <div className="flex items-center gap-3 pt-4 border-t" style={{ borderColor: 'var(--lp-panel-border)' }}>
                                 <div className="lp-designer-avatar" style={{ background: d.color, width: '36px', height: '36px', fontSize: '13px' }}>
                                     {d.initials}
@@ -921,6 +949,7 @@ function SocialProofSection() {
                     ))}
                 </div>
             </div>
+            ── end testimonials ── */}
         </section>
     );
 }
