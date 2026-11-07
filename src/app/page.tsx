@@ -1099,28 +1099,18 @@ function StudioContactForm() {
     const [sent, setSent] = useState(false);
     const ref = useScrollReveal();
 
-    const [submitting, setSubmitting] = useState(false);
-    const [submitError, setSubmitError] = useState('');
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setSubmitting(true); setSubmitError('');
-        try {
-            const res = await fetch('/api/contact', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: cName, firm: cFirm, spatial: cSpatial,
-                    scope: cScope, email: cEmail, phone: cPhone, notes: cNotes,
-                }),
-            });
-            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed'); }
-            setSent(true);
-        } catch (err: unknown) {
-            setSubmitError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-        } finally {
-            setSubmitting(false);
-        }
+        // Optimistic: show success immediately — email sends in background
+        setSent(true);
+        fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: cName, firm: cFirm, spatial: cSpatial,
+                scope: cScope, email: cEmail, phone: cPhone, notes: cNotes,
+            }),
+        }).catch(() => { /* silent — user already sees success */ });
     };
 
     const inlineInput = {
@@ -1219,13 +1209,9 @@ function StudioContactForm() {
                         </div>
 
                         {/* CTA */}
-                        {/* CTA */}
-                        {submitError && (
-                            <p className="text-xs text-center" style={{ color: '#B91C1C' }}>{submitError}</p>
-                        )}
-                        <button type="submit" disabled={submitting}
-                            className="lp-btn-primary w-full justify-center group disabled:opacity-60 disabled:cursor-not-allowed">
-                            {submitting ? 'Sending brief…' : <>Authenticate Studio Space &rarr;</>}
+                        <button type="submit"
+                            className="lp-btn-primary w-full justify-center group">
+                            Authenticate Studio Space &rarr;
                         </button>
                         <p className="text-center text-xs" style={{ color: 'var(--lp-text-subtle)' }}>
                             Response within 24 hours &middot; No spam, ever
