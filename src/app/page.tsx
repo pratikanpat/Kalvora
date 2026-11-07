@@ -71,6 +71,7 @@ export default function LandingPage() {
             <SocialProofSection />
             <TryoutGateway />
             <FAQSection />
+            <StudioContactForm />
             <DarkFooter />
             <DemoVideoModal isOpen={showDemo} onClose={() => setShowDemo(false)} />
         </div>
@@ -125,9 +126,14 @@ function HeroSection() {
             </div>
 
             <div className="relative max-w-4xl mx-auto text-center space-y-8">
-                <div className="lp-badge lp-animate-entry mx-auto w-fit">
-                    <Sparkles size={12} className="text-[#C5A880]" />
-                    <span>&#10022; Studio Platform &mdash; Built for Premium Interior Design Practices</span>
+                <div className="lp-animate-entry mx-auto w-fit flex items-center gap-3 px-5 py-2.5 border-l-2 rounded-sm"
+                    style={{ borderLeftColor: 'var(--lp-terracotta)', background: 'rgba(200,122,83,0.06)' }}>
+                    <span className="font-mono font-bold text-[11px] uppercase tracking-widest"
+                        style={{ color: 'var(--lp-terracotta)' }}>✦ VOL. 14</span>
+                    <span className="font-mono text-[10px] uppercase tracking-widest"
+                        style={{ color: 'var(--lp-text-subtle)' }}>//&nbsp;SPECIFICATION ENGINE</span>
+                    <span className="hidden sm:inline font-mono text-[10px] uppercase tracking-widest"
+                        style={{ color: 'var(--lp-text-subtle)' }}>&mdash;&nbsp;Built for Premium Practices</span>
                 </div>
 
                 {/* FIX 4: Updated headline copy with designer vocabulary */}
@@ -974,6 +980,10 @@ const faqItems = [
         q: 'What does Kalvora cost?',
         a: 'Every feature is free during early access. No credit card, no time limit. When we launch Pro, early users get 50% off forever. Pro will be priced at &#8377;999/month.',
     },
+    {
+        q: 'Who builds and maintains Kalvora?',
+        a: 'Kalvora is designed and engineered by <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" style="color:var(--lp-gold);text-decoration:underline">Kalipr Labs</a> &mdash; a dedicated product architecture studio focused on building high-performance, secure software tools. Using clean Next.js architecture and highly secure database pipelines, we ensure your studio data, pricing structures, and client proposals stay encrypted, fast, and private.',
+    },
 ];
 
 function FAQSection() {
@@ -1020,6 +1030,150 @@ function FAQSection() {
 }
 
 // ═══════════════════════════════════════════════════════
+//  LAYER 6B-CONTACT - CONVERSATIONAL STUDIO CONTACT FORM
+// ═══════════════════════════════════════════════════════
+const spatialOptions: SelectOption[] = [
+    { value: 'residential', label: 'Residential Bungalows' },
+    { value: 'corporate', label: 'Corporate Workspaces' },
+    { value: 'retail', label: 'Boutique Retail' },
+    { value: 'consultancy', label: 'Independent Consultancy' },
+];
+const scopeOptions: SelectOption[] = [
+    { value: 'small', label: 'Under 1,500 sq.ft' },
+    { value: 'medium', label: '1,500 – 4,000 sq.ft' },
+    { value: 'large', label: '4,000+ sq.ft' },
+];
+
+function StudioContactForm() {
+    const [cName, setCName] = useState('');
+    const [cFirm, setCFirm] = useState('');
+    const [cSpatial, setCSpacial] = useState('');
+    const [cScope, setCScope] = useState('');
+    const [cEmail, setCEmail] = useState('');
+    const [cPhone, setCPhone] = useState('');
+    const [cNotes, setCNotes] = useState('');
+    const [sent, setSent] = useState(false);
+    const ref = useScrollReveal();
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const body = encodeURIComponent(
+            `Name: ${cName}\nFirm: ${cFirm}\nSpatial Focus: ${cSpatial}\nScope: ${cScope}\nEmail: ${cEmail}\nPhone: ${cPhone}\nNotes: ${cNotes}`
+        );
+        window.location.href = `mailto:hello@kaliprlabs.in?subject=Studio Enquiry — ${cFirm}&body=${body}`;
+        setSent(true);
+    };
+
+    const inlineInput = {
+        borderBottom: '1px solid var(--lp-terracotta)',
+        outline: 'none',
+        background: 'transparent',
+        color: 'var(--lp-text)',
+        fontSize: '0.875rem',
+        padding: '0 4px',
+        margin: '0 4px',
+    };
+
+    return (
+        <section className="px-4 sm:px-6 lg:px-8 py-20 sm:py-28 border-t"
+            style={{ borderColor: 'var(--lp-stone-border)', background: '#FAF8F5' }}>
+            <div className="max-w-3xl mx-auto">
+                <div ref={ref} className="reveal-on-scroll text-center mb-12 space-y-3">
+                    <span className="text-[10px] font-bold tracking-widest uppercase font-mono"
+                        style={{ color: 'var(--lp-terracotta)' }}>
+                        Studio Relations
+                    </span>
+                    <h2 className="lp-font-display text-3xl sm:text-4xl font-light tracking-tight"
+                        style={{ color: 'var(--lp-text)' }}>
+                        {"Let's build a more "}
+                        <span className="italic" style={{ color: '#C5A880' }}>profitable practice.</span>
+                    </h2>
+                    <p className="text-sm font-light leading-relaxed"
+                        style={{ color: 'var(--lp-text-muted)', maxWidth: '480px', margin: '0 auto' }}>
+                        We know you are busy running site handovers. Drop your project brief variables below
+                        and a studio relations lead will set up your personalised workspace within 24 hours.
+                    </p>
+                </div>
+
+                {sent ? (
+                    <div className="text-center py-16 space-y-4">
+                        <div className="text-4xl" style={{ color: 'var(--lp-terracotta)' }}>✦</div>
+                        <p className="text-sm font-light" style={{ color: 'var(--lp-text)' }}>
+                            Brief received. A studio relations lead will reach out within 24 hours.
+                        </p>
+                    </div>
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Mad-lib conversational block */}
+                        <div className="p-6 sm:p-8 rounded-xl border"
+                            style={{
+                                background: '#FFFFFF',
+                                borderColor: 'var(--lp-panel-border)',
+                                borderLeft: '3px solid var(--lp-terracotta)',
+                            }}>
+                            <p className="text-sm sm:text-[15px] font-light leading-loose"
+                                style={{ color: 'var(--lp-text)' }}>
+                                Hello Kalvora, my name is
+                                <input type="text" value={cName} onChange={e => setCName(e.target.value)}
+                                    placeholder="Your Name" required style={{ ...inlineInput, width: '130px' }} />
+                                and I direct
+                                <input type="text" value={cFirm} onChange={e => setCFirm(e.target.value)}
+                                    placeholder="Studio or Firm" required style={{ ...inlineInput, width: '155px' }} />
+                                . We are looking to organise our spatial pipelines for
+                                <span className="inline-block align-middle mx-1" style={{ verticalAlign: 'middle' }}>
+                                    <CustomSelect value={cSpatial} onChange={setCSpacial}
+                                        options={spatialOptions} placeholder="project type…" />
+                                </span>
+                                . Our average project scope sits around
+                                <span className="inline-block align-middle mx-1" style={{ verticalAlign: 'middle' }}>
+                                    <CustomSelect value={cScope} onChange={setCScope}
+                                        options={scopeOptions} placeholder="scope scale…" />
+                                </span>
+                                . Reach our design team at
+                                <input type="email" value={cEmail} onChange={e => setCEmail(e.target.value)}
+                                    placeholder="work@studio.in" required style={{ ...inlineInput, width: '170px' }} />
+                                or call at
+                                <input type="tel" value={cPhone} onChange={e => setCPhone(e.target.value)}
+                                    placeholder="+91 98XXX XXXXX" style={{ ...inlineInput, width: '155px' }} />.
+                            </p>
+                        </div>
+
+                        {/* Operational notes */}
+                        <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider mb-2"
+                                style={{ color: 'var(--lp-text-muted)' }}>
+                                Any existing operational friction?
+                                <span className="font-light normal-case ml-1"
+                                    style={{ letterSpacing: 0 }}>
+                                    (How do you currently send quotes or format invoice milestones?)
+                                </span>
+                            </label>
+                            <textarea value={cNotes} onChange={e => setCNotes(e.target.value)}
+                                rows={4}
+                                placeholder="Tell us about your current workflow…"
+                                className="w-full rounded-lg px-4 py-3 text-sm font-light resize-none border outline-none transition"
+                                style={{
+                                    background: '#FFFFFF',
+                                    borderColor: 'var(--lp-panel-border)',
+                                    color: 'var(--lp-text)',
+                                }} />
+                        </div>
+
+                        {/* CTA */}
+                        <button type="submit" className="lp-btn-primary w-full justify-center group">
+                            Authenticate Studio Space &rarr;
+                        </button>
+                        <p className="text-center text-xs" style={{ color: 'var(--lp-text-subtle)' }}>
+                            Response within 24 hours &middot; No spam, ever
+                        </p>
+                    </form>
+                )}
+            </div>
+        </section>
+    );
+}
+
+// ═══════════════════════════════════════════════════════
 //  LAYER 6B - DARK PREMIUM FOOTER
 // ═══════════════════════════════════════════════════════
 function DarkFooter() {
@@ -1035,7 +1189,7 @@ function DarkFooter() {
                             Structured design pitch tracking, automated invoicing, and milestone management workflows built for premium interior design studios.
                         </p>
                     </div>
-                    <div className="md:col-span-7 grid grid-cols-3 gap-6">
+                    <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-6">
                         <div>
                             <p className="lp-footer-col-label">Studio Tools</p>
                             <a href="#pipeline" className="lp-footer-link">Pipeline Workflow</a>
@@ -1047,13 +1201,16 @@ function DarkFooter() {
                             <p className="lp-footer-col-label">Studio Pipeline</p>
                             <Link href="/signup" className="lp-footer-link">Create Account</Link>
                             <Link href="/login" className="lp-footer-link">Sign In</Link>
-                            <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="lp-footer-link">Kalipr Labs</a>
                             <Link href="/public-feedback" className="lp-footer-link">Give Feedback</Link>
                         </div>
                         <div>
+                            <p className="lp-footer-col-label">From the Lab</p>
+                            <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer" className="lp-footer-link">Engineering Studio ↗</a>
+                        </div>
+                        <div>
                             <p className="lp-footer-col-label">Legal</p>
-                            <span className="lp-footer-link cursor-default">Privacy Policy</span>
-                            <span className="lp-footer-link cursor-default">Terms of Service</span>
+                            <Link href="/privacy" className="lp-footer-link">Privacy Policy</Link>
+                            <Link href="/terms" className="lp-footer-link">Terms of Service</Link>
                             <a href="mailto:hello@kaliprlabs.in" className="lp-footer-link">Contact</a>
                         </div>
                     </div>
@@ -1063,8 +1220,11 @@ function DarkFooter() {
                         <p className="text-xs" style={{ color: '#57534E' }}>
                             &copy; 2026 <span style={{ color: '#78716C' }}>KALVORA</span> &middot; Built for Indian Design Studios.
                         </p>
-                        <p className="text-xs italic" style={{ color: '#57534E' }}>
-                            Designed by Kalipr Labs &middot; Engineered for Creative Professionals.
+                        <p className="text-xs" style={{ color: '#57534E' }}>
+                            An architectural production of{' '}
+                            <a href="https://kaliprlabs.in" target="_blank" rel="noopener noreferrer"
+                                className="italic hover:opacity-80 transition-opacity"
+                                style={{ color: '#78716C' }}>Kalipr Labs</a>.
                         </p>
                     </div>
                 </div>
