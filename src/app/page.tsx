@@ -66,7 +66,7 @@ export default function LandingPage() {
             <LandingNavbar />
             <HeroSection />
             <PainContrastSection />
-            <LifecycleSection />
+            <LifecycleSection onDemo={() => setShowDemo(true)} />
             <TemplateShowroom />
             <SocialProofSection />
             <TryoutGateway />
@@ -379,7 +379,7 @@ const trackerSteps: TrackerStep[] = [
     },
 ];
 
-function PipelineTracker() {
+function PipelineTracker({ onDemo }: { onDemo: () => void }) {
     const [activeNode, setActiveNode] = useState(1);
     const step = trackerSteps[activeNode];
     const progressPct = activeNode === 0 ? 0 : (activeNode / (trackerSteps.length - 1)) * 100;
@@ -398,6 +398,20 @@ function PipelineTracker() {
                 <p className="text-sm font-light max-w-2xl mx-auto" style={{ color: 'var(--lp-text-muted)' }}>
                     Click each stage to see exactly what Kalvora handles for your studio.
                 </p>
+                {/* Watch Demo button */}
+                <button
+                    onClick={onDemo}
+                    className="inline-flex items-center gap-2.5 mt-2 px-5 py-2.5 rounded-full border text-xs font-medium uppercase tracking-widest transition-all duration-300 group"
+                    style={{ borderColor: 'var(--lp-terracotta)', color: 'var(--lp-terracotta)', background: 'rgba(200,122,83,0.05)' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(200,122,83,0.12)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(200,122,83,0.05)'; }}
+                >
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="group-hover:scale-110 transition-transform">
+                        <circle cx="6.5" cy="6.5" r="6" stroke="currentColor" strokeWidth="1"/>
+                        <path d="M5 4.5L9 6.5L5 8.5V4.5Z" fill="currentColor"/>
+                    </svg>
+                    Watch how it works
+                </button>
             </div>
 
             {/* Tracker bar + nodes */}
@@ -549,7 +563,7 @@ const pipelineSteps = [
     },
 ];
 
-function LifecycleSection() {
+function LifecycleSection({ onDemo }: { onDemo: () => void }) {
     const [activeStep, setActiveStep] = useState(0);
     const [visible, setVisible] = useState(true);
     const [visibleLines, setVisibleLines] = useState<number[]>([0, 1, 2, 3]);
@@ -576,7 +590,7 @@ function LifecycleSection() {
             <div ref={ruleRef} className="reveal-on-scroll lp-section-rule mx-auto max-w-6xl" />
             <section id="pipeline" className="px-4 sm:px-6 lg:px-8 py-20 sm:py-28 max-w-6xl mx-auto">
                 <div ref={ref} className="reveal-on-scroll">
-                    <PipelineTracker />
+                    <PipelineTracker onDemo={onDemo} />
 
                     {/* FIX 4: Updated section header */}
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
