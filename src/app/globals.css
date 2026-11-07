@@ -670,15 +670,18 @@ html { scroll-behavior: smooth; }
 
 /* -- Tokens -- */
 :root {
-  --lp-canvas:       #FAF8F5;
+  --lp-canvas:       #FDFCFB;
   --lp-text:         #1A1512;
   --lp-text-muted:   #78716C;
   --lp-text-subtle:  #A8A29E;
+  --lp-text-sharp:   #2C2420;
   --lp-gold:         #C5A880;
   --lp-gold-bg:      #F5EFE6;
   --lp-gold-border:  #E8DDD0;
   --lp-stone-border: #E4E0DB;
   --lp-card-bg:      #FFFFFF;
+  --lp-panel-bg:     #F5F2EE;
+  --lp-panel-border: #EAE6E0;
   --lp-dark-bg:      #1A1512;
   --lp-amber-alert:  #D97706;
   --lp-green-ok:     #15803D;
@@ -1048,4 +1051,303 @@ html { scroll-behavior: smooth; }
 .theme-luxury .lp-proposal-title,
 .theme-luxury .lp-proposal-value {
   letter-spacing: 0.04em; line-height: 1.6;
+}
+
+
+/* ════════════════════════════════════════════════════════
+   LANDING PAGE v3 ADDITIONS
+   ════════════════════════════════════════════════════════ */
+
+/* -- Batch A: Typography label + hero subtitle + widget shadow -- */
+.lp-tag-label {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.18em;
+  text-transform: uppercase; font-family: var(--font-inter), monospace;
+}
+.lp-hero-subtitle {
+  max-width: 42rem; margin-left: auto; margin-right: auto;
+}
+.lp-activity-widget {
+  box-shadow: 0 20px 60px rgba(26,21,18,0.10), 0 4px 16px rgba(26,21,18,0.06) !important;
+}
+
+/* -- Batch B: Social Proof Section -- */
+.lp-proof-section {
+  border-top: 1px solid var(--lp-stone-border);
+  border-bottom: 1px solid var(--lp-stone-border);
+  background: var(--lp-panel-bg);
+}
+.lp-proof-logo-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 36px; flex-wrap: wrap; padding: 20px 0;
+}
+.lp-proof-logo {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: #B8B2AC;
+  transition: color 300ms ease; cursor: default; white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
+}
+.lp-proof-logo:hover { color: #C5A880; }
+.lp-proof-divider {
+  width: 1px; height: 20px; background: var(--lp-stone-border); flex-shrink: 0;
+}
+.lp-designer-card {
+  background: #fff; border: 1px solid var(--lp-panel-border);
+  border-radius: 1rem; padding: 24px;
+  transition: transform 400ms cubic-bezier(0.16,1,0.3,1), box-shadow 400ms cubic-bezier(0.16,1,0.3,1), border-color 300ms ease;
+}
+.lp-designer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(26,21,18,0.10);
+  border-color: #D4CFC9;
+}
+.lp-designer-avatar {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800; color: white; flex-shrink: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -- Batch C: Hierarchy depth -- */
+/* Navbar CTA letter-spacing on hover */
+.lp-btn-primary {
+  transition: background 300ms var(--ease-premium), box-shadow 300ms var(--ease-premium),
+              transform 150ms ease, letter-spacing 300ms var(--ease-premium) !important;
+}
+.lp-btn-primary:hover { letter-spacing: 0.08em !important; }
+
+/* Pain contrast bento wrapper */
+.lp-pain-bento {
+  background: var(--lp-panel-bg); border: 1px solid var(--lp-panel-border);
+  border-radius: 1.25rem; padding: 20px;
+}
+.lp-contrast-col-before {
+  background: var(--lp-panel-bg);
+  transition: opacity 600ms var(--ease-premium);
+}
+.lp-contrast-col-after {
+  background: #ffffff; border-color: var(--lp-panel-border);
+  box-shadow: 0 4px 20px rgba(26,21,18,0.05);
+  transition: opacity 600ms var(--ease-premium) 160ms;
+}
+/* Start slightly transparent, reach full opacity on scroll reveal */
+.lp-pain-bento:not(.active) .lp-contrast-col-before { opacity: 0.5; }
+.lp-pain-bento:not(.active) .lp-contrast-col-after  { opacity: 0.7; }
+
+/* Active tab icon scale */
+.lp-tab-trigger.active .lp-tab-icon-wrap {
+  transform: scale(1.05);
+  transition: transform 300ms var(--ease-premium);
+}
+.lp-tab-trigger.active .lp-tab-icon-wrap svg {
+  transform: scale(1.15);
+  transition: transform 300ms var(--ease-premium);
+}
+
+/* Terminal recession */
+.lp-terminal {
+  font-size: 10.5px !important;
+  opacity: 0.9;
+  border-radius: 0.6rem !important;
+}
+
+/* Showroom canvas elevated shadow */
+.lp-proposal-canvas {
+  box-shadow: 0 12px 48px rgba(26,21,18,0.09), 0 2px 8px rgba(26,21,18,0.05) !important;
+}
+
+/* -- Batch D: Motion system -- */
+body { overscroll-behavior-y: none; }
+
+/* Delay class for staggered reveals */
+.lp-delay-0 { animation-delay: 0ms; transition-delay: 0ms; }
+
+/* Section gradient divider */
+.lp-section-rule {
+  height: 1px; width: 100%;
+  background: linear-gradient(90deg, transparent 0%, var(--lp-stone-border) 50%, transparent 100%);
+  transform: scaleX(0); transform-origin: center;
+  transition: transform 900ms cubic-bezier(0.16,1,0.3,1);
+}
+.lp-section-rule.active { transform: scaleX(1); }
+
+/* Tracker node hover */
+.lp-tracker-node:hover .lp-tracker-dot-future   { transform: scale(1.25); }
+.lp-tracker-node:hover .lp-tracker-dot-complete  { transform: scale(1.15); }
+
+/* FAQ smooth height */
+.lp-faq-answer {
+  transition: max-height 500ms cubic-bezier(0.16,1,0.3,1), opacity 400ms ease;
+}
+
+/* -- Batch E: Mobile layout -- */
+@media (max-width: 1024px) {
+  .lp-theme-selector-row {
+    display: flex; overflow-x: auto; gap: 12px; padding-bottom: 8px;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .lp-theme-selector-row::-webkit-scrollbar { display: none; }
+  .lp-theme-trigger { min-width: 200px; scroll-snap-align: start; flex-shrink: 0; }
+}
+@media (max-width: 640px) {
+  .lp-tracker-label { display: none; }
+  .lp-proof-logo-row { gap: 20px; }
+  .lp-proof-divider { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-section-rule { transition: none !important; transform: scaleX(1); }
+  .lp-designer-card:hover { transform: none; }
+  .lp-btn-primary:hover { letter-spacing: inherit !important; }
+}
+
+
+
+/* ════════════════════════════════════════════════════════
+   LANDING PAGE v3 ADDITIONS
+   ════════════════════════════════════════════════════════ */
+
+/* -- Batch A: Typography label + hero subtitle + widget shadow -- */
+.lp-tag-label {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.18em;
+  text-transform: uppercase; font-family: var(--font-inter), monospace;
+}
+.lp-hero-subtitle {
+  max-width: 42rem; margin-left: auto; margin-right: auto;
+}
+.lp-activity-widget {
+  box-shadow: 0 20px 60px rgba(26,21,18,0.10), 0 4px 16px rgba(26,21,18,0.06) !important;
+}
+
+/* -- Batch B: Social Proof Section -- */
+.lp-proof-section {
+  border-top: 1px solid var(--lp-stone-border);
+  border-bottom: 1px solid var(--lp-stone-border);
+  background: var(--lp-panel-bg);
+}
+.lp-proof-logo-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 36px; flex-wrap: wrap; padding: 20px 0;
+}
+.lp-proof-logo {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: #B8B2AC;
+  transition: color 300ms ease; cursor: default; white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
+}
+.lp-proof-logo:hover { color: #C5A880; }
+.lp-proof-divider {
+  width: 1px; height: 20px; background: var(--lp-stone-border); flex-shrink: 0;
+}
+.lp-designer-card {
+  background: #fff; border: 1px solid var(--lp-panel-border);
+  border-radius: 1rem; padding: 24px;
+  transition: transform 400ms cubic-bezier(0.16,1,0.3,1), box-shadow 400ms cubic-bezier(0.16,1,0.3,1), border-color 300ms ease;
+}
+.lp-designer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(26,21,18,0.10);
+  border-color: #D4CFC9;
+}
+.lp-designer-avatar {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800; color: white; flex-shrink: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -- Batch C: Hierarchy depth -- */
+/* Navbar CTA letter-spacing on hover */
+.lp-btn-primary {
+  transition: background 300ms var(--ease-premium), box-shadow 300ms var(--ease-premium),
+              transform 150ms ease, letter-spacing 300ms var(--ease-premium) !important;
+}
+.lp-btn-primary:hover { letter-spacing: 0.08em !important; }
+
+/* Pain contrast bento wrapper */
+.lp-pain-bento {
+  background: var(--lp-panel-bg); border: 1px solid var(--lp-panel-border);
+  border-radius: 1.25rem; padding: 20px;
+}
+.lp-contrast-col-before {
+  background: var(--lp-panel-bg);
+  transition: opacity 600ms var(--ease-premium);
+}
+.lp-contrast-col-after {
+  background: #ffffff; border-color: var(--lp-panel-border);
+  box-shadow: 0 4px 20px rgba(26,21,18,0.05);
+  transition: opacity 600ms var(--ease-premium) 160ms;
+}
+/* Start slightly transparent, reach full opacity on scroll reveal */
+.lp-pain-bento:not(.active) .lp-contrast-col-before { opacity: 0.5; }
+.lp-pain-bento:not(.active) .lp-contrast-col-after  { opacity: 0.7; }
+
+/* Active tab icon scale */
+.lp-tab-trigger.active .lp-tab-icon-wrap {
+  transform: scale(1.05);
+  transition: transform 300ms var(--ease-premium);
+}
+.lp-tab-trigger.active .lp-tab-icon-wrap svg {
+  transform: scale(1.15);
+  transition: transform 300ms var(--ease-premium);
+}
+
+/* Terminal recession */
+.lp-terminal {
+  font-size: 10.5px !important;
+  opacity: 0.9;
+  border-radius: 0.6rem !important;
+}
+
+/* Showroom canvas elevated shadow */
+.lp-proposal-canvas {
+  box-shadow: 0 12px 48px rgba(26,21,18,0.09), 0 2px 8px rgba(26,21,18,0.05) !important;
+}
+
+/* -- Batch D: Motion system -- */
+body { overscroll-behavior-y: none; }
+
+/* Delay class for staggered reveals */
+.lp-delay-0 { animation-delay: 0ms; transition-delay: 0ms; }
+
+/* Section gradient divider */
+.lp-section-rule {
+  height: 1px; width: 100%;
+  background: linear-gradient(90deg, transparent 0%, var(--lp-stone-border) 50%, transparent 100%);
+  transform: scaleX(0); transform-origin: center;
+  transition: transform 900ms cubic-bezier(0.16,1,0.3,1);
+}
+.lp-section-rule.active { transform: scaleX(1); }
+
+/* Tracker node hover */
+.lp-tracker-node:hover .lp-tracker-dot-future   { transform: scale(1.25); }
+.lp-tracker-node:hover .lp-tracker-dot-complete  { transform: scale(1.15); }
+
+/* FAQ smooth height */
+.lp-faq-answer {
+  transition: max-height 500ms cubic-bezier(0.16,1,0.3,1), opacity 400ms ease;
+}
+
+/* -- Batch E: Mobile layout -- */
+@media (max-width: 1024px) {
+  .lp-theme-selector-row {
+    display: flex; overflow-x: auto; gap: 12px; padding-bottom: 8px;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .lp-theme-selector-row::-webkit-scrollbar { display: none; }
+  .lp-theme-trigger { min-width: 200px; scroll-snap-align: start; flex-shrink: 0; }
+}
+@media (max-width: 640px) {
+  .lp-tracker-label { display: none; }
+  .lp-proof-logo-row { gap: 20px; }
+  .lp-proof-divider { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-section-rule { transition: none !important; transform: scaleX(1); }
+  .lp-designer-card:hover { transform: none; }
+  .lp-btn-primary:hover { letter-spacing: inherit !important; }
 }

@@ -75,13 +75,13 @@ export default function LandingNavbar() {
                             <>
                                 <a
                                     href="#pipeline"
-                                    className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#78716C] hover:text-[#1A1512] transition-colors rounded-lg"
+                                    className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#78716C] hover:text-[#1A1512] hover:bg-[#F5F2EE] transition-all duration-300 rounded-lg"
                                 >
                                     How It Works
                                 </a>
                                 <Link
                                     href="/login"
-                                    className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#78716C] hover:text-[#1A1512] transition-colors rounded-lg"
+                                    className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[#78716C] hover:text-[#1A1512] hover:bg-[#F5F2EE] transition-all duration-300 rounded-lg"
                                 >
                                     Sign In
                                 </Link>
