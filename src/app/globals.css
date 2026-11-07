@@ -1,4 +1,4 @@
-/* Cormorant Garamond — Google Fonts CDN import (bypasses next/font loader) */
+﻿/* Cormorant Garamond — Google Fonts CDN import (bypasses next/font loader) */
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 
 @tailwind base;
@@ -1417,64 +1417,49 @@ html { scroll-behavior: smooth; }
 
 
 /* ═══════════════════════════════════════════════════════
-   LANDING PAGE v3.1 ADDITIONS — Terracotta, Marquee, Vocabulary
+
+/* ═══════════════════════════════════════════════════════
+   LANDING PAGE v4 — DUAL-AXIS RUNWAY MARQUEE
    ═══════════════════════════════════════════════════════ */
 
-/* -- Continuous studio logo marquee ticker -- */
-@keyframes lp-marquee {
+/* -- West axis: left-moving (25s) -- */
+@keyframes lp-marquee-left {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-.lp-marquee-track {
-  display: flex; width: max-content;
-  animation: lp-marquee 28s linear infinite;
-}
-.lp-marquee-track:hover { animation-play-state: paused; }
-.lp-marquee-outer {
-  overflow: hidden; mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
-}
-.lp-marquee-logo {
-  font-family: var(--font-playfair), 'Playfair Display', serif;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.24em;
-  text-transform: uppercase; color: rgba(26,21,18,0.28);
-  transition: color 400ms ease, transform 400ms ease;
-  cursor: default; white-space: nowrap; padding: 0 36px;
-  display: inline-flex; align-items: center;
-}
-.lp-marquee-logo:hover {
-  color: var(--lp-terracotta) !important;
-  transform: scale(1.03);
-}
-.lp-marquee-sep {
-  display: inline-flex; align-items: center; padding: 0 4px;
-  color: rgba(26,21,18,0.12); font-size: 10px;
+/* -- East axis: right-moving (32s, 20% slower) -- */
+@keyframes lp-marquee-right {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
 
-/* -- Testimonial material sample cards -- */
-.lp-testimonial-card {
-  background: var(--lp-sand);
-  border: 1px solid var(--lp-panel-border);
-  border-radius: 1.125rem; padding: 28px 28px 24px;
-  position: relative; overflow: hidden;
-  transition: transform 400ms cubic-bezier(0.16,1,0.3,1), box-shadow 400ms cubic-bezier(0.16,1,0.3,1);
-  min-width: 320px;
+.lp-runway-outer {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+  background: #FAF8F5;
 }
-.lp-testimonial-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(26,21,18,0.10);
+.lp-runway-row {
+  display: flex; width: max-content; padding: 6px 0;
 }
-.lp-testimonial-quotemark {
-  position: absolute; top: 12px; right: 20px;
-  font-family: 'Georgia', serif; font-size: 80px; line-height: 1;
-  color: var(--lp-terracotta); opacity: 0.18; pointer-events: none;
-  font-style: italic; user-select: none;
+.lp-runway-row-left  { animation: lp-marquee-left  25s linear infinite; }
+.lp-runway-row-right { animation: lp-marquee-right 32s linear infinite; }
+.lp-runway-row:hover { animation-play-state: paused; }
+
+.lp-runway-name {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: none; color: rgba(26,21,18,0.35);
+  transition: color 300ms ease, transform 300ms ease;
+  cursor: default; white-space: nowrap; padding: 4px 32px;
+  display: inline-flex; align-items: center;
 }
-.lp-testimonial-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 8px; font-weight: 800; letter-spacing: 0.16em;
-  text-transform: uppercase; font-family: var(--font-inter), monospace;
-  padding: 4px 10px; border-radius: 999px;
-  background: rgba(200,122,83,0.10); color: var(--lp-terracotta);
-  border: 1px solid rgba(200,122,83,0.20);
+.lp-runway-name:hover {
+  color: #C87A53 !important;
+  transform: scale(1.03);
+}
+.lp-runway-sep {
+  display: inline-flex; align-items: center;
+  color: rgba(26,21,18,0.12); font-size: 9px;
+  padding: 0 2px; pointer-events: none;
 }

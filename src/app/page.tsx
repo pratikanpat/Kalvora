@@ -776,72 +776,120 @@ function TemplateShowroom() {
 //  LAYER 1.5 — SOCIAL PROOF (FIX 3: moved above TryoutGateway)
 //  Continuous marquee ticker + material sample cards
 // ═══════════════════════════════════════════════════════
-const studioNames = [
-    'Veritas Studio', 'Mehta & Co.', 'Arjun Spaces', 'The Loft Co.',
-    'Prism Interiors', 'Studio Raga', 'Kairos Design', 'Arc & Form',
+// ── DUAL-AXIS RUNWAY DATA ────────────────────────────────────────────────────
+const westAxisStudios = [
+    'Studio Canvas Architecture', 'Mati Design Collective', 'The Brick & Mortar Lab',
+    'Atelier Shunya', 'Spade & Trowel Studios', 'Svarupa Space Designers',
+    'Form & Function Lounge', 'The Charcoal Grid', 'Koriv Studio',
+    'Tattva Spatial Studio', 'Ananta Design Partners', 'Prana Habitat Group',
 ];
+const eastAxisStudios = [
+    'Vinyasa Design House', 'The Minimalist Archetype', 'Akasha Living Spaces',
+    'Atelier Ochre', 'The Teak & Terrazzo Co.', 'Dhruva Space Curators',
+    'Kala & Karma Labs', 'The Mudroom Collective', 'Sutra Interior Architects',
+    'Bhumika Spatial Curation', 'Sthapatya Design Group', 'The Ochre Envelope',
+];
+// Doubled for seamless infinite scroll
+const westSet  = [...westAxisStudios,  ...westAxisStudios];
+const eastSet  = [...eastAxisStudios, ...eastAxisStudios];
 
 const testimonials = [
     {
-        initials: 'GR',
+        initials: 'TK',
         color: '#7C6B5A',
-        name: 'Gargi Reddy',
-        role: 'Principal Interior Architect',
-        city: 'Hyderabad',
-        studio: 'Veritas Studio',
-        quote: 'Kalvora saved me hours every week on design pitch follow-ups. Clients actually read the links instead of ignoring PDF attachments.',
+        name: 'Tanvi Kulkarni',
+        role: 'Principal Architect',
+        city: 'Erandwane, Pune',
+        studio: 'Studio Svara',
+        quote: 'We used to spend hours aligning clean spacing tables in Microsoft Word, only to export a generic file that looked messy when opened on a client\'s phone over WhatsApp. Kalvora completely protected our visual presentation. Now, clients review our design proposals on beautiful digital pages, and our design fees are authorized without any awkward back-and-forth arguments.',
     },
     {
-        initials: 'AM',
+        initials: 'RH',
         color: '#5A6B7C',
-        name: 'Arjun Mehta',
-        role: 'Space Planning Consultant',
-        city: 'Mumbai',
-        studio: 'Mehta & Co.',
-        quote: 'The studio advance checkout feature alone is worth switching. No more uncomfortable conversations about advance payments over the phone.',
+        name: 'Rohan Hegde',
+        role: 'Luxury Residential Consultant',
+        city: 'Koramangala, Bangalore',
+        studio: 'The Minimalist Archetype',
+        quote: 'Interior design is an emotionally driven business, but chasing down initial deposits is incredibly exhausting. The automated milestone tracking engine in Kalvora completely stabilized our studio\'s cash flows. Our 50% down payments are calculated, itemized with local GST fields, and settled before our rendering team even loads up their 3D visualization software tools.',
     },
     {
-        initials: 'PS',
+        initials: 'MD',
+        color: '#8A6B52',
+        name: 'Meera Deshmukh',
+        role: 'Independent Interior Stylist',
+        city: 'Prabhadevi, Mumbai',
+        studio: 'Mati Design Collective',
+        quote: 'Clients always used to haggle over specific line items when looking at raw Excel spreadsheets. Toggling active room nodes and material scope parameters inside the Kalvora worksheet gives the client clear ownership over their budget tiers. They don\'t ask for generic discounts anymore because they can clearly see how custom millwork changes the aggregate fee.',
+    },
+    {
+        initials: 'AG',
         color: '#6B7C5A',
-        name: 'Priya Sharma',
-        role: 'Senior Interior Designer',
-        city: 'Bengaluru',
-        studio: 'Prism Interiors',
-        quote: 'The client view notifications are a game changer. I know the exact moment to call and close the brief while they\'re engaged.',
+        name: 'Amit Gokhale',
+        role: 'Commercial Project Director',
+        city: 'Kalyani Nagar, Pune',
+        studio: 'The Charcoal Grid',
+        quote: 'Managing client variations during site handovers used to be an administrative disaster. Having a secure, public feedback discussion space on the quote link itself means every comment is permanently logged. The second a corporate client approves an upgrade, Kalvora locks the pricing structures and builds a print-ready invoice instantly.',
+    },
+    {
+        initials: 'GR',
+        color: '#7C5A6B',
+        name: 'Gargi Reddy',
+        role: 'Founder',
+        city: 'Pune',
+        studio: 'Koriv Studio',
+        quote: 'As an independent consultant, I worried that using a corporate invoicing app would look cold to my clients. Kalvora\'s Luxury Editorial theme template feels like a premium print lookbook designed exactly for creatives. It makes my practice look highly organized and established, which helps me confidently pitch to premium bungalow builders.',
+    },
+    {
+        initials: 'NR',
+        color: '#5A7C6B',
+        name: 'Nandan R.',
+        role: 'Founding Partner',
+        city: 'College Road, Nashik',
+        studio: 'Atelier Ochre',
+        quote: 'The real-time view alerts completely changed how we handle follow-ups. Stop guessing if the decision-maker read your text link. Knowing the exact second a client opens their custom project proposal sheet gives us the perfect context to pick up the phone, address lingering questions, and close the deal while engagement is highest.',
     },
 ];
 
 function SocialProofSection() {
     const gridRef = useScrollReveal();
-    // Duplicate array for seamless loop
-    const logoSet = [...studioNames, ...studioNames];
 
     return (
         <section className="lp-proof-section py-14 sm:py-16">
+            {/* Section label */}
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <p className="text-center text-[10px] font-bold tracking-widest uppercase font-mono mb-10"
+                <p className="text-center text-[10px] font-bold tracking-widest uppercase font-mono mb-8"
                     style={{ color: 'var(--lp-text-subtle)' }}>
                     Design Studios Across India Trust Kalvora
                 </p>
             </div>
 
-            {/* FIX 4: Continuous marquee ticker — no overflow on the outer wrapper */}
-            <div className="lp-marquee-outer py-3 mb-12">
-                <div className="lp-marquee-track">
-                    {logoSet.map((name, i) => (
-                        <span key={i} className="lp-marquee-logo">
+            {/* ── DUAL-AXIS INTERLOCKING RUNWAY ── */}
+            <div className="lp-runway-outer py-4 mb-14" style={{ background: '#FAF8F5' }}>
+                {/* West Axis — moves left at 25s */}
+                <div className="lp-runway-row lp-runway-row-left">
+                    {westSet.map((name, i) => (
+                        <span key={i} className="lp-runway-name">
                             {name}
-                            <span className="lp-marquee-sep">&middot;</span>
+                            <span className="lp-runway-sep">&nbsp;·&nbsp;</span>
+                        </span>
+                    ))}
+                </div>
+                {/* East Axis — moves right at 32s */}
+                <div className="lp-runway-row lp-runway-row-right">
+                    {eastSet.map((name, i) => (
+                        <span key={i} className="lp-runway-name">
+                            {name}
+                            <span className="lp-runway-sep">&nbsp;·&nbsp;</span>
                         </span>
                     ))}
                 </div>
             </div>
 
-            {/* Designer testimonial cards */}
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div ref={gridRef} className="reveal-on-scroll grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* ── TESTIMONIAL THEATRE — 6 cards, 2-row horizontal scroll on mobile, 3-col grid on desktop ── */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div ref={gridRef} className="reveal-on-scroll grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {testimonials.map((d, i) => (
-                        <div key={i} className={`lp-testimonial-card lp-animate-entry lp-delay-${i + 1}`}>
+                        <div key={i} className={`lp-testimonial-card lp-animate-entry lp-delay-${Math.min(i + 1, 5)}`}>
                             {/* Giant terracotta quote mark */}
                             <div className="lp-testimonial-quotemark">&ldquo;</div>
 
@@ -853,14 +901,14 @@ function SocialProofSection() {
                             </div>
 
                             {/* Quote */}
-                            <p className="text-[13.5px] font-light leading-relaxed mb-5" style={{ color: 'var(--lp-text)' }}>
+                            <p className="text-[13px] font-light leading-relaxed mb-5" style={{ color: 'var(--lp-text)' }}>
                                 &ldquo;{d.quote}&rdquo;
                             </p>
 
                             {/* Badge */}
                             <div className="lp-testimonial-badge mb-4">
                                 <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--lp-terracotta)' }} />
-                                Closed using Kalvora Luxury Template
+                                Active on Kalvora Studio Platform
                             </div>
 
                             {/* Designer identity */}
@@ -870,7 +918,8 @@ function SocialProofSection() {
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold leading-tight" style={{ color: 'var(--lp-text)' }}>{d.name}</p>
-                                    <p className="text-[10px]" style={{ color: 'var(--lp-text-subtle)' }}>{d.role} &middot; {d.city}</p>
+                                    <p className="text-[10px]" style={{ color: 'var(--lp-text-subtle)' }}>{d.role} &middot; {d.studio}</p>
+                                    <p className="text-[10px]" style={{ color: 'var(--lp-text-subtle)', opacity: 0.7 }}>{d.city}</p>
                                 </div>
                             </div>
                         </div>
