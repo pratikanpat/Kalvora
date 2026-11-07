@@ -685,7 +685,11 @@ html { scroll-behavior: smooth; }
   --lp-stone-mid:    #78716C;
   --lp-shadow-float: 0 4px 30px rgba(26,21,18,0.03), 0 1px 3px rgba(26,21,18,0.02);
   --lp-shadow-card:  0 8px 32px rgba(26,21,18,0.06), 0 1px 4px rgba(26,21,18,0.04);
-  --ease-premium:    cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-premium:    cubic-bezier(0.16, 1, 0.3, 1);
+  /* v2 tokens */
+  --lp-sand:         #EFEBE4;
+  --lp-olive:        #556B2F;
+  --lp-gold-polish:  #D4AF37;
 }
 
 /* -- Typography -- */
@@ -953,4 +957,95 @@ html { scroll-behavior: smooth; }
   .lp-animate-entry { animation: none !important; opacity: 1; transform: none; }
   .lp-tab-panel { transition: none !important; }
   .lp-proposal-canvas { transition: none !important; }
+}
+
+/* -- Scroll reveal (Batch B) -- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-on-scroll.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* -- Olive pulse glow (Batch C) -- */
+@keyframes lp-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(85,107,47,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(85,107,47,0); }
+}
+.lp-status-dot-approved {
+  animation: lp-pulse-glow 1.8s ease-in-out infinite;
+}
+
+/* -- Tab capsule (Batch D) -- */
+.lp-tab-capsule {
+  position: absolute; left: 0; right: 0; height: 76px;
+  background: var(--lp-sand); border-radius: 1rem;
+  border: 1px solid var(--lp-stone-border);
+  transition: top 400ms cubic-bezier(0.16,1,0.3,1);
+  z-index: 0; pointer-events: none;
+}
+
+/* -- Pipeline Tracker (Batch E) -- */
+.lp-tracker-bar {
+  position: relative; height: 2px; background: var(--lp-sand);
+  border-radius: 1px; margin: 0 20px;
+}
+.lp-tracker-fill {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: var(--lp-olive); border-radius: 1px;
+  transition: width 500ms cubic-bezier(0.16,1,0.3,1);
+}
+.lp-tracker-node {
+  position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; flex: 1;
+}
+.lp-tracker-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid transparent;
+  transition: all 350ms cubic-bezier(0.16,1,0.3,1);
+  position: relative; z-index: 2;
+}
+.lp-tracker-dot-future   { background: var(--lp-sand); border-color: #C4BFB9; }
+.lp-tracker-dot-active   { background: #1A1512; border-color: #1A1512; transform: scale(1.4); box-shadow: 0 0 0 3px rgba(26,21,18,0.12); }
+.lp-tracker-dot-complete { background: var(--lp-olive); border-color: var(--lp-olive); }
+.lp-tracker-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--font-inter), monospace; text-align: center; white-space: nowrap;
+  transition: color 300ms ease;
+}
+.lp-tracker-card {
+  background: var(--lp-card-bg); border: 1px solid var(--lp-stone-border);
+  border-radius: 1rem; padding: 28px; margin-top: 32px;
+  box-shadow: var(--lp-shadow-float);
+}
+@keyframes fadeInContainer {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lp-tracker-card-anim {
+  animation: fadeInContainer 450ms cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+/* -- Showroom morphing transitions (Batch F) -- */
+.lp-proposal-title,
+.lp-proposal-ref,
+.lp-proposal-label,
+.lp-proposal-value,
+.lp-proposal-row,
+.lp-proposal-total,
+.lp-proposal-total-label,
+.lp-proposal-total-val,
+.lp-proposal-accent {
+  transition: color 500ms cubic-bezier(0.16,1,0.3,1),
+              font-family 500ms cubic-bezier(0.16,1,0.3,1),
+              border-color 500ms cubic-bezier(0.16,1,0.3,1),
+              background 500ms cubic-bezier(0.16,1,0.3,1),
+              letter-spacing 500ms cubic-bezier(0.16,1,0.3,1);
+}
+.theme-luxury .lp-proposal-title,
+.theme-luxury .lp-proposal-value {
+  letter-spacing: 0.04em; line-height: 1.6;
 }
